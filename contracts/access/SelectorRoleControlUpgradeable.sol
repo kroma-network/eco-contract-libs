@@ -4,10 +4,10 @@ pragma solidity ^0.8.0;
 
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { Ownable2StepUpgradeable, OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
-import { AccessControlEnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
+import { AccessControlEnumerableUpgradeable, AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 
-import {IAccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/IAccessControlEnumerable.sol";
+import {IAccessControlEnumerable, IAccessControl} from "@openzeppelin/contracts/access/extensions/IAccessControlEnumerable.sol";
 
 interface IOwnable2Step {
     function owner() external view returns (address);
@@ -35,7 +35,7 @@ interface IRoleAdmin is
     IPausable
 {}
 
-contract RoleAdminUpgradeable is
+contract SelectorRoleControlUpgradeable is
     Initializable,
     Ownable2StepUpgradeable,
     AccessControlEnumerableUpgradeable,
@@ -43,8 +43,6 @@ contract RoleAdminUpgradeable is
     IRoleAdmin
 {
     function __RoleAdmin_init() internal onlyInitializing {
-        _grantRole(grantRole.selector, owner());
-        _grantRole(revokeRole.selector, owner());
     }
 
     modifier onlyAdmin {
@@ -52,6 +50,16 @@ contract RoleAdminUpgradeable is
             _checkRole(msg.sig, _msgSender());
         } // owner ok
         _;
+    }
+
+    function grantRole(bytes32 role, address account) public virtual onlyAdmin
+    override(IAccessControl, AccessControlUpgradeable) {
+        _grantRole(role, account);
+    }
+
+    function revokeRole(bytes32 role, address account) public virtual onlyAdmin
+    override(IAccessControl, AccessControlUpgradeable) {
+        _revokeRole(role, account);
     }
 
     // IOwnable2Step
