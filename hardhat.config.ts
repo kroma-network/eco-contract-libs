@@ -1,6 +1,8 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
+import "./tasks/utils";
+
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [

@@ -37,7 +37,7 @@ abstract contract ERC721SequencialMintUpbradeable is
         uint256 count;
     }
     // keccak256(abi.encode(uint256(keccak256("eco.storage.ERC721SequencialMintUpbradeable")) - 1)) & ~bytes32(uint256(0xff))
-    bytes32 private constant ERC721SequencialMintStorageLocation = 0x80bb2b638cc20bc4d0a60d66940f3ab4a00c1d7b313497ca82fb0b4ab00793ff; // TODO: check
+    bytes32 private constant ERC721SequencialMintStorageLocation = 0x7330e025bdbd8ee021c7588e9b33f6f89de788eeb194164646ca75a5b7284100;
 
     function _getERC721SequencialMintStorage() private pure returns (ERC721SequencialMintStorage storage $) {
         assembly {

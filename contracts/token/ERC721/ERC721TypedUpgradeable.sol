@@ -29,8 +29,8 @@ abstract contract ERC721TypedUpgradeable is
         mapping (uint256 tokenId => uint256 types) tokenTypes;
         mapping (uint256 tokenId => string uris) typeURIs;
     }
-    // keccak256(abi.encode(uint256(keccak256("eco.storage.ERC721SequencialMintUpbradeable")) - 1)) & ~bytes32(uint256(0xff))
-    bytes32 private constant ERC721TypedUpgradeableStorageLocation = 0x80bb2b638cc20bc4d0a60d66940f3ab4a00c1d7b313497ca82fb0b4ab00793aa; // TODO: check
+    // keccak256(abi.encode(uint256(keccak256("eco.storage.ERC721TypedUpgradeable")) - 1)) & ~bytes32(uint256(0xff))
+    bytes32 private constant ERC721TypedUpgradeableStorageLocation = 0xe33ef228a2d38ea28a4d3727ab6a50a7774dfc78e3d917d05bbe05c960da6100;
 
     function _getERC721TypedUpgradeable() private pure returns (ERC721TypedUpgradeableStorage storage $) {
         assembly {
