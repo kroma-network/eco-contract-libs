@@ -14,11 +14,16 @@ import { ERC721URIStorageUpgradeable } from "@openzeppelin/contracts-upgradeable
 
 import { ERC721IdenticalResourceUpgradeable } from "./ERC721IdenticalResourceUpgradeable.sol";
 import { ERC721PausableUpgradeable } from "./ERC721PausableUpgradeable.sol";
-import { ERC721QueryableUpgradeable } from "./ERC721QueryableUpgradeable.sol";
-import { ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
+import { IERC721Queryable, ERC721QueryableUpgradeable } from "./ERC721QueryableUpgradeable.sol";
+import { IERC721SequencialMintUpbradeable, ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
 import { ERC721TypedUpgradeable } from "./ERC721TypedUpgradeable.sol";
 
+interface INFT_Mintable is IERC721SequencialMintUpbradeable, IERC721Queryable {
+
+}
+
 contract NFT_Mintable is
+    INFT_Mintable,
     ERC721PausableUpgradeable,
     ERC721SequencialMintUpbradeable,
     ERC721QueryableUpgradeable
@@ -35,7 +40,7 @@ contract NFT_Mintable is
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual
-    override(ERC721Upgradeable, ERC721SequencialMintUpbradeable) returns (bool) {
+    override(IERC165, ERC721Upgradeable, ERC721SequencialMintUpbradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 

@@ -3,12 +3,12 @@
 
 pragma solidity ^0.8.0;
 
-import { ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
+import { IERC721SequencialMintUpbradeable, ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
 
 /**
  * @dev Interface of ERC721AQueryable.
  */
-interface IERC721Queryable {
+interface IERC721Queryable is IERC721SequencialMintUpbradeable {
     /**
      * Invalid query range (`start` >= `stop`).
      */
