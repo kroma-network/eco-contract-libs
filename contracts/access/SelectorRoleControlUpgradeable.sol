@@ -37,9 +37,9 @@ interface IRoleAdmin is
 
 contract SelectorRoleControlUpgradeable is
     Initializable,
+    PausableUpgradeable,
     Ownable2StepUpgradeable,
     AccessControlEnumerableUpgradeable,
-    PausableUpgradeable,
     IRoleAdmin
 {
     function __RoleAdmin_init() internal onlyInitializing {
