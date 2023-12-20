@@ -23,6 +23,11 @@ contract NFT_Mintable is
     ERC721SequencialMintUpbradeable,
     ERC721QueryableUpgradeable
 {
+    function __NFT_Mintable_init(address owner, string memory name, string memory symbol) public initializer {
+        __Ownable_init(owner);
+        __ERC721_init(name, symbol);
+    }
+
     function paused() public view virtual override(PausableUpgradeable, SelectorRoleControlUpgradeable) returns (bool) {
         return super.paused();
     }
