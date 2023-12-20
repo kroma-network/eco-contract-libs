@@ -3,20 +3,11 @@
 pragma solidity ^0.8.0;
 
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import { Ownable2StepUpgradeable, OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
+import { IEcoOwnable, EcoOwnable } from "./EcoOwnable.sol";
 import { AccessControlEnumerableUpgradeable, AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 
 import {IAccessControlEnumerable, IAccessControl} from "@openzeppelin/contracts/access/extensions/IAccessControlEnumerable.sol";
-
-interface IOwnable2Step {
-    function owner() external view returns (address);
-    function renounceOwnership() external ;
-    function transferOwnership(address newOwner) external ;
-
-    function pendingOwner() external view returns (address);
-    function acceptOwnership() external ;
-}
 
 interface IPausable {
     function paused() external view returns (bool);
@@ -29,26 +20,26 @@ interface IMulticall {
     function multicall(bytes[] calldata data) external returns (bytes[] memory results);
 }
 
-interface IRoleAdmin is
-    IOwnable2Step,
-    IAccessControlEnumerable,
-    IPausable
+interface ISelectorRoleControl is
+    IEcoOwnable,
+    IPausable,
+    IAccessControlEnumerable
 {}
 
 contract SelectorRoleControlUpgradeable is
     Initializable,
+    ISelectorRoleControl,
+    EcoOwnable,
     PausableUpgradeable,
-    Ownable2StepUpgradeable,
-    AccessControlEnumerableUpgradeable,
-    IRoleAdmin
+    AccessControlEnumerableUpgradeable
 {
     function __RoleAdmin_init() internal onlyInitializing {
     }
 
     modifier onlyAdmin {
-        if (owner() != _msgSender()) {
+        if (owner() != _msgSender()) { // owner ok
             _checkRole(msg.sig, _msgSender());
-        } // owner ok
+        }
         _;
     }
 
@@ -61,25 +52,23 @@ contract SelectorRoleControlUpgradeable is
     override(IAccessControl, AccessControlUpgradeable) {
         _revokeRole(role, account);
     }
-
-    // IOwnable2Step
-    function owner() public view override(IOwnable2Step, OwnableUpgradeable) returns (address) {
+    function owner() public view virtual override(IEcoOwnable, EcoOwnable) returns (address) {
         return super.owner();
     }
 
-    function renounceOwnership() public virtual override(IOwnable2Step, OwnableUpgradeable) {
+    function renounceOwnership() public virtual override(IEcoOwnable, EcoOwnable) {
         return super.renounceOwnership();
     }
 
-    function pendingOwner() public view virtual override(IOwnable2Step, Ownable2StepUpgradeable) returns (address) {
+    function pendingOwner() public view virtual override(IEcoOwnable, EcoOwnable) returns (address) {
         return super.pendingOwner();
     }
 
-    function transferOwnership(address newOwner) public virtual override(IOwnable2Step, Ownable2StepUpgradeable) {
+    function transferOwnership(address newOwner) public virtual override(IEcoOwnable, EcoOwnable) {
         return super.transferOwnership(newOwner);
     }
 
-    function acceptOwnership() public virtual override(IOwnable2Step, Ownable2StepUpgradeable) {
+    function acceptOwnership() public virtual override(IEcoOwnable, EcoOwnable) {
         return super.acceptOwnership();
     }
 
