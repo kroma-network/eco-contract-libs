@@ -37,10 +37,13 @@ contract SelectorRoleControlUpgradeable is
     }
 
     modifier onlyAdmin {
-        if (owner() != _msgSender()) { // owner ok
-            _checkRole(msg.sig, _msgSender());
-        }
+        _onlyAdmin(_msgSender());
         _;
+    }
+
+    // owner or hash role
+    function _onlyAdmin(address account) internal view {
+        if (owner() != account) _checkRole(msg.sig, account);
     }
 
     function grantRole(bytes32 role, address account) public virtual onlyAdmin
