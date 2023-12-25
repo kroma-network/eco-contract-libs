@@ -7,7 +7,7 @@ import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/O
 import { Ownable2StepUpgradeable } from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 
 interface IEcoOwnable {
-    function __EcoOwnable(address initialOwner) external ;
+    function initEcoOwnable(address initialOwner) external ;
 
     function owner() external view returns (address);
     function renounceOwnership() external ;
@@ -26,10 +26,10 @@ contract EcoOwnable is
     constructor() {
         // prevent owner setting attack
         // avoid initialize for simple test
-        _transferOwnership(_msgSender());
+        initEcoOwnable(_msgSender());
     }
 
-    function __EcoOwnable(address initialOwner) public initializer {
+    function initEcoOwnable(address initialOwner) public initializer {
         __Ownable_init(initialOwner);
     }
 
