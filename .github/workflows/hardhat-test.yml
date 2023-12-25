@@ -1,0 +1,55 @@
+name: hardhat test(yarn)
+
+on: pull_request
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+          token: ${{ secrets.KROMA_GIT_TOKEN }}
+
+      - name: Cache Submodules
+        id: cache-submodule
+        uses: actions/cache@v3
+        with:
+          path: |
+            eco-contract-info
+            wemix-wonder-staking
+          key: ${{ runner.os }}-submodules
+
+      - name: Update git submodules
+        if: steps.cache-submodule.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install(Cache) yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'yarn'
+
+      - run: yarn --ignore-scripts
+        shell: bash
+
+      - name: Caching solidity compiler
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.solcx
+            ~/.vvm
+            ~/.brownie/packages
+          key: ${{ runner.os }}-compiler-cache
+
+      - name: Compile solidity
+        run: yarn hardhat compile
+
+      - name: Launch local hardhat node
+        run: yarn hardhat node &
+
+      - name: Testing
+        run: yarn hardhat test

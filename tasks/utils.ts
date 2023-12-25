@@ -8,6 +8,7 @@ task("calc-slot", "calc slot value from string(ERC7201)")
     .setAction(async (args, hre: HardhatRuntimeEnvironment) => {
         await namespaceSlot(args.string)
     });
+
 task("slots", "calc slot value from string(ERC7201)")
     .setAction(async (_, hre: HardhatRuntimeEnvironment) => {
         const namespaces = [
