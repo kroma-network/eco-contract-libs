@@ -18,17 +18,11 @@ interface IEcoOwnable {
     function acceptOwnership() external ;
 }
 
-contract EcoOwnable is
+abstract contract EcoOwnable is
     IEcoOwnable,
     Initializable,
     Ownable2StepUpgradeable
 {
-    constructor() {
-        // prevent owner setting attack
-        // avoid initialize for simple test
-        initEcoOwnable(_msgSender());
-    }
-
     function initEcoOwnable(address initialOwner) public initializer {
         __Ownable_init(initialOwner);
     }

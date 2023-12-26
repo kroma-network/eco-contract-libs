@@ -3,6 +3,8 @@ import "@nomicfoundation/hardhat-toolbox";
 
 import "./tasks/utils";
 
+import "hardhat-tracer";
+
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
