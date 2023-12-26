@@ -33,9 +33,6 @@ contract SelectorRoleControlUpgradeable is
     PausableUpgradeable,
     AccessControlEnumerableUpgradeable
 {
-    function __RoleAdmin_init() internal onlyInitializing {
-    }
-
     modifier onlyAdmin {
         _onlyAdmin(_msgSender());
         _;

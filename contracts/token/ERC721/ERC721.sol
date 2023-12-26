@@ -24,12 +24,16 @@ interface INFT_Mintable is IERC721SequencialMintUpbradeable, IERC721Queryable {
 
 contract NFT_Mintable is
     INFT_Mintable,
-    ERC721PausableUpgradeable,
     ERC721SequencialMintUpbradeable,
+    ERC721PausableUpgradeable,
     ERC721QueryableUpgradeable
 {
-    function __NFT_Mintable_init(address owner, string memory name, string memory symbol) public initializer {
-        __Ownable_init(owner);
+    constructor(string memory name, string memory symbol) {
+        initNFT_Mintable(_msgSender(), name, symbol);
+    }
+
+    function initNFT_Mintable(address initialOwner, string memory name, string memory symbol) public initializer {
+        __Ownable_init(initialOwner);
         __ERC721_init(name, symbol);
     }
 
@@ -59,6 +63,9 @@ contract NFT_Identical is
     NFT_Mintable,
     ERC721IdenticalResourceUpgradeable
 {
+    constructor(string memory name, string memory symbol)
+    NFT_Mintable(name, symbol) {}
+
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual
@@ -88,6 +95,9 @@ contract NFT_Typed is
     NFT_Mintable,
     ERC721TypedUpgradeable
 {
+    constructor(string memory name, string memory symbol)
+    NFT_Mintable(name, symbol) {}
+
     function paused() public view virtual
     override(SelectorRoleControlUpgradeable, NFT_Mintable) returns (bool) {
         return super.paused();
