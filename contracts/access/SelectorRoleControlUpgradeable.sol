@@ -10,7 +10,7 @@ import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/P
 import {IAccessControlEnumerable, IAccessControl} from "@openzeppelin/contracts/access/extensions/IAccessControlEnumerable.sol";
 
 interface IPausable {
-    function paused() external view returns (bool);
+    // function paused() external view returns (bool); already defined & implemented
 
     function pause() external ;
     function unpause() external ;
@@ -21,10 +21,13 @@ interface IMulticall {
 }
 
 interface ISelectorRoleControl is
-    IEcoOwnable,
-    IPausable,
-    IAccessControlEnumerable
-{}
+    // IEcoOwnable, TODO: check redundant override, already defined & implemented
+    IAccessControlEnumerable,
+    IPausable
+{
+    function pause() external ;
+    function unpause() external ;
+}
 
 contract SelectorRoleControlUpgradeable is
     Initializable,
@@ -52,36 +55,17 @@ contract SelectorRoleControlUpgradeable is
     override(IAccessControl, AccessControlUpgradeable) {
         _revokeRole(role, account);
     }
-    function owner() public view virtual override(IEcoOwnable, EcoOwnable) returns (address) {
-        return super.owner();
-    }
 
-    function renounceOwnership() public virtual override(IEcoOwnable, EcoOwnable) {
-        return super.renounceOwnership();
-    }
-
-    function pendingOwner() public view virtual override(IEcoOwnable, EcoOwnable) returns (address) {
-        return super.pendingOwner();
-    }
-
-    function transferOwnership(address newOwner) public virtual override(IEcoOwnable, EcoOwnable) {
-        return super.transferOwnership(newOwner);
-    }
-
-    function acceptOwnership() public virtual override(IEcoOwnable, EcoOwnable) {
-        return super.acceptOwnership();
-    }
-
-    // IPausable
-    function paused() public view virtual override(IPausable, PausableUpgradeable) returns (bool) {
+    function paused() public view virtual override returns (bool) {
         return super.paused();
     }
 
-    function pause() external override onlyAdmin {
+    // IPausable
+    function pause() public virtual override onlyAdmin {
         _pause();
     }
 
-    function unpause() external override onlyAdmin {
+    function unpause() public virtual override onlyAdmin {
         _unpause();
     }
 }
