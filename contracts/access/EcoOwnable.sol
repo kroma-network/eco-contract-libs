@@ -6,16 +6,21 @@ import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/I
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import { Ownable2StepUpgradeable } from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 
-interface IEcoOwnable {
-    function initEcoOwnable(address initialOwner) external ;
-
+interface IOwnable {
     function owner() external view returns (address);
     function renounceOwnership() external ;
     function transferOwnership(address newOwner) external ;
+}
 
+interface IOwnable2Step is IOwnable {
     function pendingOwner() external view returns (address);
-    function registerPendingOwner(address pendingOwner) external ;
     function acceptOwnership() external ;
+}
+
+interface IEcoOwnable is IOwnable2Step {
+    function initEcoOwnable(address initialOwner) external ;
+
+    function registerPendingOwner(address pendingOwner) external ;
 }
 
 abstract contract EcoOwnable is
@@ -27,27 +32,37 @@ abstract contract EcoOwnable is
         __Ownable_init(initialOwner);
     }
 
-    function owner() public view virtual override(IEcoOwnable, OwnableUpgradeable) returns (address) {
-        return OwnableUpgradeable.owner();
+    function owner() public view virtual
+    override(IOwnable, OwnableUpgradeable) returns (address) {
+        return super.owner();
     }
 
-    function renounceOwnership() public virtual override(IEcoOwnable, OwnableUpgradeable) {
-        return OwnableUpgradeable.renounceOwnership();
+    function renounceOwnership() public virtual
+    override(IOwnable, OwnableUpgradeable) {
+        return super.renounceOwnership();
     }
 
-    function transferOwnership(address newOwner) public virtual override(IEcoOwnable, Ownable2StepUpgradeable) {
+    function transferOwnership(address newOwner) public virtual
+    override(IOwnable, Ownable2StepUpgradeable) {
         return OwnableUpgradeable.transferOwnership(newOwner);
     }
 
-    function pendingOwner() public view virtual override(IEcoOwnable, Ownable2StepUpgradeable) returns (address) {
-        return Ownable2StepUpgradeable.pendingOwner();
+    function pendingOwner() public view virtual
+    override(IOwnable2Step, Ownable2StepUpgradeable) returns (address) {
+        return super.pendingOwner();
     }
 
-    function registerPendingOwner(address nextPendingOwner) external override {
+    function registerPendingOwner(address nextPendingOwner) public override {
         return Ownable2StepUpgradeable.transferOwnership(nextPendingOwner);
     }
 
-    function acceptOwnership() public virtual override(IEcoOwnable, Ownable2StepUpgradeable) {
-        return Ownable2StepUpgradeable.acceptOwnership();
+    function acceptOwnership() public virtual
+    override(IOwnable2Step, Ownable2StepUpgradeable) {
+        return super.acceptOwnership();
+    }
+
+    function _transferOwnership(address newOwner) internal virtual
+    override(Ownable2StepUpgradeable) {
+        return super._transferOwnership(newOwner);
     }
 }

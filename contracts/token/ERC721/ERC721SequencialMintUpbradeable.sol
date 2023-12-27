@@ -16,7 +16,7 @@ import { ERC721BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/t
 import { ERC721EnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 
 interface IERC721SequencialMintUpbradeable is // Seq == Sequencial
-    // ISelectorRoleControl,
+    ISelectorRoleControl,
     IERC165,
     IERC721,
     IERC4906,
