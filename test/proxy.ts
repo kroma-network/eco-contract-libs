@@ -2,9 +2,48 @@ import {
     time,
     loadFixture,
 } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-  import { expect } from "chai";
-  import { ethers } from "hardhat";
+
+import { expect } from "chai";
+import { ethers } from "hardhat";
+
 import { EcoERC20Mintable } from "../typechain-types";
+
+import { ContractFactory } from "ethers";
+
+import { AsyncConstructor } from 'async-constructor'
+
+type ProxiedContract<FT extends ContractFactory> = Awaited<ReturnType<FT['deploy']>>;
+
+class ProxyContractTypeTest<FT extends ContractFactory> extends AsyncConstructor {
+  logicFactory!: FT;
+  logic!: ProxiedContract<FT>; // FT의 deploy 메서드 반환 타입으로 정의
+
+  constructor(logicFactory: FT, ...args: any[]) {
+    super(async () => {
+      this.logicFactory = logicFactory;
+      this.logic = await this.logicFactory.deploy(...args) as ProxiedContract<FT>;
+    });
+  }
+}
+
+describe("ProxyContractTypeTest", function () {
+  const name = "Mintable Token";
+  const symbol = "M ERC20";
+
+  const amount = ethers.parseEther("100");
+
+    async function Proxy_Helper_Fixture() {
+      const [owner, ...users] = await ethers.getSigners();
+        const helper = await new ProxyContractTypeTest(await ethers.getContractFactory("EcoERC20Mintable"), name, symbol);
+        return {owner, helper}
+    }
+
+    it("testing proxy", async function () {
+      const { helper } = await loadFixture(Proxy_Helper_Fixture);
+      expect(await helper.logic.symbol()).equal(symbol);
+    });
+});
+
 
 describe("ERC20 Mintable", function () {
 const name = "Mintable Token";
