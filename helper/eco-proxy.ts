@@ -40,10 +40,20 @@ export class ProxyFactory extends AsyncConstructor {
     const inst = await logic.attach(proxy) as EcoProxiedInstance<CT>;
 
     inst.ecoProxy = proxy;
-    inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await ethers.provider.getStorage(proxy, this.ADMIN_SLOT)) as EcoProxyAdmin;
+    inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await this.getAdminAddress(proxy)) as EcoProxyAdmin;
     inst.ecoLogic = logic;
 
     return inst;
+  }
+
+  async getImplAddress<CT extends BaseContract>(logic:CT) {
+    const slotData = await ethers.provider.getStorage(logic, this.IMPLEMENTATION_SLOT)
+    return ethers.getAddress("0x" + slotData.slice(-40));
+  }
+
+  async getAdminAddress<CT extends BaseContract>(logic:CT) {
+    const slotData = await ethers.provider.getStorage(logic, this.ADMIN_SLOT)
+    return ethers.getAddress("0x" + slotData.slice(-40));
   }
 }
 
