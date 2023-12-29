@@ -12,6 +12,7 @@
     "@types/chai": "^4.2.0",
     "@types/mocha": ">=9.1.0",
     "@types/node": ">=16.0.0",
+    "async-constructor": "^0.4.17",
     "chai": "^4.2.0",
     "ethers": "^6.4.0",
     "hardhat": "^2.19.2",
