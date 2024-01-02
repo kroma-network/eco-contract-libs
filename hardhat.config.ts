@@ -4,6 +4,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import "./tasks/utils";
 
 import "hardhat-tracer";
+import "solidity-coverage"
 
 const config: HardhatUserConfig = {
   solidity: {
