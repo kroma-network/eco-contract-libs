@@ -53,6 +53,15 @@ describe("EcoOwnable", function () {
       await expect(ecoOwnable.connect(nextOwner).transferOwnership(initialOwner)).reverted
       await expect(ecoOwnable.connect(nextOwner).registerPendingOwner(initialOwner)).reverted
     });
+    it("renounce ownership", async function () {
+      const { ecoOwnable, initialOwner, nextOwner } = await loadFixture(fixtureEcoOwnableDeploy);
+
+      await expect(ecoOwnable.connect(nextOwner).renounceOwnership()).reverted
+      await expect(ecoOwnable.connect(initialOwner).renounceOwnership()).not.reverted
+
+      await expect(ecoOwnable.connect(nextOwner).transferOwnership(initialOwner)).reverted
+      await expect(ecoOwnable.connect(initialOwner).transferOwnership(nextOwner)).reverted
+    });
   });
 
   describe("Test on Registered pendingOwner", function () {
@@ -70,6 +79,23 @@ describe("EcoOwnable", function () {
 
       await expect(ecoOwnable.connect(initialOwner).acceptOwnership()).reverted
       await expect(ecoOwnable.connect(nextOwner).acceptOwnership()).reverted
+    });
+
+    it("renounce ownership", async function () { // todo redundant check
+      const { ecoOwnable, initialOwner, nextOwner } = await loadFixture(fixtureEcoOwnablePendingRegistered);
+
+      await expect(ecoOwnable.connect(nextOwner).renounceOwnership()).reverted
+      // remove owner & pendingOwner
+      await expect(ecoOwnable.connect(initialOwner).renounceOwnership()).not.reverted
+
+      await expect(ecoOwnable.connect(nextOwner).transferOwnership(initialOwner)).reverted
+      await expect(ecoOwnable.connect(initialOwner).transferOwnership(nextOwner)).reverted
+
+      await expect(ecoOwnable.connect(initialOwner).acceptOwnership()).reverted
+      await expect(ecoOwnable.connect(nextOwner).acceptOwnership()).reverted
+
+      await expect(ecoOwnable.connect(initialOwner).registerPendingOwner(initialOwner)).reverted
+      await expect(ecoOwnable.connect(nextOwner).registerPendingOwner(nextOwner)).reverted
     });
   });
 });
