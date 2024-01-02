@@ -66,3 +66,9 @@ abstract contract EcoOwnable is
         return super._transferOwnership(newOwner);
     }
 }
+
+contract TestEcoOwnable is EcoOwnable {
+    constructor() {
+        initEcoOwnable(_msgSender());
+    }
+}
