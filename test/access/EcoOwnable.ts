@@ -33,6 +33,8 @@ describe("EcoOwnable", function () {
       const { ecoOwnable, initialOwner } = await loadFixture(fixtureEcoOwnableDeploy);
       expect(await ecoOwnable.owner()).equal(initialOwner.address);
       expect(await ecoOwnable.pendingOwner()).equal(ethers.ZeroAddress);
+
+      await expect(ecoOwnable.initEcoOwnable(initialOwner)).reverted;
     });
 
     it("transfer onwer", async function () {
