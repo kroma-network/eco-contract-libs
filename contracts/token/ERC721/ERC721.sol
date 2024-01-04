@@ -16,7 +16,7 @@ import { ERC721IdenticalResourceUpgradeable } from "./ERC721IdenticalResourceUpg
 import { ERC721PausableUpgradeable } from "./ERC721PausableUpgradeable.sol";
 import { IERC721Queryable, ERC721QueryableUpgradeable } from "./ERC721QueryableUpgradeable.sol";
 import { IERC721SequencialMintUpbradeable, ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
-import { ERC721TypedUpgradeable } from "./ERC721TypedUpgradeable.sol";
+import { IERC721TypedResource, ERC721TypedUpgradeable } from "./ERC721TypedUpgradeable.sol";
 
 interface INFT_Mintable is IERC721SequencialMintUpbradeable, IERC721Queryable {
 
@@ -94,7 +94,10 @@ contract NFT_Identical is
     }
 }
 
+interface INFT_Typed is INFT_Mintable, IERC721TypedResource {}
+
 contract NFT_Typed is
+    INFT_Typed,
     NFT_Mintable,
     ERC721TypedUpgradeable
 {
