@@ -15,10 +15,6 @@ describe("NFT Mintable", function () {
     const nft = await NFT.connect(owner).deploy(name, symbol);
     // await nft.initNFT_Mintable(owner.address, name, symbol); only for proxy
 
-    // contract NFT_Mintable is
-    // contract NFT_Identical is
-    // contract NFT_Typed is
-
     return { owner, admin, user0, user1, nft };
   }
 
@@ -53,7 +49,10 @@ describe("NFT Mintable", function () {
       await expect(nft.connect(admin).nextMint(user0)).reverted;
 
       await expect(nft.grantRole(getSelector(nft.nextMint), admin)).not.reverted;
-      await expect(nft.connect(admin).nextMint(user0)).not.reverted;
+      const tokenId = await nft.nextMintId();
+      await expect(nft.connect(admin).nextMint(user0))
+        .emit(nft, "Transfer")
+        .withArgs(hre.ethers.ZeroAddress, user0, tokenId);
       await expect(nft.connect(user0).nextMint(user0)).reverted;
       await expect(nft.revokeRole(getSelector(nft.nextMint), admin)).not.reverted;
     });
@@ -82,6 +81,38 @@ describe("NFT Mintable", function () {
         for (let i = 1; i < (await nft.balanceOf(user0)); i++) {
           await expect(nft.connect(user1).transferFrom(user0, user1, i)).not.reverted;
         }
+      });
+
+      it("transfer and approve test", async function () {
+        const { nft, user0, user1 } = await loadFixture(NFT_Mintable_Fixture);
+
+        const tokenId = await nft.nextMintId();
+        await expect(nft.nextMint(user0)).not.reverted;
+        await expect(nft.pause()).not.reverted;
+
+        await expect(nft.connect(user0).transferFrom(user0, user1, tokenId)).reverted;
+      });
+
+      it("Queryable!", async function () {
+        const { nft, user0, user1 } = await loadFixture(NFT_Mintable_Fixture);
+
+        const len = 10;
+
+        const tokenIds = Array(len);
+
+        for (let i = 0; i < 10; i++) {
+          tokenIds[i] = await nft.nextMintId();
+          await expect(nft.nextMint(user0)).not.reverted;
+        }
+
+        expect(await nft.tokensOfOwner(user0)).deep.equal(tokenIds);
+        expect(await nft.tokensOfOwnerIn(user0, 1, len + 1)).deep.equal(tokenIds);
+
+        expect(await nft.tokensOfOwnerIn(user0, 1, len + 2)).deep.equal(tokenIds);
+
+        await expect(nft.tokensOfOwnerIn(user0, len + 1, 1)).reverted;
+
+        expect(await nft.tokensOfOwnerIn(user1, 1, len + 1)).deep.equal([]);
       });
     });
   });

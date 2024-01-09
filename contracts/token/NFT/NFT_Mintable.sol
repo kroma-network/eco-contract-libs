@@ -6,7 +6,7 @@ pragma solidity ^0.8.0;
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
-import { SelectorRoleControlUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
+import { SelectorRoleControlUpgradeable, AccessControlEnumerableUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
 
 import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 
@@ -16,11 +16,12 @@ import { IERC721SequencialMintUpbradeable, ERC721SequencialMintUpbradeable } fro
 
 interface INFT_Mintable is IERC721SequencialMintUpbradeable, IERC721Queryable {}
 
+// INFT_Mintable,
 contract NFT_Mintable is
     INFT_Mintable,
     ERC721SequencialMintUpbradeable,
-    ERC721QueryableUpgradeable,
-    ERC721PausableUpgradeable
+    ERC721PausableUpgradeable,
+    ERC721QueryableUpgradeable
 {
     constructor(string memory name, string memory symbol) {
         initNFT_Mintable(_msgSender(), name, symbol);
@@ -37,7 +38,7 @@ contract NFT_Mintable is
 
     function supportsInterface(
         bytes4 interfaceId
-    ) public view virtual override(IERC165, ERC721Upgradeable, ERC721SequencialMintUpbradeable) returns (bool) {
+    ) public view virtual override(ERC721SequencialMintUpbradeable, ERC721Upgradeable, IERC165) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 

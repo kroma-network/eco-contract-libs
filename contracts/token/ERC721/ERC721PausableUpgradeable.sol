@@ -20,13 +20,11 @@ import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC
  * access control, e.g. using {AccessControl} or {Ownable}. Not doing so will
  * make the contract pause mechanism of the contract unreachable, and thus unusable.
  */
-abstract contract ERC721PausableUpgradeable is Initializable, PausableUpgradeable, ERC721Upgradeable { // inheritance layout changed
-    function __ERC721Pausable_init() internal onlyInitializing {
-        __Pausable_init_unchained();
-    }
-
-    function __ERC721Pausable_init_unchained() internal onlyInitializing {
-    }
+abstract contract ERC721PausableUpgradeable is
+    Initializable,
+    PausableUpgradeable,
+    ERC721Upgradeable // inheritance layout changed
+{
     /**
      * @dev See {ERC721-_update}.
      *
