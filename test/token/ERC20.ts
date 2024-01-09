@@ -1,6 +1,5 @@
 import {
-  time,
-  loadFixture,
+  loadFixture
 } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
@@ -40,7 +39,7 @@ describe("ERC20 Mintable", function () {
     describe("Mint", function () {
       it("Should revert with the right error if mint called from another account", async function () {
         const { erc20, users } = await loadFixture(NFT_Mintable_Fixture);
-        const user_connected_nft = erc20.connect(users[0])
+        const user_connected_nft = erc20.connect(users[0]);
         await expect( user_connected_nft.mint(users[0], amount) ).reverted;
       });
 
@@ -52,10 +51,10 @@ describe("ERC20 Mintable", function () {
       it("Shouldn't fail mint with the right role access account", async function () {
         const { erc20, users } = await loadFixture(NFT_Mintable_Fixture);
 
-        const nextMintSelector = ethers.zeroPadBytes(erc20.mint.fragment.selector, 32)
+        const nextMintSelector = ethers.zeroPadBytes(erc20.mint.fragment.selector, 32);
         await expect( erc20.grantRole(nextMintSelector, users[0]) ).not.reverted;
 
-        const user_connected_nft = erc20.connect(users[0])
+        const user_connected_nft = erc20.connect(users[0]);
         await expect( user_connected_nft.mint(users[0], amount) ).not.reverted;
 
         await expect( erc20.revokeRole(nextMintSelector, users[0]) ).not.reverted;
