@@ -11,27 +11,27 @@ import { ERC721URIStorageUpgradeable } from "@openzeppelin/contracts-upgradeable
 
 import { IERC721SequencialMintUpbradeable, ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
 
-interface IERC721TypedResource is IERC721SequencialMintUpbradeable {
+interface IERC721Typed is IERC721SequencialMintUpbradeable {
     event TokenType(uint256 indexed tokenId, uint256 indexed _tokenType);
 
     function tokenType(uint256 tokenId) external view returns (uint256);
+
     function setTokenType(uint256 tokenId, uint256 _tokenType) external;
 
     function setTypeURI(uint256 _tokenType, string memory typedURI) external;
+
     function typedMint(address to, uint256 _tokenType) external returns (uint256 tokenId);
 }
 
-abstract contract ERC721TypedUpgradeable is
-    IERC721TypedResource,
-    ERC721SequencialMintUpbradeable
-{
+abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUpbradeable {
     struct ERC721TypedUpgradeableStorage {
-        mapping (uint256 tokenId => uint256 types) tokenTypes;
-        mapping (uint256 tokenId => string uris) typeURIs;
+        mapping(uint256 tokenId => uint256 types) tokenTypes;
+        mapping(uint256 tokenId => string uris) typeURIs;
     }
 
     // keccak256(abi.encode(uint256(keccak256("eco.storage.ERC721TypedUpgradeable")) - 1)) & ~bytes32(uint256(0xff))
-    bytes32 private constant ERC721TypedUpgradeableStorageLocation = 0xe33ef228a2d38ea28a4d3727ab6a50a7774dfc78e3d917d05bbe05c960da6100;
+    bytes32 private constant ERC721TypedUpgradeableStorageLocation =
+        0xe33ef228a2d38ea28a4d3727ab6a50a7774dfc78e3d917d05bbe05c960da6100;
 
     function _getERC721TypedUpgradeable() private pure returns (ERC721TypedUpgradeableStorage storage $) {
         assembly {
@@ -44,27 +44,25 @@ abstract contract ERC721TypedUpgradeable is
         return _getERC721TypedUpgradeable().tokenTypes[tokenId];
     }
 
-    function tokenURI(uint256 tokenId) public view virtual override(IERC721Metadata, ERC721Upgradeable) returns (string memory uri) {
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override(IERC721Metadata, ERC721Upgradeable) returns (string memory uri) {
         _requireOwned(tokenId);
         ERC721TypedUpgradeableStorage storage $ = _getERC721TypedUpgradeable();
-
-        uri = $.typeURIs[ $.tokenTypes[tokenId] ];
-        require(bytes(uri).length != 0, "None URI");
+        uri = $.typeURIs[$.tokenTypes[tokenId]];
     }
 
     function _setTokenType(uint256 tokenId, uint256 _tokenType) internal virtual {
         ERC721TypedUpgradeableStorage storage $ = _getERC721TypedUpgradeable();
 
         require(bytes($.typeURIs[_tokenType]).length != 0, "None URI");
-        require($.tokenTypes[tokenId] != _tokenType, "token type");
         $.tokenTypes[tokenId] = _tokenType;
 
         emit TokenType(tokenId, _tokenType);
     }
 
-    function _nextMint(address to) internal virtual override returns (uint256 tokenId) {
-        tokenId = super._nextMint(to);
-        emit TokenType(tokenId, 0);
+    function _nextMint(address) internal virtual override returns (uint256) {
+        revert("typedMint not support _nextMint");
     }
 
     function _typedMint(address to, uint256 _tokenType) internal virtual returns (uint256 tokenId) {

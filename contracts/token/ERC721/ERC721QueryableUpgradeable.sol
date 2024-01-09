@@ -26,11 +26,7 @@ interface IERC721Queryable is IERC721SequencialMintUpbradeable {
      *
      * - `start < stop`
      */
-    function tokensOfOwnerIn(
-        address owner,
-        uint256 start,
-        uint256 stop
-    ) external view returns (uint256[] memory);
+    function tokensOfOwnerIn(address owner, uint256 start, uint256 stop) external view returns (uint256[] memory);
 
     /**
      * @dev Returns an array of token IDs owned by `owner`.
@@ -51,25 +47,29 @@ abstract contract ERC721QueryableUpgradeable is IERC721Queryable, ERC721Sequenci
         uint256 start,
         uint256 stop
     ) public view virtual override returns (uint256[] memory tokenIds) {
-        uint256 _tmp = nextMintId();
-        if (stop > _tmp) stop = _tmp;
+        unchecked {
+            uint256 _tmp = nextMintId();
+            if (stop > _tmp) stop = _tmp;
 
-        if (stop < start) revert InvalidQueryRange();
+            if (stop < start) revert InvalidQueryRange();
 
-        _tmp = balanceOf(owner);
-        tokenIds = new uint256[](_tmp < stop-start ? stop-start :_tmp);
+            _tmp = balanceOf(owner);
+            tokenIds = new uint256[](_tmp < stop - start ? stop - start : _tmp);
 
-        _tmp = 0; // tokenIdsLength
-        while(start<stop) {
-            if(_ownerOf(start) == owner) {
-                unchecked{ tokenIds[_tmp++] = start; }
+            _tmp = 0; // tokenIdsLength
+            while (start < stop) {
+                if (_ownerOf(start) == owner) {
+                    tokenIds[_tmp++] = start;
+                }
+                start++;
             }
-            unchecked{ start++; }
-        }
 
-        // Downsize the array to fit.
-        assembly { mstore(tokenIds, _tmp) }
-        return tokenIds;
+            // Downsize the array to fit.
+            assembly {
+                mstore(tokenIds, _tmp)
+            }
+            return tokenIds;
+        }
     }
 
     function tokensOfOwner(address owner) external view virtual override returns (uint256[] memory) {

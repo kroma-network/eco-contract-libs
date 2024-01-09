@@ -8,6 +8,6 @@ import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC
 abstract contract ERC721SoulBoundUpgradeable is ERC721Upgradeable {
     function _update(address to, uint256 tokenId, address auth) internal virtual override returns (address from) {
         from = super._update(to, tokenId, auth);
-        require(from != address(0) && to != address(0), "Soul Bound");
+        require(from == address(0) || to == address(0), "Soul Bound");
     }
 }

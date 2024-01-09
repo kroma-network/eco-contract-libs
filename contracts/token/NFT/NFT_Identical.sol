@@ -3,25 +3,41 @@
 
 pragma solidity ^0.8.0;
 
+import { SelectorRoleControlUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
+
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import { IERC721Metadata } from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
 import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import { ERC721URIStorageUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
 
-import { ERC721IdenticalResourceUpgradeable } from "../ERC721/ERC721IdenticalResourceUpgradeable.sol";
+import { ERC721IdenticalUpgradeable } from "../ERC721/ERC721IdenticalUpgradeable.sol";
 
 import { INFT_Mintable, NFT_Mintable } from "./NFT_Mintable.sol";
 
 interface INFT_Identical is INFT_Mintable {}
 
-contract NFT_Identical is INFT_Identical, NFT_Mintable, ERC721IdenticalResourceUpgradeable {
+contract NFT_Identical is NFT_Mintable, ERC721IdenticalUpgradeable {
     constructor(string memory name, string memory symbol) NFT_Mintable(name, symbol) {}
+
+    function paused() public view virtual override(NFT_Mintable, SelectorRoleControlUpgradeable) returns (bool) {
+        return super.paused();
+    }
 
     function supportsInterface(
         bytes4 interfaceId
-    ) public view virtual override(IERC165, ERC721URIStorageUpgradeable, NFT_Mintable) returns (bool) {
+    ) public view virtual override(ERC721IdenticalUpgradeable, NFT_Mintable) returns (bool) {
         return super.supportsInterface(interfaceId);
+    }
+
+    function _baseURI()
+        internal
+        view
+        virtual
+        override(ERC721IdenticalUpgradeable, ERC721Upgradeable)
+        returns (string memory)
+    {
+        return super._baseURI();
     }
 
     function tokenURI(
@@ -30,7 +46,7 @@ contract NFT_Identical is INFT_Identical, NFT_Mintable, ERC721IdenticalResourceU
         public
         view
         virtual
-        override(IERC721Metadata, ERC721Upgradeable, ERC721IdenticalResourceUpgradeable)
+        override(IERC721Metadata, ERC721Upgradeable, ERC721IdenticalUpgradeable)
         returns (string memory)
     {
         return super.tokenURI(tokenId);

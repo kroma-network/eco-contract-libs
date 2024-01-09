@@ -11,11 +11,13 @@ import { SelectorRoleControlUpgradeable } from "../../access/SelectorRoleControl
 import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 
 import { ERC721SequencialMintUpbradeable } from "../ERC721/ERC721SequencialMintUpbradeable.sol";
-import { ERC721TypedUpgradeable } from "../ERC721/ERC721TypedUpgradeable.sol";
+import { IERC721Typed, ERC721TypedUpgradeable } from "../ERC721/ERC721TypedUpgradeable.sol";
 
 import { INFT_Mintable, NFT_Mintable } from "./NFT_Mintable.sol";
 
-contract NFT_Typed is NFT_Mintable, ERC721TypedUpgradeable {
+interface INFT_Typed is INFT_Mintable, IERC721Typed {}
+
+contract NFT_Typed is INFT_Typed, NFT_Mintable, ERC721TypedUpgradeable {
     constructor(string memory name, string memory symbol) NFT_Mintable(name, symbol) {}
 
     function paused() public view virtual override(SelectorRoleControlUpgradeable, NFT_Mintable) returns (bool) {
@@ -43,9 +45,8 @@ contract NFT_Typed is NFT_Mintable, ERC721TypedUpgradeable {
 
     function _nextMint(
         address to
-    ) internal virtual override(ERC721SequencialMintUpbradeable, ERC721TypedUpgradeable) returns (uint256 tokenId) {
-        tokenId = super._nextMint(to);
-        emit TokenType(tokenId, 0);
+    ) internal virtual override(ERC721SequencialMintUpbradeable, ERC721TypedUpgradeable) returns (uint256) {
+        return super._nextMint(to);
     }
 
     function _update(
