@@ -1,32 +1,33 @@
-import { task, types } from "hardhat/config";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { ethers } from "ethers";
 
+import { task } from "hardhat/config";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 task("calc-slot", "calc slot value from string(ERC7201)")
-    .addParam("string", "ERC7201 string for slot")
-    .setAction(async (args, hre: HardhatRuntimeEnvironment) => {
-        await namespaceSlot(args.string)
-    });
+  .addParam("string", "ERC7201 string for slot")
+  .setAction(async (args, hre: HardhatRuntimeEnvironment) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+    namespaceSlot(hre, args.string);
+  });
 
 task("slots", "calc slot value from string(ERC7201)")
-    .setAction(async (_, hre: HardhatRuntimeEnvironment) => {
-        const namespaces = [
-            "eco.storage.ERC721TypedUpgradeable",
-            "eco.storage.ERC721SequencialMintUpbradeable",
-        ]
-        namespaces.map(async (namespace) => console.log(await namespaceSlot(namespace), namespace))
-    });
+  .setAction(async (_, hre: HardhatRuntimeEnvironment) => {
+    const namespaces = [
+      "eco.storage.ERC721TypedUpgradeable",
+      "eco.storage.ERC721SequencialMintUpbradeable"
+    ];
 
-async function namespaceSlot(namespace:string) {
-    // keccak256(abi.encode(uint256(keccak256(namespace)) - 1)) & ~bytes32(uint256(0xff))
-    let hashNamespace = ethers.keccak256(ethers.toUtf8Bytes(namespace));
+    namespaces.map((namespace) => console.log(namespaceSlot(hre, namespace), namespace));
+  });
 
-    let number = ethers.toBigInt(hashNamespace) -1n;
+function namespaceSlot(hre: HardhatRuntimeEnvironment, namespace:string) {
+  // keccak256(abi.encode(uint256(keccak256(namespace)) - 1)) & ~bytes32(uint256(0xff))
+  const hashNamespace = hre.ethers.keccak256(hre.ethers.toUtf8Bytes(namespace));
 
-    let hash_second = ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(["uint256"], [number]));
+  const number = hre.ethers.toBigInt(hashNamespace) -1n;
 
-    let finalMasked = (ethers.toBigInt(hash_second) & (ethers.MaxUint256 - 255n)).toString(16);
+  const hash_second = hre.ethers.keccak256(hre.ethers.AbiCoder.defaultAbiCoder().encode(["uint256"], [number]));
 
-    return finalMasked;
+  const finalMasked = (hre.ethers.toBigInt(hash_second) & (hre.ethers.MaxUint256 - 255n)).toString(16);
+
+  return finalMasked;
 }
