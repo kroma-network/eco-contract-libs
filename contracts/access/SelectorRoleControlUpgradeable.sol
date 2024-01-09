@@ -7,26 +7,25 @@ import { IEcoOwnable, EcoOwnable } from "./EcoOwnable.sol";
 import { AccessControlEnumerableUpgradeable, AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 
-import {IAccessControlEnumerable, IAccessControl} from "@openzeppelin/contracts/access/extensions/IAccessControlEnumerable.sol";
+import { IAccessControlEnumerable, IAccessControl } from "@openzeppelin/contracts/access/extensions/IAccessControlEnumerable.sol";
 
 interface IPausable {
     // function paused() external view returns (bool); already defined & implemented
 
-    function pause() external ;
-    function unpause() external ;
+    function pause() external;
+
+    function unpause() external;
 }
 
 interface IMulticall {
     function multicall(bytes[] calldata data) external returns (bytes[] memory results);
 }
 
-interface ISelectorRoleControl is
-    // IEcoOwnable, TODO: check redundant override, already defined & implemented
-    IAccessControlEnumerable,
-    IPausable
-{
-    function pause() external ;
-    function unpause() external ;
+// IEcoOwnable, TODO: check redundant override, already defined & implemented
+interface ISelectorRoleControl is IAccessControlEnumerable, IPausable {
+    function pause() external;
+
+    function unpause() external;
 }
 
 contract SelectorRoleControlUpgradeable is
@@ -36,7 +35,7 @@ contract SelectorRoleControlUpgradeable is
     PausableUpgradeable,
     AccessControlEnumerableUpgradeable
 {
-    modifier onlyAdmin {
+    modifier onlyAdmin() {
         _onlyAdmin(_msgSender());
         _;
     }
@@ -46,14 +45,18 @@ contract SelectorRoleControlUpgradeable is
         if (owner() != account) _checkRole(msg.sig, account);
     }
 
-    function grantRole(bytes32 role, address account) public virtual onlyAdmin
-    override(IAccessControl, AccessControlUpgradeable) {
-        _grantRole(role, account);
+    function grantRole(
+        bytes32 role,
+        address account
+    ) public virtual override(IAccessControl, AccessControlUpgradeable) onlyAdmin {
+        require(_grantRole(role, account), "role exist");
     }
 
-    function revokeRole(bytes32 role, address account) public virtual onlyAdmin
-    override(IAccessControl, AccessControlUpgradeable) {
-        _revokeRole(role, account);
+    function revokeRole(
+        bytes32 role,
+        address account
+    ) public virtual override(IAccessControl, AccessControlUpgradeable) onlyAdmin {
+        require(_revokeRole(role, account), "role not exist");
     }
 
     function paused() public view virtual override returns (bool) {
