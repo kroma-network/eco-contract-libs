@@ -41,7 +41,7 @@
     "gitlens.codeLens.symbolScopes": ["!Module"],
     "editor.tabSize": 4,
     "editor.formatOnType": true,
-    "editor.wordBasedSuggestions": true,
+    "editor.wordBasedSuggestions": "matchingDocuments"
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "python.analysis.typeCheckingMode": "basic"
