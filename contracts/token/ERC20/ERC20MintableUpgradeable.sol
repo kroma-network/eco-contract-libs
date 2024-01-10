@@ -16,6 +16,7 @@ interface IEcoERC20 is IERC20, IERC20Metadata, IERC20Errors {}
 
 interface IEcoERC20_Burnable is IEcoERC20 {
     function burn(uint256 amount) external;
+
     function burnFrom(address account, uint256 amount) external;
 }
 
@@ -25,6 +26,7 @@ interface IEcoERC20Mintable is ISelectorRoleControl, IEcoERC20 {
 
 interface IWETH is IEcoERC20 {
     function deposit() external payable;
+
     function withdraw(uint256 amount) external;
 }
 
@@ -56,7 +58,7 @@ contract EcoERC20Mintable is
         __ERC20_init(name, symbol);
     }
 
-    function mint(address to, uint256 amount) onlyAdmin public override returns (bool) {
+    function mint(address to, uint256 amount) public override onlyAdmin returns (bool) {
         _mint(to, amount);
         return true;
     }
@@ -70,17 +72,14 @@ contract EcoERC20Mintable is
     }
 }
 
-contract EcoERC20MintableDecimal is
-    EcoERC20Mintable,
-    ERC20Decimal
-{
-    constructor(string memory name, string memory symbol, uint8 _decimals) initializer
-    EcoERC20Mintable(name, symbol)
-    ERC20Decimal(_decimals)
-    {}
+contract EcoERC20MintableDecimal is EcoERC20Mintable, ERC20Decimal {
+    constructor(
+        string memory name,
+        string memory symbol,
+        uint8 _decimals
+    ) initializer EcoERC20Mintable(name, symbol) ERC20Decimal(_decimals) {}
 
-    function decimals() public view virtual
-    override(IERC20Metadata, ERC20Upgradeable, ERC20Decimal) returns (uint8) {
+    function decimals() public view virtual override(IERC20Metadata, ERC20Upgradeable, ERC20Decimal) returns (uint8) {
         return super.decimals();
     }
 }

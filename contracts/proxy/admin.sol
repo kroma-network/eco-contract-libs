@@ -9,7 +9,7 @@ import { IEcoOwnable, EcoOwnable } from "../access/EcoOwnable.sol";
 import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 interface IEcoProxyAdmin {
-    function initEcoProxyAdmin(address initialOwner) external ;
+    function initEcoProxyAdmin(address initialOwner) external;
 }
 
 /**
@@ -52,15 +52,25 @@ contract EcoProxyAdmin is IEcoProxyAdmin, EcoOwnable {
         address implementation,
         bytes memory data
     ) public payable virtual onlyOwner {
-        proxy.upgradeToAndCall{value: msg.value}(implementation, data);
+        proxy.upgradeToAndCall{ value: msg.value }(implementation, data);
     }
 }
 
 contract EcoProxyForProxyAdmin is ERC1967Proxy {
-    constructor(address proxyAdminLogic, address initialOwner)
-    ERC1967Proxy(
-        proxyAdminLogic,
-        abi.encodeWithSelector(IEcoProxyAdmin.initEcoProxyAdmin.selector, initialOwner)
-    )
-    {}
+    constructor(
+        address proxyAdminLogic,
+        address initialOwner
+    ) ERC1967Proxy(proxyAdminLogic, abi.encodeWithSelector(IEcoProxyAdmin.initEcoProxyAdmin.selector, initialOwner)) {}
+}
+
+contract TestProxyAdminFail is EcoProxyAdmin {
+    constructor() EcoProxyAdmin(_msgSender()) {}
+
+    function command(address to, uint256 value, bytes memory data) public payable returns (bytes memory) {
+        bool success;
+        (success, data) = to.call{ value: value }(data);
+        // require(success, string(data)); // TODO: hardhat cannot catch "v8 error" in "low level calls"
+        require(success, "call fail");
+        return data;
+    }
 }
