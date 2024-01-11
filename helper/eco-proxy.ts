@@ -20,7 +20,7 @@ export interface EcoProxyProperties<CT> {
 export type EcoProxiedInstance<CT extends BaseContract> = CT & EcoProxyProperties<CT>;
 // Contract logic type CT inherit? BaseContract, and inherit? Eco custom proxy property
 
-export class ProxyFactory extends AsyncConstructor {
+export class ProxyInstanceFactory extends AsyncConstructor {
   IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
   ADMIN_SLOT = "0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103";
 
@@ -28,7 +28,7 @@ export class ProxyFactory extends AsyncConstructor {
   proxyAdminLogic!: EcoProxyAdmin;
   proxyAdminFactory!: EcoProxyAdmin__factory;
 
-  proxyFactory!: EcoTUPWithAdminLogic__factory;
+  EcoTUPFactory!: EcoTUPWithAdminLogic__factory;
 
   constructor(deployer?: HardhatEthersSigner, proxyAdminLogic?: EcoProxyAdmin) {
     super(async () => {
@@ -38,12 +38,27 @@ export class ProxyFactory extends AsyncConstructor {
       this.proxyAdminLogic = proxyAdminLogic
         ? proxyAdminLogic?.connect(deployer)
         : (await this.proxyAdminFactory.deploy(this.deployer)).connect(this.deployer);
-      this.proxyFactory = (await hre.ethers.getContractFactory("EcoTUPWithAdminLogic")).connect(this.deployer);
+      this.EcoTUPFactory = (await hre.ethers.getContractFactory("EcoTUPWithAdminLogic")).connect(this.deployer);
     });
   }
 
-  async deploy<CT extends BaseContract>(logic: CT, input: BytesLike): Promise<EcoProxiedInstance<CT>> {
-    const proxy = await this.proxyFactory.deploy(this.proxyAdminLogic, logic, input);
+  async deployWithLogic<CT extends BaseContract>(logic: CT, input: BytesLike): Promise<EcoProxiedInstance<CT>> {
+    const proxy = await this.EcoTUPFactory.deploy(this.proxyAdminLogic, logic, input);
+    const inst = (await logic.attach(proxy)) as EcoProxiedInstance<CT>;
+
+    inst.ecoProxy = proxy;
+    inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await this.getAdminAddress(proxy)) as EcoProxyAdmin;
+    inst.ecoLogic = logic;
+
+    return inst;
+  }
+
+  async deployWithFactory<CT extends BaseContract>(
+    factory: { deploy(): Promise<CT> },
+    input: BytesLike,
+  ): Promise<EcoProxiedInstance<CT>> {
+    const logic = await factory.deploy();
+    const proxy = await this.EcoTUPFactory.deploy(this.proxyAdminLogic, logic, input);
     const inst = (await logic.attach(proxy)) as EcoProxiedInstance<CT>;
 
     inst.ecoProxy = proxy;
@@ -66,10 +81,10 @@ export class ProxyFactory extends AsyncConstructor {
 
 async function test() {
   const logicFactory = await hre.ethers.getContractFactory("EcoERC20Mintable");
-  const proxyFactory = new ProxyFactory();
+  const EcoTUPFactory = new ProxyInstanceFactory();
   const logic = await logicFactory.deploy("a", "a");
   const input = logic.interface.encodeFunctionData("initEcoERC20Mintable", [logic, "a", "a"]);
-  const inst = await proxyFactory.deploy(logic, input);
+  const inst = await EcoTUPFactory.deployWithLogic(logic, input);
 
   await inst.symbol();
   await inst.ecoLogic.symbol();
