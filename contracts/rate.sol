@@ -27,4 +27,16 @@ library RateMath {
         }
         return value;
     }
+
+    function down(Rate rate, Rate basisPoint) internal pure returns (Rate result) {
+        assembly {
+            result := sub(rate, basisPoint)
+        }
+    }
+
+    function up(Rate rate, Rate basisPoint) internal pure returns (Rate result) {
+        assembly {
+            result := add(rate, basisPoint)
+        }
+    }
 }
