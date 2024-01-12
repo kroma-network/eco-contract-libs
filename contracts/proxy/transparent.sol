@@ -7,7 +7,7 @@ import { ERC1967Utils } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils
 import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import { ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
-import { EcoProxyForProxyAdmin } from "./admin.sol";
+import { EcoProxyAdmin, EcoProxyForProxyAdmin } from "./admin.sol";
 
 // EcoTransparentUpgradeableProxy
 contract EcoTUPWithAdmin is ERC1967Proxy {
@@ -66,6 +66,13 @@ contract EcoTUPWithAdmin is ERC1967Proxy {
         (address newImplementation, bytes memory data) = abi.decode(msg.data[4:], (address, bytes));
         ERC1967Utils.upgradeToAndCall(newImplementation, data);
     }
+}
+
+contract EcoTUPDeployAdmin is EcoTUPWithAdmin {
+    constructor(
+        address _logic,
+        bytes memory _data
+    ) EcoTUPWithAdmin(address(new EcoProxyAdmin(msg.sender)), _logic, _data) {}
 }
 
 contract EcoTUPWithAdminLogic is EcoTUPWithAdmin {
