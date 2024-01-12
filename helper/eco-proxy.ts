@@ -1,6 +1,6 @@
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { AsyncConstructor } from "async-constructor";
-import { BaseContract, Signer, BytesLike } from "ethers";
+import { BaseContract, Signer, BytesLike, Addressable, ContractFactory } from "ethers";
 import hre from "hardhat";
 
 import {
@@ -8,6 +8,7 @@ import {
   EcoTUPWithAdminLogic__factory,
   EcoProxyAdmin__factory,
   EcoProxyAdmin,
+  EcoTUPWithAdminLogic,
 } from "../typechain-types";
 
 export interface EcoProxyProperties<CT> {
@@ -17,8 +18,13 @@ export interface EcoProxyProperties<CT> {
   ecoLogic: CT;
 }
 
+export interface EcoContractLogicFactoryProperties<CT> {
+  deploy(...deployArgs: unknown[]): Promise<CT>;
+}
+
 export type EcoProxiedInstance<CT extends BaseContract> = CT & EcoProxyProperties<CT>;
 // Contract logic type CT inherit? BaseContract, and inherit? Eco custom proxy property
+export type EcoContractLogicFactory<CT> = ContractFactory & EcoContractLogicFactoryProperties<CT>;
 
 export class ProxyInstanceFactory extends AsyncConstructor {
   IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
@@ -47,23 +53,50 @@ export class ProxyInstanceFactory extends AsyncConstructor {
     const inst = (await logic.attach(proxy)) as EcoProxiedInstance<CT>;
 
     inst.ecoProxy = proxy;
-    inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await this.getAdminAddress(proxy)) as EcoProxyAdmin;
+    inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await this.getAdminAddress(inst)) as EcoProxyAdmin;
     inst.ecoLogic = logic;
 
     return inst;
   }
 
   async deployWithFactory<CT extends BaseContract>(
-    factory: { deploy(): Promise<CT> },
+    factory: { deploy(...deployArgs: unknown[]): Promise<CT> },
+    deployArgs: unknown[],
     input: BytesLike,
   ): Promise<EcoProxiedInstance<CT>> {
-    const logic = await factory.deploy();
+    const logic = await factory.deploy(deployArgs);
     const proxy = await this.EcoTUPFactory.deploy(this.proxyAdminLogic, logic, input);
-    const inst = (await logic.attach(proxy)) as EcoProxiedInstance<CT>;
+    const inst = logic.attach(proxy) as EcoProxiedInstance<CT>;
 
     inst.ecoProxy = proxy;
-    inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await this.getAdminAddress(proxy)) as EcoProxyAdmin;
+    inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await this.getAdminAddress(inst)) as EcoProxyAdmin;
     inst.ecoLogic = logic;
+
+    return inst;
+  }
+
+  async attachWithLogic<CT extends BaseContract>(
+    logic: CT,
+    address: string | Addressable,
+  ): Promise<EcoProxiedInstance<CT>> {
+    const inst = logic.attach(address) as EcoProxiedInstance<CT>;
+
+    inst.ecoProxy = this.EcoTUPFactory.attach(address) as EcoTUPWithAdminLogic;
+    inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await this.getAdminAddress(inst)) as EcoProxyAdmin;
+    inst.ecoLogic = logic.attach(await this.getAdminAddress(inst)) as CT;
+
+    return inst;
+  }
+
+  async attachWithFactory<CT extends BaseContract>(
+    factory: { deploy(...deployArgs: unknown[]): Promise<CT>; attach(target: string | Addressable): unknown },
+    address: string | Addressable,
+  ): Promise<EcoProxiedInstance<CT>> {
+    const inst = factory.attach(address) as EcoProxiedInstance<CT>;
+
+    inst.ecoProxy = this.EcoTUPFactory.attach(address) as EcoTUPWithAdminLogic;
+    inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await this.getAdminAddress(inst)) as EcoProxyAdmin;
+    inst.ecoLogic = factory.attach(await this.getAdminAddress(inst)) as CT;
 
     return inst;
   }
@@ -83,9 +116,16 @@ async function test() {
   const logicFactory = await hre.ethers.getContractFactory("EcoERC20Mintable");
   const EcoTUPFactory = new ProxyInstanceFactory();
   const logic = await logicFactory.deploy("a", "a");
-  const input = logic.interface.encodeFunctionData("initEcoERC20Mintable", [logic, "a", "a"]);
-  const inst = await EcoTUPFactory.deployWithLogic(logic, input);
 
-  await inst.symbol();
-  await inst.ecoLogic.symbol();
+  const input = logic.interface.encodeFunctionData("initEcoERC20Mintable", [logic, "a", "a"]);
+
+  const instByLogic = await EcoTUPFactory.deployWithLogic(logic, input);
+  const instByFactory = await EcoTUPFactory.deployWithFactory(logicFactory, ["a", "a"], input);
+  const instByAttachLogic = await EcoTUPFactory.attachWithLogic(logic, instByLogic);
+  const instByAttachFactory = await EcoTUPFactory.attachWithFactory(logicFactory, instByLogic);
+
+  await instByLogic.decimals();
+  await instByFactory.decimals();
+  await instByAttachLogic.decimals();
+  await instByAttachFactory.decimals();
 }
