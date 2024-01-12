@@ -27,8 +27,7 @@ contract EcoTUPWithAdmin is ERC1967Proxy {
      * backed by the implementation at `_logic`, and optionally initialized with `_data` as explained in
      * {ERC1967Proxy-constructor}.
      */
-    constructor(address proxyAdmin, address _logic, bytes memory _data) payable
-    ERC1967Proxy(_logic, _data) {
+    constructor(address proxyAdmin, address _logic, bytes memory _data) payable ERC1967Proxy(_logic, _data) {
         _admin = proxyAdmin;
         // Set the storage value and emit an event for ERC-1967 compatibility
         ERC1967Utils.changeAdmin(_proxyAdmin());
@@ -70,10 +69,9 @@ contract EcoTUPWithAdmin is ERC1967Proxy {
 }
 
 contract EcoTUPWithAdminLogic is EcoTUPWithAdmin {
-    constructor(address proxyAdminLogic, address _logic, bytes memory _data) payable
-    EcoTUPWithAdmin(
-        address(new EcoProxyForProxyAdmin(proxyAdminLogic, msg.sender)),
-        _logic,
-        _data
-    ) {}
+    constructor(
+        address proxyAdminLogic,
+        address _logic,
+        bytes memory _data
+    ) payable EcoTUPWithAdmin(address(new EcoProxyForProxyAdmin(proxyAdminLogic, msg.sender)), _logic, _data) {}
 }
