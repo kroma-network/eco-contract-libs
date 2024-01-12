@@ -11,20 +11,27 @@ import {
   EcoTUPWithAdminLogic,
 } from "../typechain-types";
 
-export interface EcoProxyProperties<CT> {
+export interface ContractFactoryTypeSupporter<CT extends BaseContract> {
+  deploy(...deployArgs: unknown[]): Promise<CT>;
+  attach(target: string | Addressable): unknown;
+}
+
+type EcoContractFactory<CT extends BaseContract> = ContractFactoryTypeSupporter<CT> & ContractFactory;
+
+export interface EcoProxyBaseProperties<CT> {
   // Generic for Contract logic type CT
   ecoProxy: EcoTUPWithAdmin;
   ecoProxyAdmin: EcoProxyAdmin;
   ecoLogic: CT;
 }
 
-export interface EcoContractLogicFactoryProperties<CT> {
-  deploy(...deployArgs: unknown[]): Promise<CT>;
+export interface EcoProxyPropertiesWithFactory<CT extends BaseContract> extends EcoProxyBaseProperties<CT> {
+  ecoLogicFactory: EcoContractFactory<CT>;
 }
 
-export type EcoProxiedInstance<CT extends BaseContract> = CT & EcoProxyProperties<CT>;
+export type EcoProxiedInstance<CT extends BaseContract> = CT & EcoProxyBaseProperties<CT>;
+export type EcoProxiedInstanceWithFactory<CT extends BaseContract> = CT & EcoProxyPropertiesWithFactory<CT>;
 // Contract logic type CT inherit? BaseContract, and inherit? Eco custom proxy property
-export type EcoContractLogicFactory<CT> = ContractFactory & EcoContractLogicFactoryProperties<CT>;
 
 export class ProxyInstanceFactory extends AsyncConstructor {
   IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
@@ -60,17 +67,18 @@ export class ProxyInstanceFactory extends AsyncConstructor {
   }
 
   async deployWithFactory<CT extends BaseContract>(
-    factory: { deploy(...deployArgs: unknown[]): Promise<CT> },
+    factory: EcoContractFactory<CT>,
     deployArgs: unknown[],
     input: BytesLike,
-  ): Promise<EcoProxiedInstance<CT>> {
+  ): Promise<EcoProxiedInstanceWithFactory<CT>> {
     const logic = await factory.deploy(deployArgs);
     const proxy = await this.EcoTUPFactory.deploy(this.proxyAdminLogic, logic, input);
-    const inst = logic.attach(proxy) as EcoProxiedInstance<CT>;
+    const inst = logic.attach(proxy) as EcoProxiedInstanceWithFactory<CT>;
 
     inst.ecoProxy = proxy;
     inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await this.getAdminAddress(inst)) as EcoProxyAdmin;
     inst.ecoLogic = logic;
+    inst.ecoLogicFactory = factory;
 
     return inst;
   }
@@ -89,14 +97,15 @@ export class ProxyInstanceFactory extends AsyncConstructor {
   }
 
   async attachWithFactory<CT extends BaseContract>(
-    factory: { deploy(...deployArgs: unknown[]): Promise<CT>; attach(target: string | Addressable): unknown },
+    factory: EcoContractFactory<CT>,
     address: string | Addressable,
-  ): Promise<EcoProxiedInstance<CT>> {
-    const inst = factory.attach(address) as EcoProxiedInstance<CT>;
+  ): Promise<EcoProxiedInstanceWithFactory<CT>> {
+    const inst = factory.attach(address) as EcoProxiedInstanceWithFactory<CT>;
 
     inst.ecoProxy = this.EcoTUPFactory.attach(address) as EcoTUPWithAdminLogic;
     inst.ecoProxyAdmin = this.proxyAdminFactory.attach(await this.getAdminAddress(inst)) as EcoProxyAdmin;
     inst.ecoLogic = factory.attach(await this.getAdminAddress(inst)) as CT;
+    inst.ecoLogicFactory = factory;
 
     return inst;
   }
