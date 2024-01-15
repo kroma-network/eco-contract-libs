@@ -48,13 +48,13 @@ describe("NFT Mintable", function () {
 
       await expect(nft.connect(admin).nextMint(user0)).reverted;
 
-      await expect(nft.grantRole(getSelector(nft.nextMint), admin)).not.reverted;
+      await expect(nft.grantSelectorRole(getSelector(nft.nextMint), admin)).not.reverted;
       const tokenId = await nft.nextMintId();
       await expect(nft.connect(admin).nextMint(user0))
         .emit(nft, "Transfer")
         .withArgs(hre.ethers.ZeroAddress, user0, tokenId);
       await expect(nft.connect(user0).nextMint(user0)).reverted;
-      await expect(nft.revokeRole(getSelector(nft.nextMint), admin)).not.reverted;
+      await expect(nft.revokeSelectorRole(getSelector(nft.nextMint), admin)).not.reverted;
     });
 
     describe("Transfer", function () {

@@ -38,36 +38,36 @@ describe("SelectorRoleControlUpgradeable", function () {
       await expect(role.connect(admin).pause()).reverted;
       await expect(role.connect(admin).unpause()).reverted;
 
-      await expect(role.revokeRole(getSelector(role.pause), admin)).reverted;
-      await expect(role.grantRole(getSelector(role.pause), admin)).not.reverted;
-      await expect(role.grantRole(getSelector(role.pause), admin)).reverted;
+      await expect(role.revokeSelectorRole(getSelector(role.pause), admin)).reverted;
+      await expect(role.grantSelectorRole(getSelector(role.pause), admin)).not.reverted;
+      await expect(role.grantSelectorRole(getSelector(role.pause), admin)).reverted;
 
       await expect(role.connect(admin).pause()).not.reverted;
       await expect(role.connect(admin).pause()).reverted;
 
-      await expect(role.revokeRole(getSelector(role.unpause), admin)).reverted;
-      await expect(role.grantRole(getSelector(role.unpause), admin)).not.reverted;
-      await expect(role.grantRole(getSelector(role.unpause), admin)).reverted;
+      await expect(role.revokeSelectorRole(getSelector(role.unpause), admin)).reverted;
+      await expect(role.grantSelectorRole(getSelector(role.unpause), admin)).not.reverted;
+      await expect(role.grantSelectorRole(getSelector(role.unpause), admin)).reverted;
 
       await expect(role.connect(admin).unpause()).not.reverted;
       await expect(role.connect(admin).unpause()).reverted;
 
       // TODO: unpause revoke test?
-      await expect(role.revokeRole(getSelector(role.pause), admin)).not.reverted;
-      await expect(role.revokeRole(getSelector(role.pause), admin)).reverted;
+      await expect(role.revokeSelectorRole(getSelector(role.pause), admin)).not.reverted;
+      await expect(role.revokeSelectorRole(getSelector(role.pause), admin)).reverted;
 
-      await expect(role.revokeRole(getSelector(role.unpause), admin)).not.reverted;
-      await expect(role.revokeRole(getSelector(role.unpause), admin)).reverted;
+      await expect(role.revokeSelectorRole(getSelector(role.unpause), admin)).not.reverted;
+      await expect(role.revokeSelectorRole(getSelector(role.unpause), admin)).reverted;
     });
 
     it("admin try grant & admin try role", async function () {
       const { role, admin } = await loadFixture(fixtureSelectorRoleControlUpgradeableDeploy);
 
-      await expect(role.connect(admin).grantRole(getSelector(role.pause), admin)).reverted;
-      await expect(role.connect(admin).grantRole(getSelector(role.unpause), admin)).reverted;
+      await expect(role.connect(admin).grantSelectorRole(getSelector(role.pause), admin)).reverted;
+      await expect(role.connect(admin).grantSelectorRole(getSelector(role.unpause), admin)).reverted;
 
-      await expect(role.connect(admin).revokeRole(getSelector(role.pause), admin)).reverted;
-      await expect(role.connect(admin).revokeRole(getSelector(role.unpause), admin)).reverted;
+      await expect(role.connect(admin).revokeSelectorRole(getSelector(role.pause), admin)).reverted;
+      await expect(role.connect(admin).revokeSelectorRole(getSelector(role.unpause), admin)).reverted;
     });
   });
 });

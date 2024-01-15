@@ -2,6 +2,8 @@ import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
 import hre from "hardhat";
 
+import { getSelector } from "../helper";
+
 describe("ERC20 Mintable", function () {
   const name = "Mintable Token";
   const symbol = "M ERC20";
@@ -52,13 +54,12 @@ describe("ERC20 Mintable", function () {
       it("Shouldn't fail mint with the right role access account", async function () {
         const { erc20, users } = await loadFixture(NFT_Mintable_Fixture);
 
-        const nextMintSelector = hre.ethers.zeroPadBytes(erc20.mint.fragment.selector, 32);
-        await expect(erc20.grantRole(nextMintSelector, users[0])).not.reverted;
+        await expect(erc20.grantSelectorRole(getSelector(erc20.mint), users[0])).not.reverted;
 
         const user_connected_nft = erc20.connect(users[0]);
         await expect(user_connected_nft.mint(users[0], amount)).not.reverted;
 
-        await expect(erc20.revokeRole(nextMintSelector, users[0])).not.reverted;
+        await expect(erc20.revokeSelectorRole(getSelector(erc20.mint), users[0])).not.reverted;
         await expect(user_connected_nft.mint(users[0], amount)).reverted;
       });
     });

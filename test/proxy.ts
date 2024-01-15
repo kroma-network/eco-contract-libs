@@ -6,6 +6,8 @@ import hre from "hardhat";
 
 import { EcoERC20Mintable } from "../typechain-types";
 
+import { getSelector } from "./helper";
+
 type ProxiedContract<FT extends ContractFactory> = Awaited<ReturnType<FT["deploy"]>>;
 
 class ProxyContractTypeTest<FT extends ContractFactory> extends AsyncConstructor {
@@ -100,13 +102,12 @@ describe("ERC20 Mintable", function () {
       it("Shouldn't fail mint with the right role access account", async function () {
         const { pErc20, users } = await loadFixture(NFT_Mintable_Fixture);
 
-        const nextMintSelector = hre.ethers.zeroPadBytes(pErc20.mint.fragment.selector, 32);
-        await expect(pErc20.grantRole(nextMintSelector, users[0])).not.reverted;
+        await expect(pErc20.grantSelectorRole(getSelector(pErc20.mint), users[0])).not.reverted;
 
         const user_connected_nft = pErc20.connect(users[0]);
         await expect(user_connected_nft.mint(users[0], amount)).not.reverted;
 
-        await expect(pErc20.revokeRole(nextMintSelector, users[0])).not.reverted;
+        await expect(pErc20.revokeSelectorRole(getSelector(pErc20.mint), users[0])).not.reverted;
         await expect(user_connected_nft.mint(users[0], amount)).reverted;
       });
     });
