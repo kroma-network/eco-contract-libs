@@ -23,6 +23,10 @@ interface IMulticall {
 
 // IEcoOwnable, TODO: check redundant override, already defined & implemented
 interface ISelectorRoleControl is IAccessControlEnumerable, IPausable {
+    function grantSelectorRole(bytes4 selector, address account) external;
+
+    function revokeSelectorRole(bytes4 selector, address account) external;
+
     function pause() external;
 
     function unpause() external;
@@ -40,23 +44,17 @@ contract SelectorRoleControlUpgradeable is
         _;
     }
 
-    // owner or hash role
+    // owner or selector role
     function _onlyAdmin(address account) internal view {
         if (owner() != account) _checkRole(msg.sig, account);
     }
 
-    function grantRole(
-        bytes32 role,
-        address account
-    ) public virtual override(IAccessControl, AccessControlUpgradeable) onlyAdmin {
-        require(_grantRole(role, account), "role exist");
+    function grantSelectorRole(bytes4 selector, address account) public virtual override onlyAdmin {
+        require(_grantRole(selector, account), "role exist");
     }
 
-    function revokeRole(
-        bytes32 role,
-        address account
-    ) public virtual override(IAccessControl, AccessControlUpgradeable) onlyAdmin {
-        require(_revokeRole(role, account), "role not exist");
+    function revokeSelectorRole(bytes4 selector, address account) public virtual override onlyAdmin {
+        require(_revokeRole(selector, account), "role not exist");
     }
 
     function paused() public view virtual override returns (bool) {
