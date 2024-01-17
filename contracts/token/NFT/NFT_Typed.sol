@@ -30,6 +30,16 @@ contract NFT_Typed is INFT_Typed, NFT_Mintable, ERC721TypedUpgradeable {
         return super.supportsInterface(interfaceId);
     }
 
+    function _baseURI()
+        internal
+        view
+        virtual
+        override(ERC721TypedUpgradeable, ERC721Upgradeable)
+        returns (string memory)
+    {
+        return super._baseURI();
+    }
+
     function tokenURI(
         uint256 tokenId
     ) public view virtual override(IERC721Metadata, ERC721Upgradeable, ERC721TypedUpgradeable) returns (string memory) {

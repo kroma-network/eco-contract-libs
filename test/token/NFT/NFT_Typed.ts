@@ -37,24 +37,22 @@ describe("NFT Typed", function () {
     it("Typed mint", async function () {
       const { nft, user0 } = await loadFixture(NFT_Typed_Fixture);
 
-      const typeURIs = ["type 0", "type 1", "type 2"];
+      const baseURIForType = "https://eco.typed.nft.metadata.io/";
 
-      for (let i = 0; i < typeURIs.length; i++) {
-        await expect(nft.typedMint(user0, i)).reverted;
-        await expect(nft.setTypeURI(i, "")).reverted;
-        await expect(nft.connect(user0).setTypeURI(i, typeURIs[i])).reverted;
+      await expect(nft.setBaseURIForType(baseURIForType)).not.reverted;
+
+      for (let i = 0; i < baseURIForType.length; i++) {
+        await expect(nft.setBaseURIForType("")).reverted;
         await expect(nft.connect(user0).typedMint(user0, i)).reverted;
-
-        await expect(nft.setTypeURI(i, typeURIs[i])).not.reverted;
       }
 
-      for (let i = 0; i < typeURIs.length; i++) {
+      for (let i = 0; i < baseURIForType.length; i++) {
         await expect(nft.typedMint(user0, i)).not.reverted;
       }
 
-      for (let i = 0; i < typeURIs.length; i++) {
+      for (let i = 0; i < baseURIForType.length; i++) {
         expect(await nft.tokenType(i + 1)).equal(i);
-        expect(await nft.tokenURI(i + 1)).equal(typeURIs[i]);
+        expect(await nft.tokenURI(i + 1)).equal(baseURIForType + i.toString());
         await expect(nft.connect(user0).setTokenType(i + 1, 0)).reverted;
         await expect(nft.setTokenType(i + 1, 0)).not.reverted;
       }
@@ -63,7 +61,7 @@ describe("NFT Typed", function () {
     it("Next mint", async function () {
       const { nft, user0 } = await loadFixture(NFT_Typed_Fixture);
 
-      await expect(nft.nextMint(user0)).reverted;
+      await expect(nft.nextMint(user0)).not.reverted;
     });
   });
 });
