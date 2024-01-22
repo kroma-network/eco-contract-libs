@@ -46,15 +46,50 @@ describe("NFT Mintable", function () {
     it("admin mint", async function () {
       const { nft, admin, user0 } = await loadFixture(NFT_Mintable_Fixture);
 
+      await expect(nft.connect(user0).nextMint(user0)).reverted;
       await expect(nft.connect(admin).nextMint(user0)).reverted;
 
       await expect(nft.grantSelectorRole(getSelector(nft.nextMint), admin)).not.reverted;
+      await expect(nft.connect(user0).nextMint(user0)).reverted;
+
       const tokenId = await nft.nextMintId();
       await expect(nft.connect(admin).nextMint(user0))
         .emit(nft, "Transfer")
         .withArgs(hre.ethers.ZeroAddress, user0, tokenId);
-      await expect(nft.connect(user0).nextMint(user0)).reverted;
+
       await expect(nft.revokeSelectorRole(getSelector(nft.nextMint), admin)).not.reverted;
+      await expect(nft.connect(user0).nextMint(user0)).reverted;
+      await expect(nft.connect(admin).nextMint(user0)).reverted;
+    });
+
+    it("admin mint batch", async function () {
+      const { nft, admin, user0 } = await loadFixture(NFT_Mintable_Fixture);
+
+      const batchAmount = 10;
+
+      await expect(nft.connect(user0).nextMintBatch(user0, batchAmount)).reverted;
+      await expect(nft.connect(admin).nextMintBatch(user0, batchAmount)).reverted;
+
+      await expect(nft.grantSelectorRole(getSelector(nft.nextMintBatch), admin)).not.reverted;
+      await expect(nft.connect(user0).nextMintBatch(user0, batchAmount)).reverted;
+
+      const startTokenId = await nft.nextMintId();
+      const tokenIds = Array.from({ length: batchAmount }, (_, i) => startTokenId + BigInt(i));
+
+
+      expect(await nft.totalSupply()).equal(0);
+      expect(await nft.balanceOf(user0)).equal(0);
+      await expect(nft.connect(admin).nextMintBatch(user0, batchAmount)).not.reverted;
+      expect(await nft.totalSupply()).equal(BigInt(tokenIds.length));
+      expect(await nft.balanceOf(user0)).equal(BigInt(tokenIds.length));
+
+      for(let i=0; i<tokenIds.length; i++) {
+        expect(await nft.tokenOfOwnerByIndex(user0, i)).equal(tokenIds[i]);
+      }
+
+      await expect(nft.revokeSelectorRole(getSelector(nft.nextMintBatch), admin)).not.reverted;
+      await expect(nft.connect(user0).nextMintBatch(user0, batchAmount)).reverted;
+      await expect(nft.connect(admin).nextMintBatch(user0, batchAmount)).reverted;
     });
 
     describe("Transfer", function () {

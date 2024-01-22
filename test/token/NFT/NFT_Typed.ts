@@ -39,26 +39,44 @@ describe("NFT Typed", function () {
 
       const baseURIForType = "https://eco.typed.nft.metadata.io/";
 
-      await expect(nft.setBaseURIForType(baseURIForType)).not.reverted;
+      expect(await nft.tokenURI(0)).equal("");
+      await expect(nft.setBaseURI(baseURIForType)).not.reverted;
+      await expect(nft.connect(user0).setBaseURI(baseURIForType)).reverted;
 
       for (let i = 0; i < baseURIForType.length; i++) {
-        await expect(nft.setBaseURIForType("")).reverted;
+        await expect(nft.setBaseURI("")).reverted;
         await expect(nft.connect(user0).typedMint(user0, i)).reverted;
       }
 
       for (let i = 0; i < baseURIForType.length; i++) {
         await expect(nft.typedMint(user0, i)).not.reverted;
+        expect(await nft.typeSupply(i)).equal(1);
       }
+
+      expect(await nft.totalSupply()).equal(baseURIForType.length);
+
+      let totalTypedSupply = BigInt(0);
 
       for (let i = 0; i < baseURIForType.length; i++) {
         expect(await nft.tokenType(i + 1)).equal(i);
         expect(await nft.tokenURI(i + 1)).equal(baseURIForType + i.toString());
         await expect(nft.connect(user0).setTokenType(i + 1, 0)).reverted;
         await expect(nft.setTokenType(i + 1, 0)).not.reverted;
+
+        const typedSupply = await nft.typeSupply(i);
+        expect(typedSupply).not.equal(BigInt(0));
+        totalTypedSupply += typedSupply;
       }
+      expect(await nft.totalSupply()).equal(totalTypedSupply);
     });
 
     it("Next mint", async function () {
+      const { nft, user0 } = await loadFixture(NFT_Typed_Fixture);
+
+      await expect(nft.nextMint(user0)).not.reverted;
+    });
+
+    it("Batch Mint and type changes", async function () {
       const { nft, user0 } = await loadFixture(NFT_Typed_Fixture);
 
       await expect(nft.nextMint(user0)).not.reverted;
