@@ -21,6 +21,8 @@ interface IEcoERC20_Burnable is IEcoERC20 {
 }
 
 interface IEcoERC20Mintable is ISelectorRoleControl, IEcoERC20 {
+    function initEcoERC20Mintable(address initialOwner, string memory name, string memory symbol) external;
+
     function mint(address to, uint256 amount) external returns (bool);
 }
 
@@ -53,7 +55,11 @@ contract EcoERC20Mintable is
         initEcoERC20Mintable(_msgSender(), name, symbol);
     }
 
-    function initEcoERC20Mintable(address initialOwner, string memory name, string memory symbol) public initializer {
+    function initEcoERC20Mintable(
+        address initialOwner,
+        string memory name,
+        string memory symbol
+    ) public override initializer {
         __Ownable_init(initialOwner);
         __ERC20_init(name, symbol);
     }
