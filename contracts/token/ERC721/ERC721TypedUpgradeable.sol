@@ -107,6 +107,14 @@ abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUp
     }
 
     function setTokenType(uint256 tokenId, uint256 _tokenType) public override onlyAdmin {
-        return _setTokenType(tokenId, 0, _tokenType);
+        require(tokenType(tokenId) != _tokenType, "set type");
+        return _setTokenType(tokenId, tokenType(tokenId), _tokenType);
+    }
+
+    function burn(uint256 tokenId) public virtual override {
+        unchecked {
+            _getERC721TypedUpgradeable().typeSupply[tokenType(tokenId)] -= 1;
+        }
+        _update(address(0), tokenId, _msgSender());
     }
 }

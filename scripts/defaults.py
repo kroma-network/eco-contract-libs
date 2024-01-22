@@ -67,3 +67,10 @@ def is_testnet():
     return chain.id in TESTNETS
 
 async_tx_override = {"required_confs": 0}
+
+
+def get_proxy_impl(inst:Contract):
+    return bytes32_to_address(web3.eth.get_storage_at(inst.address, IMPL_SLOT))
+
+def get_proxy_admin(inst:Contract):
+    return bytes32_to_address(web3.eth.get_storage_at(inst.address, ADMIN_SLOT))
