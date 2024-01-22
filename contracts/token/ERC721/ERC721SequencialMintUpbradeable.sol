@@ -26,6 +26,8 @@ interface IERC721SequencialMintUpbradeable is
     function nextMintId() external view returns (uint256 tokeId);
 
     function nextMint(address to) external returns (uint256 tokenId);
+
+    function nextMintBatch(address to, uint256 amount) external returns (uint256[] memory tokenIds);
 }
 
 abstract contract ERC721SequencialMintUpbradeable is
@@ -68,6 +70,16 @@ abstract contract ERC721SequencialMintUpbradeable is
 
     function nextMint(address to) public virtual override onlyAdmin returns (uint256 tokenId) {
         return _nextMint(to);
+    }
+
+    function nextMintBatch(
+        address to,
+        uint256 amount
+    ) public virtual override onlyAdmin returns (uint256[] memory tokenIds) {
+        tokenIds = new uint256[](amount);
+        for (uint256 i; i < amount; i++) {
+            tokenIds[i] = _nextMint(to);
+        }
     }
 
     function _nextMint(address to) internal virtual returns (uint256 tokenId) {

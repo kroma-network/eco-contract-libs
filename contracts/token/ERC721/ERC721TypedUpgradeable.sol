@@ -18,7 +18,9 @@ interface IERC721Typed is IERC721SequencialMintUpbradeable {
 
     function tokenType(uint256 tokenId) external view returns (uint256);
 
-    function setBaseURIForType(string memory baseURI) external;
+    function typeSupply(uint256 _tokenType) external view returns (uint256 supply);
+
+    function setBaseURI(string memory baseURI) external;
 
     function setTokenType(uint256 tokenId, uint256 _tokenType) external;
 
@@ -31,6 +33,7 @@ abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUp
     struct ERC721TypedUpgradeableStorage {
         string baseURI;
         mapping(uint256 tokenId => uint256 types) tokenTypes;
+        mapping(uint256 tokenType => uint256 amount) typeSupply;
     }
 
     // keccak256(abi.encode(uint256(keccak256("eco.storage.ERC721TypedUpgradeable")) - 1)) & ~bytes32(uint256(0xff))
@@ -59,9 +62,19 @@ abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUp
         return _getERC721TypedUpgradeable().tokenTypes[tokenId];
     }
 
-    function _setTokenType(uint256 tokenId, uint256 _tokenType) internal virtual {
-        _getERC721TypedUpgradeable().tokenTypes[tokenId] = _tokenType;
-        emit TokenType(tokenId, _tokenType);
+    function typeSupply(uint256 _tokenType) external view returns (uint256 supply) {
+        return _getERC721TypedUpgradeable().typeSupply[_tokenType];
+    }
+
+    function _setTokenType(uint256 tokenId, uint256 typeFrom, uint256 typeTo) internal virtual {
+        ERC721TypedUpgradeableStorage storage $ = _getERC721TypedUpgradeable();
+        unchecked {
+            $.typeSupply[typeFrom] -= 1;
+            $.typeSupply[typeTo] += 1;
+        }
+
+        $.tokenTypes[tokenId] = typeTo;
+        emit TokenType(tokenId, typeTo);
     }
 
     function _nextMint(address to) internal virtual override returns (uint256 tokenId) {
@@ -70,10 +83,13 @@ abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUp
 
     function _typedMint(address to, uint256 _tokenType) internal virtual returns (uint256 tokenId) {
         tokenId = super._nextMint(to);
-        _setTokenType(tokenId, _tokenType);
+        unchecked {
+            _getERC721TypedUpgradeable().typeSupply[0] += 1;
+        }
+        _setTokenType(tokenId, 0, _tokenType);
     }
 
-    function setBaseURIForType(string memory baseURI) public override onlyAdmin {
+    function setBaseURI(string memory baseURI) public override onlyAdmin {
         require(bytes(baseURI).length != 0, "URI length");
         _getERC721TypedUpgradeable().baseURI = baseURI;
     }
@@ -83,6 +99,6 @@ abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUp
     }
 
     function setTokenType(uint256 tokenId, uint256 _tokenType) public override onlyAdmin {
-        return _setTokenType(tokenId, _tokenType);
+        return _setTokenType(tokenId, 0, _tokenType);
     }
 }
