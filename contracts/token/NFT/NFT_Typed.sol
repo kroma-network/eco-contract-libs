@@ -10,6 +10,7 @@ import { SelectorRoleControlUpgradeable } from "../../access/SelectorRoleControl
 
 import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 
+import { ERC721BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
 import { ERC721SequencialMintUpbradeable } from "../ERC721/ERC721SequencialMintUpbradeable.sol";
 import { IERC721Typed, ERC721TypedUpgradeable } from "../ERC721/ERC721TypedUpgradeable.sol";
 
@@ -65,5 +66,9 @@ contract NFT_Typed is INFT_Typed, NFT_Mintable, ERC721TypedUpgradeable {
         address auth
     ) internal virtual override(ERC721SequencialMintUpbradeable, NFT_Mintable) returns (address) {
         return super._update(to, tokenId, auth);
+    }
+
+    function burn(uint256 tokenId) public virtual override(ERC721BurnableUpgradeable, ERC721TypedUpgradeable) {
+        return super.burn(tokenId);
     }
 }

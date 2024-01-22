@@ -53,27 +53,40 @@ describe("NFT Typed", function () {
         expect(await nft.typeSupply(i)).equal(1);
       }
 
+      await expect(nft.setTokenType(1, 0)).reverted;
+
       expect(await nft.totalSupply()).equal(baseURIForType.length);
 
       let totalTypedSupply = BigInt(0);
 
       for (let i = 0; i < baseURIForType.length; i++) {
         expect(await nft.tokenType(i + 1)).equal(i);
-        expect(await nft.tokenURI(i + 1)).equal(baseURIForType + i.toString());
+        expect(await nft.tokenURI(i + 1)).equal(baseURIForType + i.toString() + ".json");
         await expect(nft.connect(user0).setTokenType(i + 1, 0)).reverted;
-        await expect(nft.setTokenType(i + 1, 0)).not.reverted;
-
         const typedSupply = await nft.typeSupply(i);
         expect(typedSupply).not.equal(BigInt(0));
+        if(i!=0)
+          await expect(nft.setTokenType(i + 1, 0)).not.reverted;
+
         totalTypedSupply += typedSupply;
       }
       expect(await nft.totalSupply()).equal(totalTypedSupply);
     });
 
-    it("Next mint", async function () {
+    it("Next mint & burn", async function () {
       const { nft, user0 } = await loadFixture(NFT_Typed_Fixture);
 
+      const tokenId = await nft.nextMintId();
+      expect(await nft.totalSupply()).equal(0);
+      expect(await nft.typeSupply(0)).equal(0);
+
       await expect(nft.nextMint(user0)).not.reverted;
+      expect(await nft.totalSupply()).equal(tokenId);
+      expect(await nft.typeSupply(0)).equal(tokenId);
+
+      await expect(nft.connect(user0).burn(tokenId)).not.reverted;
+      expect(await nft.totalSupply()).equal(0);
+      expect(await nft.typeSupply(0)).equal(0);
     });
 
     it("Batch Mint and type changes", async function () {
