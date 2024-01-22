@@ -27,8 +27,15 @@ interface IERC721Typed is IERC721SequencialMintUpbradeable {
     function typedMint(address to, uint256 _tokenType) external returns (uint256 tokenId);
 }
 
+library ConcatChain {
+    function concat(string memory self, string memory other) internal pure returns (string memory) {
+        return string.concat(self, other);
+    }
+}
+
 abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUpbradeable {
     using Strings for uint256;
+    using ConcatChain for string;
 
     struct ERC721TypedUpgradeableStorage {
         string baseURI;
@@ -54,7 +61,8 @@ abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUp
         uint256 tokenId
     ) public view virtual override(IERC721Metadata, ERC721Upgradeable) returns (string memory) {
         string memory baseURI = _baseURI();
-        return bytes(baseURI).length > 0 ? string.concat(baseURI, tokenType(tokenId).toString()) : "";
+
+        return bytes(baseURI).length > 0 ? baseURI.concat(tokenType(tokenId).toString()).concat(".json") : "";
     }
 
     function tokenType(uint256 tokenId) public view override returns (uint256) {
