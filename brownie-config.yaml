@@ -1,0 +1,82 @@
+project_structure:
+  build: build
+  contracts: contracts
+  interfaces: interfaces
+  reports: build
+  scripts: scripts
+  tests: build
+
+networks:
+  default: hardhat
+
+  development:
+    gas_limit: max
+    gas_buffer: 1.2
+    gas_price: 0
+    max_fee: null
+    priority_fee: null
+    reverting_tx_gas_limit: max
+    default_contract_owner: true
+    cmd_settings:
+      port: 8545
+      gas_limit: 100000000
+      accounts: 20
+      evm_version: paris
+      mnemonic: brownie
+      block_time: 0
+      default_balance: 1000000
+      unlimited_contract_size: true
+
+  live:
+    gas_limit: auto
+    gas_buffer: 1.2
+    gas_price: auto
+    max_fee: null
+    priority_fee: null
+    reverting_tx_gas_limit: false
+    default_contract_owner: false
+
+compiler:
+  evm_version: null
+  solc:
+    version: 0.8.22
+    evm_version: paris
+    optimizer:
+      enabled: true
+      runs: 1000000
+    remappings:
+      - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@5.0.1"
+      - "@openzeppelin/contracts-upgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@5.0.1/contracts"
+  vyper:
+    version: null
+
+console:
+  show_colors: true
+  color_style: monokai
+  auto_suggest: true
+  completions: true
+  editing_mode: emacs
+
+reports:
+  exclude_paths: null
+  exclude_contracts: null
+  only_include_project: true
+
+hypothesis:
+  deadline: null
+  max_examples: 50
+  report_multiple_bugs: False
+  stateful_step_count: 10
+  phases:
+    explicit: true
+    reuse: true
+    generate: true
+    target: true
+    shrink: true
+
+autofetch_sources: false
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@5.0.1
+  - OpenZeppelin/openzeppelin-contracts-upgradeable@5.0.1
+
+dev_deployment_artifacts: false

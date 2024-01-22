@@ -1,5 +1,4 @@
 node_modules
-.env
 
 # Hardhat files
 /cache
@@ -12,3 +11,11 @@ node_modules
 # solidity-coverage files
 /coverage
 /coverage.json
+
+# brownie
+__pycache__
+.env
+.history
+.hypothesis/
+build/
+reports/
