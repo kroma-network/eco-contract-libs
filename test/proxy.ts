@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { ContractFactory } from "ethers";
 import hre from "hardhat";
 
-import { EcoERC20Mintable } from "../typechain-types";
+import { ERC20MintableUpgradeable } from "../typechain-types";
 
 import { getSelector } from "./helper";
 
@@ -29,7 +29,7 @@ describe("ProxyContractTypeTest", function () {
   async function Proxy_Helper_Fixture() {
     const [owner] = await hre.ethers.getSigners();
     const helper = await new ProxyContractTypeTest(
-      await hre.ethers.getContractFactory("EcoERC20Mintable"),
+      await hre.ethers.getContractFactory("ERC20MintableUpgradeable"),
       name,
       symbol,
     );
@@ -57,7 +57,7 @@ describe("ERC20 Mintable", function () {
     const EcoProxyForProxyAdmin = await hre.ethers.getContractFactory("EcoProxyForProxyAdmin");
     const pAdmin = await EcoProxyForProxyAdmin.deploy(admin, owner);
 
-    const ERC20 = await hre.ethers.getContractFactory("EcoERC20Mintable");
+    const ERC20 = await hre.ethers.getContractFactory("ERC20MintableUpgradeable");
     const erc20 = await ERC20.deploy(name, symbol);
 
     const EcoTUPWithAdmin = await hre.ethers.getContractFactory("EcoTUPWithAdmin");
@@ -66,7 +66,7 @@ describe("ERC20 Mintable", function () {
       erc20,
       erc20.interface.encodeFunctionData("initEcoERC20Mintable", [owner.address, name, symbol]),
     );
-    const pErc20: EcoERC20Mintable = erc20.attach(await inst.getAddress()) as EcoERC20Mintable;
+    const pErc20: ERC20MintableUpgradeable = erc20.attach(await inst.getAddress()) as ERC20MintableUpgradeable;
 
     return { owner, users, admin, pAdmin, erc20, pErc20 };
   }

@@ -14,7 +14,7 @@ describe("ERC20 Mintable", function () {
   async function NFT_Mintable_Fixture() {
     const [owner, ...users] = await hre.ethers.getSigners();
 
-    const ERC20 = await hre.ethers.getContractFactory("EcoERC20MintableDecimal");
+    const ERC20 = await hre.ethers.getContractFactory("ERC20MintableUpgradeableWithDecimal");
     const erc20 = await ERC20.deploy(name, symbol, decimals);
     // await erc20.initNFT_Mintable(owner.address, name, symbol); only for proxy
 
