@@ -6,6 +6,8 @@ import "./tasks/utils";
 import "hardhat-tracer";
 import "solidity-coverage";
 
+import "./tasks/namespace-slot";
+
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
