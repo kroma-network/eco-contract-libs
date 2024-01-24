@@ -11,7 +11,7 @@ describe("Proxy Test", function () {
   async function fixtureProxyConfig() {
     const [owner, ...users] = await hre.ethers.getSigners();
 
-    const ERC20 = await hre.ethers.getContractFactory("EcoERC20Mintable");
+    const ERC20 = await hre.ethers.getContractFactory("ERC20MintableUpgradeable");
     const erc20Logic = await ERC20.deploy(name, symbol);
 
     const EcoProxyAdmin = await hre.ethers.getContractFactory("EcoProxyAdmin");
@@ -23,7 +23,7 @@ describe("Proxy Test", function () {
     const proxy = await EcoTUPWithAdminLogic.deploy(proxyAdminLogic, erc20Logic, initData);
 
     const proxyAdmin = await hre.ethers.getContractAt("EcoProxyAdmin", await getAdminAddress(proxy), owner);
-    const inst = await hre.ethers.getContractAt("EcoERC20Mintable", proxy.target, owner);
+    const inst = await hre.ethers.getContractAt("ERC20MintableUpgradeable", proxy.target, owner);
 
     return { erc20Logic, proxyAdminLogic, proxyAdmin, proxy, inst, owner, users, EcoTUPWithAdminLogic };
   }
@@ -54,7 +54,7 @@ describe("Proxy Test", function () {
       const { erc20Logic, proxyAdmin, proxy, inst, users } = await loadFixture(fixtureProxyConfig);
 
       const theDecimals = 6;
-      const ERC20Decimal = await hre.ethers.getContractFactory("EcoERC20MintableDecimal");
+      const ERC20Decimal = await hre.ethers.getContractFactory("ERC20MintableUpgradeableWithDecimal");
       const erc20DecimalLogic = await ERC20Decimal.deploy(name, symbol, theDecimals);
 
       expect(await erc20Logic.decimals()).equal(18);
