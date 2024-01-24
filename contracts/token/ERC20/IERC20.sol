@@ -7,9 +7,9 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { IERC20Errors } from "@openzeppelin/contracts/interfaces/draft-IERC6093.sol";
 
-interface IERC20Base is IERC20, IERC20Metadata, IERC20Errors {}
-
 import { ISelectorRoleControl } from "../../access/SelectorRoleControlUpgradeable.sol";
+
+interface IERC20Base is IERC20, IERC20Metadata, IERC20Errors {}
 
 interface IWETH is IERC20, IERC20Metadata {
     function deposit() external payable;
@@ -26,3 +26,9 @@ interface IERC20Burnable is IERC20Base {
 interface IERC20Mintable is IERC20Burnable {
     function mint(address to, uint256 amount) external;
 }
+
+interface IEcoERC20Mintable is IERC20Mintable {
+    function initEcoERC20Mintable(address initialOwner, string memory name, string memory symbol) external;
+}
+
+interface IEcoERC20 is ISelectorRoleControl, IEcoERC20Mintable {}

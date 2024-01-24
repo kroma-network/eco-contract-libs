@@ -8,13 +8,7 @@ import { ISelectorRoleControl, IPausable, IEcoOwnable, SelectorRoleControlUpgrad
 import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import { ERC20BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 
-import { IERC20Metadata, IERC20Burnable, IERC20Mintable, IERC20Base } from "./IERC20.sol";
-
-interface IEcoERC20Mintable is IERC20Mintable {
-    function initEcoERC20Mintable(address initialOwner, string memory name, string memory symbol) external;
-}
-
-interface IEcoERC20 is ISelectorRoleControl, IEcoERC20Mintable {}
+import { IERC20Metadata, IERC20Base, IERC20Burnable, IERC20Mintable, IEcoERC20Mintable, IEcoERC20 } from "./IERC20.sol";
 
 abstract contract ERC20Decimal is ERC20Upgradeable {
     uint8 private immutable _decimals_;
