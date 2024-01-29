@@ -21,7 +21,6 @@ interface IMulticall {
     function multicall(bytes[] calldata data) external returns (bytes[] memory results);
 }
 
-// IEcoOwnable, TODO: check redundant override, already defined & implemented
 interface ISelectorRoleControl is IAccessControlEnumerable, IPausable {
     function grantSelectorRole(bytes4 selector, address account) external;
 

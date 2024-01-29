@@ -69,7 +69,6 @@ contract TestProxyAdminFail is EcoProxyAdmin {
     function command(address to, uint256 value, bytes memory data) public payable returns (bytes memory) {
         bool success;
         (success, data) = to.call{ value: value }(data);
-        // require(success, string(data)); // TODO: hardhat cannot catch "v8 error" in "low level calls"
         require(success, "call fail");
         return data;
     }
