@@ -20,7 +20,9 @@ __pycache__
 build/
 reports/
 
-scripts/test.py
+scripts/*.py
+!scripts/defaults.py
+!scripts/load_key.py
 
 # eco
 abi
