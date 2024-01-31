@@ -24,6 +24,14 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
+      // chainId: 2358,
+      // forking: {
+      //   url: "https://api.sepolia.kroma.network/", // sepolia
+      //   url: "http://apne2a-sail-proposer01.kroma.cc:8545", // sail
+      //   url: "https://api.kroma.network", // kroma
+      //   url: "http://20.214.181.154:8588", // kroma
+      // },
+
       hardfork: "london",
       // base fee of 0 allows use of 0 gas price when testing
       initialBaseFeePerGas: 0,
