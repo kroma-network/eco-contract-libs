@@ -36,7 +36,7 @@ contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, ERC20MintableUpgradeableWi
 
     // keccak256(abi.encode(uint256(keccak256("eco.storage.ERC20L2Bridged")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant ERC20L2BridgedStorageLocation =
-        0xd4c2e13820a12dd0a9208a003fc2124d72e108ab939a8ed7cd658b7808cefa00;
+        0x077ffeaa7eec0cfdcda90af8784697c3c22a1b5cfbafe2f9887cbd76cdb47300;
 
     struct ERC20L2BridgedStorage {
         address REMOTE_TOKEN;
