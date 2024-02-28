@@ -74,5 +74,10 @@ export function namespaceSlot(namespace: string, hre:HardhatRuntimeEnvironment) 
 
   const finalMasked = (hre.ethers.toBigInt(hash_second) & (hre.ethers.MaxUint256 - 255n)).toString(16);
 
-  return finalMasked;
+  const paddingSize = 64 - finalMasked.length;
+  if (paddingSize > 0) {
+    return "0".repeat(paddingSize) + finalMasked;
+  } else {
+    return finalMasked;
+  }
 }
