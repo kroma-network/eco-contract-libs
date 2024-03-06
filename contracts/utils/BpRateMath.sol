@@ -50,6 +50,12 @@ library BpMath {
         return b;
     }
 
+    function isZero(Bp a) internal pure returns (bool result) {
+        assembly {
+            result := eq(a, 0)
+        }
+    }
+
     function lt(Bp a, Bp b) internal pure returns (bool result) {
         assembly {
             result := lt(a, b)
