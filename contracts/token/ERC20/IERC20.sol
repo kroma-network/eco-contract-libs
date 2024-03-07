@@ -12,9 +12,14 @@ import { ISelectorRoleControl } from "../../access/SelectorRoleControlUpgradeabl
 interface IERC20Base is IERC20, IERC20Metadata, IERC20Errors {}
 
 interface IWETH is IERC20, IERC20Metadata {
+    event Deposit(address indexed acc, uint256 amount);
+    event Withdrawal(address indexed acc, uint256 amount);
+
     function deposit() external payable;
 
     function withdraw(uint256 amount) external;
+
+    receive() external payable;
 }
 
 interface IERC20Burnable is IERC20Base {
