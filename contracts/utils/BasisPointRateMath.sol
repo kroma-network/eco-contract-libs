@@ -12,7 +12,13 @@ int32 constant IbpBase = 10000;
 
 type Ibp is int32;
 
+error ZeroDivision();
+
 library UbpMath {
+    function base() internal pure returns (Ubp) {
+        return Ubp.wrap(UbpBase);
+    }
+
     function add(Ubp a, Ubp b) internal pure returns (Ubp) {
         assembly {
             b := add(a, b)
@@ -42,6 +48,7 @@ library UbpMath {
     }
 
     function div(Ubp a, Ubp b) internal pure returns (Ubp) {
+        if (isZero(b)) revert ZeroDivision();
         assembly {
             b := div(mul(a, UbpBase), b)
         }
@@ -49,6 +56,7 @@ library UbpMath {
     }
 
     function div(uint a, Ubp b) internal pure returns (uint) {
+        if (isZero(b)) revert ZeroDivision();
         assembly {
             a := div(mul(a, UbpBase), b)
         }
@@ -68,6 +76,7 @@ library UbpMath {
     }
 
     function toUbp(uint numerator, uint denominator) internal pure returns (Ubp bp) {
+        if (denominator == 0) revert ZeroDivision();
         assembly {
             bp := div(mul(numerator, UintBase), denominator)
         }
@@ -118,6 +127,7 @@ library IbpMath {
     }
 
     function div(Ibp a, Ibp b) internal pure returns (Ibp) {
+        if (isZero(b)) revert ZeroDivision();
         unchecked {
             return wrap((unwrap(a) * IntBase) / unwrap(b));
         }
@@ -132,6 +142,7 @@ library IbpMath {
     }
 
     function toIbp(uint numerator, uint denominator) internal pure returns (Ibp bp) {
+        if (denominator == 0) revert ZeroDivision();
         unchecked {
             return wrap((numerator * UintBase) / denominator);
         }
