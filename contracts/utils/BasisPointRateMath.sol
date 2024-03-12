@@ -2,6 +2,12 @@
 
 pragma solidity ^0.8.0;
 
+/*
+ 1000000 = 1.0 = 100%
+ 10000 = 0.01 = 1%
+ 100 = 0.0001 = 0.01%
+*/
+
 uint256 constant UintBase = 1e18;
 uint32 constant UbpBase = 10000;
 
@@ -17,6 +23,11 @@ error ZeroDivision();
 library UbpMath {
     function base() internal pure returns (Ubp) {
         return Ubp.wrap(UbpBase);
+    }
+
+    function wrap(Ibp bp) internal pure returns (Ubp) {
+        if (IbpMath.lt(bp, 0)) revert("unsigned bp");
+        return Ubp.wrap(uint32(Ibp.unwrap(bp)));
     }
 
     function add(Ubp a, Ubp b) internal pure returns (Ubp) {
@@ -84,6 +95,10 @@ library UbpMath {
 }
 
 library IbpMath {
+    function base() internal pure returns (int256) {
+        return IntBase;
+    }
+
     function wrap(uint256 underlying) internal pure returns (Ibp) {
         return Ibp.wrap(int32(uint32(underlying)));
     }
@@ -94,6 +109,10 @@ library IbpMath {
 
     function unwrap(Ibp bp) internal pure returns (int256) {
         return Ibp.unwrap(bp);
+    }
+
+    function unwrap(Ubp bp) internal pure returns (int32) {
+        return int32(Ubp.unwrap(bp));
     }
 
     function add(Ibp a, Ibp b) internal pure returns (Ibp) {
@@ -110,26 +129,32 @@ library IbpMath {
 
     function mul(Ibp a, Ibp b) internal pure returns (Ibp) {
         unchecked {
-            return wrap((unwrap(a) * unwrap(b)) / IntBase);
+            return wrap((unwrap(a) * unwrap(b)) / IbpBase);
+        }
+    }
+
+    function mul(Ibp a, Ubp b) internal pure returns (Ibp) {
+        unchecked {
+            return wrap((unwrap(a) * unwrap(b)) / IbpBase);
         }
     }
 
     function mul(Ibp a, uint b) internal pure returns (int256) {
         unchecked {
-            return (unwrap(a) * int256(b)) / IntBase;
+            return (unwrap(a) * int256(b)) / IbpBase;
         }
     }
 
     function mul(Ibp a, int b) internal pure returns (int) {
         unchecked {
-            return (unwrap(a) * b) / IntBase;
+            return (unwrap(a) * b) / IbpBase;
         }
     }
 
     function div(Ibp a, Ibp b) internal pure returns (Ibp) {
         if (isZero(b)) revert ZeroDivision();
         unchecked {
-            return wrap((unwrap(a) * IntBase) / unwrap(b));
+            return wrap((unwrap(a) * IbpBase) / unwrap(b));
         }
     }
 
@@ -139,6 +164,10 @@ library IbpMath {
 
     function lt(Ibp a, Ibp b) internal pure returns (bool result) {
         return unwrap(a) < unwrap(b);
+    }
+
+    function lt(Ibp a, int32 b) internal pure returns (bool result) {
+        return unwrap(a) < b;
     }
 
     function toIbp(uint numerator, uint denominator) internal pure returns (Ibp bp) {
