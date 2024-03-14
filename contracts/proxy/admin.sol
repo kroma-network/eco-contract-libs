@@ -35,7 +35,7 @@ contract EcoProxyAdmin is IEcoProxyAdmin, EcoOwnable {
     }
 
     function initEcoProxyAdmin(address initialOwner) public override initializer {
-        initEcoOwnable(initialOwner);
+        _initEcoOwnable(initialOwner);
     }
 
     /**
