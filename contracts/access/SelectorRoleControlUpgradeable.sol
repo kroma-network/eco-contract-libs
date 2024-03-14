@@ -38,6 +38,10 @@ contract SelectorRoleControlUpgradeable is
     PausableUpgradeable,
     AccessControlEnumerableUpgradeable
 {
+    function initSelectorRoleControl(address initialOnwer) public initializer {
+        _initEcoOwnable(initialOnwer);
+    }
+
     modifier onlyAdmin() {
         _onlyAdmin(_msgSender());
         _;

@@ -4,7 +4,8 @@
 pragma solidity ^0.8.0;
 
 import { IERC20Burnable, IERC20Mintable, IEcoERC20 } from "./IERC20.sol";
-import { ERC20MintableUpgradeable, ERC20MintableUpgradeableWithDecimal } from "./ERC20MintableUpgradeable.sol";
+import { ERC20MintableUpgradeable } from "./ERC20MintableUpgradeable.sol";
+import { EcoERC20Upgradeable } from "./EcoERC20Upgradeable.sol";
 
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import { AccessControlEnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
@@ -27,13 +28,7 @@ interface IKromaBridgedERC20 {
     function burn(address _from, uint256 _amount) external;
 }
 
-contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, ERC20MintableUpgradeableWithDecimal {
-    constructor(
-        string memory name,
-        string memory symbol,
-        uint8 decimals
-    ) ERC20MintableUpgradeableWithDecimal(name, symbol, decimals) {}
-
+contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, EcoERC20Upgradeable {
     // keccak256(abi.encode(uint256(keccak256("eco.storage.ERC20L2Bridged")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant ERC20L2BridgedStorageLocation =
         0x077ffeaa7eec0cfdcda90af8784697c3c22a1b5cfbafe2f9887cbd76cdb47300;
@@ -53,12 +48,12 @@ contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, ERC20MintableUpgradeableWi
         address initialOwner,
         string memory name,
         string memory symbol,
-        uint8 _decimals,
+        uint8 decimals,
         address remoteToken,
         address bridge
     ) public initializer {
-        require(_decimals == decimals(), "decimal");
-        initEcoERC20Mintable(initialOwner, name, symbol);
+        initEcoERC20(initialOwner, name, symbol, decimals);
+
         ERC20L2BridgedStorage storage $ = _getERC20L2BridgedStorage();
         $.REMOTE_TOKEN = remoteToken;
         $.BRIDGE = bridge;
@@ -72,11 +67,11 @@ contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, ERC20MintableUpgradeableWi
         return interfaceId == type(IKromaBridgedERC20).interfaceId || super.supportsInterface(interfaceId);
     }
 
-    function burn(uint256 amount) public override(ERC20MintableUpgradeable, IERC20Burnable) {
+    function burn(uint256 amount) public override(EcoERC20Upgradeable, IERC20Burnable) {
         super.burn(amount);
     }
 
-    function burnFrom(address account, uint256 amount) public override(ERC20MintableUpgradeable, IERC20Burnable) {
+    function burnFrom(address account, uint256 amount) public override(EcoERC20Upgradeable, IERC20Burnable) {
         super.burnFrom(account, amount);
     }
 

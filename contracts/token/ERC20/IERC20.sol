@@ -11,6 +11,10 @@ import { ISelectorRoleControl } from "../../access/SelectorRoleControlUpgradeabl
 
 interface IERC20Base is IERC20, IERC20Metadata, IERC20Errors {}
 
+interface IEcoERC20Metadata is IERC20Base {
+    function _initEcoERC20Metadata(string memory _name, string memory _symbol, uint8 _decimals) external;
+}
+
 interface IWETH is IERC20, IERC20Metadata {
     event Deposit(address indexed acc, uint256 amount);
     event Withdrawal(address indexed acc, uint256 amount);
@@ -32,8 +36,6 @@ interface IERC20Mintable is IERC20Burnable {
     function mint(address to, uint256 amount) external;
 }
 
-interface IEcoERC20Mintable is IERC20Mintable {
-    function initEcoERC20Mintable(address initialOwner, string memory name, string memory symbol) external;
-}
+interface IEcoERC20Mintable is IERC20Mintable {}
 
-interface IEcoERC20 is ISelectorRoleControl, IEcoERC20Mintable {}
+interface IEcoERC20 is IEcoERC20Mintable, ISelectorRoleControl {}
