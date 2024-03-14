@@ -4,7 +4,7 @@ import { expect } from "chai";
 import { ContractFactory } from "ethers";
 import hre from "hardhat";
 
-import { ERC20MintableUpgradeable } from "../typechain-types";
+import { EcoERC20Upgradeable } from "../typechain-types";
 
 import { getSelector } from "./helper";
 
@@ -29,10 +29,9 @@ describe("ProxyContractTypeTest", function () {
   async function Proxy_Helper_Fixture() {
     const [owner] = await hre.ethers.getSigners();
     const helper = await new ProxyContractTypeTest(
-      await hre.ethers.getContractFactory("ERC20MintableUpgradeable"),
-      name,
-      symbol,
+      await hre.ethers.getContractFactory("EcoERC20Upgradeable")
     );
+    await helper.logic.initEcoERC20(owner, name, symbol, 18n);
     return { owner, helper };
   }
 
@@ -57,34 +56,20 @@ describe("ERC20 Mintable", function () {
     const EcoProxyForProxyAdmin = await hre.ethers.getContractFactory("EcoProxyForProxyAdmin");
     const pAdmin = await EcoProxyForProxyAdmin.deploy(admin, owner);
 
-    const ERC20 = await hre.ethers.getContractFactory("ERC20MintableUpgradeable");
-    const erc20 = await ERC20.deploy(name, symbol);
+    const ERC20 = await hre.ethers.getContractFactory("EcoERC20Upgradeable");
+    const erc20 = await ERC20.deploy();
 
     const EcoTUPWithAdmin = await hre.ethers.getContractFactory("EcoTUPWithAdmin");
     const inst = await EcoTUPWithAdmin.deploy(
       pAdmin,
       erc20,
-      erc20.interface.encodeFunctionData("initEcoERC20Mintable", [owner.address, name, symbol]),
+      erc20.interface.encodeFunctionData("initEcoERC20", [owner.address, name, symbol, 18n]),
     );
-    const pErc20: ERC20MintableUpgradeable = erc20.attach(await inst.getAddress()) as ERC20MintableUpgradeable;
+    const pErc20: EcoERC20Upgradeable = erc20.attach(await inst.getAddress()) as EcoERC20Upgradeable;
 
     return { owner, users, admin, pAdmin, erc20, pErc20 };
   }
 
-  describe("Deployment", function () {
-    it("Should set the right owner", async function () {
-      const { pErc20, owner } = await loadFixture(NFT_Mintable_Fixture);
-
-      expect(await pErc20.owner()).to.equal(owner.address);
-    });
-
-    it("Should set the right metadata", async function () {
-      const { pErc20 } = await loadFixture(NFT_Mintable_Fixture);
-
-      expect(await pErc20.name()).to.equal(name);
-      expect(await pErc20.symbol()).to.equal(symbol);
-    });
-  });
 
   describe("Non Fungible Token", function () {
     describe("Mint", function () {

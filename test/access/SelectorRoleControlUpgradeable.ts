@@ -11,7 +11,7 @@ describe("SelectorRoleControlUpgradeable", function () {
     const SelectorRoleControlUpgradeable = await hre.ethers.getContractFactory("SelectorRoleControlUpgradeable");
     const role = await SelectorRoleControlUpgradeable.connect(initialOwner).deploy();
 
-    await expect(role.initEcoOwnable(initialOwner)).not.reverted;
+    await expect(role.initSelectorRoleControl(initialOwner)).not.reverted;
 
     return { role, initialOwner, admin };
   }

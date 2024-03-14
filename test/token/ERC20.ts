@@ -14,9 +14,9 @@ describe("ERC20 Mintable", function () {
   async function NFT_Mintable_Fixture() {
     const [owner, ...users] = await hre.ethers.getSigners();
 
-    const ERC20 = await hre.ethers.getContractFactory("ERC20MintableUpgradeableWithDecimal");
-    const erc20 = await ERC20.deploy(name, symbol, decimals);
-    // await erc20.initNFT_Mintable(owner.address, name, symbol); only for proxy
+    const ERC20 = await hre.ethers.getContractFactory("EcoERC20Upgradeable");
+    const erc20 = await ERC20.deploy();
+    await erc20.initEcoERC20(owner, name, symbol, decimals);
 
     return { erc20, owner, users };
   }
@@ -26,7 +26,7 @@ describe("ERC20 Mintable", function () {
       const { erc20, owner } = await loadFixture(NFT_Mintable_Fixture);
 
       expect(await erc20.owner()).to.equal(owner.address);
-      await expect(erc20.initEcoERC20Mintable(owner, name, symbol)).reverted;
+      await expect(erc20.initEcoERC20(owner, name, symbol, decimals)).reverted;
     });
 
     it("Should set the right metadata", async function () {
