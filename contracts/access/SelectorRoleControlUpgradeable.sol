@@ -21,15 +21,25 @@ interface IMulticall {
     function multicall(bytes[] calldata data) external returns (bytes[] memory results);
 }
 
-interface ISelectorRoleControl is IAccessControlEnumerable, IPausable {
-    function grantSelectorRole(bytes4 selector, address account) external;
+interface ISelectorControl is IAccessControl {
+    function hasSelectorRole(bytes4 role, address account) external view returns (bool);
 
-    function revokeSelectorRole(bytes4 selector, address account) external;
+    function getSelectorRoleAdmin(bytes4 role) external view returns (bytes32);
 
-    function pause() external;
+    function grantSelectorRole(bytes4 role, address account) external;
 
-    function unpause() external;
+    function revokeSelectorRole(bytes4 role, address account) external;
+
+    function renounceSelectorRole(bytes4 role, address callerConfirmation) external;
 }
+
+interface ISelectorControlEnumerable is IAccessControlEnumerable, ISelectorControl {
+    function getSelectorRoleMember(bytes4 role, uint256 index) external view returns (address);
+
+    function getSelectorRoleMemberCount(bytes4 role) external view returns (uint256);
+}
+
+interface ISelectorRoleControl is ISelectorControlEnumerable, IPausable {}
 
 contract SelectorRoleControlUpgradeable is
     Initializable,
@@ -71,5 +81,25 @@ contract SelectorRoleControlUpgradeable is
 
     function unpause() public virtual override onlyAdmin {
         _unpause();
+    }
+
+    function hasSelectorRole(bytes4 role, address account) external view override returns (bool) {
+        return hasRole(role, account);
+    }
+
+    function getSelectorRoleAdmin(bytes4 role) external view override returns (bytes32) {
+        return getRoleAdmin(role);
+    }
+
+    function renounceSelectorRole(bytes4 role, address callerConfirmation) external override {
+        return renounceRole(role, callerConfirmation);
+    }
+
+    function getSelectorRoleMember(bytes4 role, uint256 index) external view override returns (address) {
+        return getRoleMember(role, index);
+    }
+
+    function getSelectorRoleMemberCount(bytes4 role) external view override returns (uint256) {
+        return getRoleMemberCount(role);
     }
 }

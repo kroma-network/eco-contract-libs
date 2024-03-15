@@ -5,6 +5,7 @@ import "./tasks/utils";
 
 import "hardhat-tracer";
 import "solidity-coverage";
+import "hardhat-contract-sizer";
 
 import "./tasks/namespace-slot";
 
