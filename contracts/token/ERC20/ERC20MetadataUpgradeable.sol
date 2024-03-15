@@ -28,7 +28,7 @@ abstract contract ERC20MetadataUpgradeable is IEcoERC20Metadata, ERC20Upgradeabl
         string memory _name,
         string memory _symbol,
         uint8 _decimals
-    ) public override onlyInitializing {
+    ) internal onlyInitializing {
         ERC20MetadataUpgradeableStorage storage $ = _getERC20MetadataUpgradeableStorage();
         $.name = _name;
         $.symbol = _symbol;

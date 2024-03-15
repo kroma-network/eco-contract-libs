@@ -11,9 +11,7 @@ import { ISelectorRoleControl } from "../../access/SelectorRoleControlUpgradeabl
 
 interface IERC20Base is IERC20, IERC20Metadata, IERC20Errors {}
 
-interface IEcoERC20Metadata is IERC20Base {
-    function _initEcoERC20Metadata(string memory _name, string memory _symbol, uint8 _decimals) external;
-}
+interface IEcoERC20Metadata is IERC20Base {}
 
 interface IWETH is IERC20, IERC20Metadata {
     event Deposit(address indexed acc, uint256 amount);

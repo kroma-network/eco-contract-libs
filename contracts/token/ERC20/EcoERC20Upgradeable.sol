@@ -7,13 +7,14 @@ import { ISelectorRoleControl, IPausable, IEcoOwnable, SelectorRoleControlUpgrad
 
 import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import { ERC20BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
+import { ERC20PermitUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
 
 import { IERC20, IERC20Metadata, IERC20Burnable, IEcoERC20 } from "./IERC20.sol";
 
 import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
 import { ERC20MintableUpgradeable } from "./ERC20MintableUpgradeable.sol";
 
-contract EcoERC20Upgradeable is IEcoERC20, ERC20MetadataUpgradeable, ERC20MintableUpgradeable {
+contract EcoERC20Upgradeable is IEcoERC20, ERC20MetadataUpgradeable, ERC20MintableUpgradeable, ERC20PermitUpgradeable {
     function initEcoERC20(
         address initialOwner,
         string memory _name,
