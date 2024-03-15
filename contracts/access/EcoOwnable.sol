@@ -21,13 +21,11 @@ interface IOwnable2Step is IOwnable {
 }
 
 interface IEcoOwnable is IOwnable2Step {
-    function _initEcoOwnable(address initialOwner) external;
-
     function registerPendingOwner(address pendingOwner) external;
 }
 
 abstract contract EcoOwnable is IEcoOwnable, Initializable, Ownable2StepUpgradeable {
-    function _initEcoOwnable(address initialOwner) public onlyInitializing {
+    function _initEcoOwnable(address initialOwner) internal onlyInitializing {
         __Ownable_init(initialOwner);
     }
 
@@ -61,7 +59,11 @@ abstract contract EcoOwnable is IEcoOwnable, Initializable, Ownable2StepUpgradea
 }
 
 contract TestEcoOwnable is EcoOwnable {
-    constructor() initializer {
-        _initEcoOwnable(_msgSender());
+    constructor() {
+        initTestEcoOwnable(_msgSender());
+    }
+
+    function initTestEcoOwnable(address initalOwner) public initializer {
+        _initEcoOwnable(initalOwner);
     }
 }
