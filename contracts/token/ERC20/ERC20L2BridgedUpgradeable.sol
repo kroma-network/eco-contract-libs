@@ -58,7 +58,7 @@ contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, EcoERC20Upgradeable {
         $.REMOTE_TOKEN = remoteToken;
         $.BRIDGE = bridge;
         grantSelectorRole(IERC20Mintable.mint.selector, bridge);
-        grantSelectorRole(IL2BridgeERC20.burn.selector, bridge);
+        grantSelectorRole(IKromaBridgedERC20.burn.selector, bridge);
     }
 
     function supportsInterface(
