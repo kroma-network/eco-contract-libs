@@ -78,5 +78,5 @@ autofetch_sources: false
 dependencies:
   - OpenZeppelin/openzeppelin-contracts@5.0.1
   - OpenZeppelin/openzeppelin-contracts-upgradeable@5.0.1
-
+  - OpenZeppelin/openzeppelin-contracts-upgradeable@5.0.1
 dev_deployment_artifacts: false
