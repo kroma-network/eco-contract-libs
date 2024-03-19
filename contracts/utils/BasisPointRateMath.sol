@@ -21,12 +21,14 @@ type Ibp is int32;
 error ZeroDivision();
 
 library UbpMath {
+    error ErrorUbp();
+
     function base() internal pure returns (Ubp) {
         return Ubp.wrap(UbpBase);
     }
 
     function wrap(Ibp bp) internal pure returns (Ubp) {
-        if (IbpMath.lt(bp, 0)) revert("unsigned bp");
+        if (IbpMath.lt(bp, 0)) revert ErrorUbp();
         return Ubp.wrap(uint32(Ibp.unwrap(bp)));
     }
 
