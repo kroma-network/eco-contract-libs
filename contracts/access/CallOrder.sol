@@ -17,7 +17,7 @@ interface ICallOrder {
     ) external payable returns (bytes memory);
 
     function functionMultiCallWithValue(
-        address target,
+        address[] memory target,
         bytes[] memory data,
         uint256[] memory value
     ) external payable returns (bytes[] memory);
@@ -35,16 +35,16 @@ abstract contract CallOrder is ICallOrder, EcoOwnable {
     }
 
     function functionMultiCallWithValue(
-        address target,
+        address[] memory target,
         bytes[] memory data,
         uint256[] memory value
     ) public payable override onlyOwner returns (bytes[] memory) {
-        if (data.length != value.length) revert CallCount();
+        if (target.length != data.length || target.length != value.length) revert CallCount();
 
         uint256 valueSum;
         unchecked {
-            for (uint256 i; i < data.length; i++) {
-                data[i] = Address.functionCallWithValue(target, data[i], value[i]);
+            for (uint256 i; i < target.length; i++) {
+                data[i] = Address.functionCallWithValue(target[i], data[i], value[i]);
                 valueSum += value[i];
             }
         }
