@@ -26,6 +26,7 @@ describe("EcoOwnable", function () {
       expect(await ecoOwnable.owner()).equal(initialOwner.address);
       expect(await ecoOwnable.pendingOwner()).equal(hre.ethers.ZeroAddress);
 
+      await expect(ecoOwnable.initEcoOwnableFail(initialOwner)).reverted;
       await expect(ecoOwnable.initTestEcoOwnable(initialOwner)).reverted;
     });
 

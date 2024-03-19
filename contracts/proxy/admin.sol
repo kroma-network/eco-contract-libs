@@ -3,11 +3,12 @@
 
 pragma solidity ^0.8.20;
 
-import { ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
-
-import { IEcoOwnable, EcoOwnable } from "../access/EcoOwnable.sol";
+import { EcoOwnable } from "../access/EcoOwnable.sol";
 import { CallOrder } from "../access/CallOrder.sol";
 import { SlotOrder } from "../access/SlotOrder.sol";
+import { MulticallUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/MulticallUpgradeable.sol";
+
+import { ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 interface IEcoProxyAdmin {
@@ -18,7 +19,7 @@ interface IEcoProxyAdmin {
  * @dev This is an auxiliary contract meant to be assigned as the admin of a {TransparentUpgradeableProxy}. For an
  * explanation of why you would want to use this see the documentation for {TransparentUpgradeableProxy}.
  */
-contract EcoProxyAdmin is IEcoProxyAdmin, EcoOwnable, CallOrder, SlotOrder {
+contract EcoProxyAdmin is IEcoProxyAdmin, EcoOwnable, CallOrder, SlotOrder, MulticallUpgradeable {
     /**
      * @dev The version of the upgrade interface of the contract. If this getter is missing, both `upgrade(address)`
      * and `upgradeAndCall(address,bytes)` are present, and `upgradeTo` must be used if no function should be called,

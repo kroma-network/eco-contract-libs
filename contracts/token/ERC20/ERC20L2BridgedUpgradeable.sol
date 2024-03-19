@@ -52,7 +52,8 @@ contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, EcoERC20Upgradeable {
         address remoteToken,
         address bridge
     ) public initializer {
-        initEcoERC20(initialOwner, name, symbol, decimals);
+        _initEcoOwnable(initialOwner);
+        _initEcoERC20Metadata(name, symbol, decimals);
 
         ERC20L2BridgedStorage storage $ = _getERC20L2BridgedStorage();
         $.REMOTE_TOKEN = remoteToken;
