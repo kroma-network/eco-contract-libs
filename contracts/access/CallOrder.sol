@@ -6,7 +6,10 @@ import { EcoOwnable } from "./EcoOwnable.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { StorageSlot } from "@openzeppelin/contracts/utils/StorageSlot.sol";
 
-interface ICallAccess {
+interface ICallOrder {
+    error CallCount();
+    error ValueSum();
+
     function functionCallWithValue(
         address target,
         bytes memory data,
@@ -20,13 +23,9 @@ interface ICallAccess {
     ) external payable returns (bytes[] memory);
 
     function functionDelegateCall(address target, bytes memory data) external payable returns (bytes memory);
-
-    function setSlot(bytes32 slot, bytes32 value) external;
-
-    function getSlot(bytes32 slot) external view returns (bytes32 value);
 }
 
-abstract contract CallAccess is ICallAccess, EcoOwnable {
+abstract contract CallOrder is ICallOrder, EcoOwnable {
     function functionCallWithValue(
         address target,
         bytes memory data,
@@ -40,7 +39,8 @@ abstract contract CallAccess is ICallAccess, EcoOwnable {
         bytes[] memory data,
         uint256[] memory value
     ) public payable override onlyOwner returns (bytes[] memory) {
-        require(data.length == value.length, "call count");
+        if (data.length != value.length) revert CallCount();
+
         uint256 valueSum;
         unchecked {
             for (uint256 i; i < data.length; i++) {
@@ -48,7 +48,8 @@ abstract contract CallAccess is ICallAccess, EcoOwnable {
                 valueSum += value[i];
             }
         }
-        require(valueSum == msg.value, "value sum");
+
+        if (valueSum != msg.value) revert ValueSum();
         return data;
     }
 
@@ -57,13 +58,5 @@ abstract contract CallAccess is ICallAccess, EcoOwnable {
         bytes memory data
     ) public payable override onlyOwner returns (bytes memory) {
         return Address.functionDelegateCall(target, data);
-    }
-
-    function setSlot(bytes32 slot, bytes32 value) public override onlyOwner {
-        StorageSlot.getBytes32Slot(slot).value = value;
-    }
-
-    function getSlot(bytes32 slot) external view override onlyOwner returns (bytes32 value) {
-        return StorageSlot.getBytes32Slot(slot).value;
     }
 }
