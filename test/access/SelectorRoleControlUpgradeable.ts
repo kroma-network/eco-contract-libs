@@ -1,6 +1,6 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
-import hre from "hardhat";
+import hre, { ethers } from "hardhat";
 
 import { getSelector } from "../helper";
 
@@ -21,6 +21,7 @@ describe("SelectorRoleControlUpgradeable", function () {
       const { role, initialOwner } = await loadFixture(fixtureSelectorRoleControlUpgradeableDeploy);
       expect(await role.owner()).equal(initialOwner.address);
       expect(await role.pendingOwner()).equal(hre.ethers.ZeroAddress);
+      await expect(role.initSelectorRoleControl(initialOwner)).reverted;
     });
 
     it("owner pause", async function () {
@@ -35,12 +36,22 @@ describe("SelectorRoleControlUpgradeable", function () {
     it("owner grant admin & admin try & play role", async function () {
       const { role, admin } = await loadFixture(fixtureSelectorRoleControlUpgradeableDeploy);
 
+      expect(await role.getSelectorRoleAdmin(getSelector(role.pause))).eq(ethers.ZeroHash);
+
       await expect(role.connect(admin).pause()).reverted;
       await expect(role.connect(admin).unpause()).reverted;
+
+      expect(await role.hasSelectorRole(getSelector(role.pause), admin)).eq(false);
+      expect(await role.getSelectorRoleMemberCount(getSelector(role.pause))).eq(0);
+      await expect(role.getSelectorRoleMember(getSelector(role.pause), 0)).reverted;
 
       await expect(role.revokeSelectorRole(getSelector(role.pause), admin)).reverted;
       await expect(role.grantSelectorRole(getSelector(role.pause), admin)).not.reverted;
       await expect(role.grantSelectorRole(getSelector(role.pause), admin)).reverted;
+
+      expect(await role.hasSelectorRole(getSelector(role.pause), admin)).eq(true);
+      expect(await role.getSelectorRoleMemberCount(getSelector(role.pause))).eq(1);
+      expect(await role.getSelectorRoleMember(getSelector(role.pause), 0)).eq(admin);
 
       await expect(role.connect(admin).pause()).not.reverted;
       await expect(role.connect(admin).pause()).reverted;
@@ -56,7 +67,9 @@ describe("SelectorRoleControlUpgradeable", function () {
       await expect(role.revokeSelectorRole(getSelector(role.pause), admin)).not.reverted;
       await expect(role.revokeSelectorRole(getSelector(role.pause), admin)).reverted;
 
-      await expect(role.revokeSelectorRole(getSelector(role.unpause), admin)).not.reverted;
+      await expect(role.renounceSelectorRole(getSelector(role.unpause), admin)).reverted;
+      await expect(role.connect(admin).renounceSelectorRole(getSelector(role.unpause), admin)).not.reverted;
+      await expect(role.connect(admin).renounceSelectorRole(getSelector(role.unpause), admin)).reverted;
       await expect(role.revokeSelectorRole(getSelector(role.unpause), admin)).reverted;
     });
 

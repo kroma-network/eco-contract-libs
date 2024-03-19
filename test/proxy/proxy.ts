@@ -1,7 +1,9 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
-import hre from "hardhat";
+import { ZeroAddress } from "ethers";
+import hre, { ethers } from "hardhat";
 
+import { ERC20L2BridgedUpgradeable } from "../../typechain-types";
 import { getAdminAddress, getImplAddress } from "../helper";
 
 describe("Proxy Test", function () {
@@ -51,30 +53,86 @@ describe("Proxy Test", function () {
       expect(await inst.symbol()).equal(symbol);
     });
 
-    it("upgrade check", async function () {
-      const { owner, erc20Logic, proxyAdmin, proxy, inst, users } = await loadFixture(fixtureProxyConfig);
+    it("proxy admin check: upgrade, call, calls, delcall, get/setSlot", async function () {
+      const { owner, proxyAdmin, proxy, inst, users, erc20Logic } = await loadFixture(fixtureProxyConfig);
 
       const theDecimals = 6n;
-      const EcoERC20 = await hre.ethers.getContractFactory("EcoERC20Upgradeable");
-      const EcoERC20Logic = await EcoERC20.deploy();
-      await EcoERC20Logic.initEcoERC20(owner, name, symbol, theDecimals);
+      const BridgedEcoERC20 = await hre.ethers.getContractFactory("ERC20L2BridgedUpgradeable");
+      const BridgedEcoERC20Logic = await BridgedEcoERC20.deploy();
+      await BridgedEcoERC20Logic.initEcoERC20(owner, name, symbol, theDecimals);
 
-      // test update, immutable decimals logic upgrade to state view return
+      const upgradeInst:ERC20L2BridgedUpgradeable = BridgedEcoERC20.attach(inst) as ERC20L2BridgedUpgradeable;
 
-      // expect(await erc20Logic.decimals()).equal(18);
-      // expect(await inst.decimals()).equal(18);
-      // expect(await EcoERC20Logic.decimals()).equal(theDecimals);
+      await expect(upgradeInst.REMOTE_TOKEN()).reverted;
 
-      // await expect(proxyAdmin.connect(users[0]).upgradeAndCall(proxy, EcoERC20Logic, "0x")).rejected;
-      // await expect(proxyAdmin.upgradeAndCall(proxy, EcoERC20Logic, "0x")).not.reverted;
+      await expect(proxyAdmin.connect(users[0]).upgradeAndCall(proxy, BridgedEcoERC20Logic, "0x")).rejected;
+      await expect(proxyAdmin.upgradeAndCall(proxy, BridgedEcoERC20Logic, "0x")).not.reverted;
 
-      // expect(await inst.decimals()).equal(theDecimals);
-      // expect(await inst.name()).equal(name);
-      // expect(await inst.symbol()).equal(symbol);
+      expect(await upgradeInst.REMOTE_TOKEN()).eq(ZeroAddress);
+
+      const artifact = await hre.artifacts.readArtifact("ITransparentUpgradeableProxy");
+      const proxyInterface = new hre.ethers.Interface(artifact.abi);
+      const calldata = proxyInterface.encodeFunctionData("upgradeToAndCall", [await erc20Logic.getAddress(), "0x"]);
+
+      await expect(proxyAdmin.connect(users[0]).functionCallWithValue(proxy, calldata, 0)).reverted;
+      await expect(proxyAdmin.functionCallWithValue(proxy, calldata, 0)).not.reverted;
+      await expect(upgradeInst.REMOTE_TOKEN()).reverted;
+
+      const ownableSlot = "0x9016d09d72d40fdae2fd8ceac6b6234c7706214fd39c1cd1e609a0528c199300";
+
+      expect(await proxyAdmin.getSlot(ownableSlot)).eq(ethers.zeroPadValue(owner.address, 32));
+      await expect( proxyAdmin.setSlot(ownableSlot, ethers.zeroPadValue(users[0].address, 32))).not.reverted;
+      expect(await proxyAdmin.owner()).eq(users[0].address);
+
+      const hackedProxyAdmin = proxyAdmin.connect(users[0]);
+
+      const upgradeCalldata = proxyInterface.encodeFunctionData("upgradeToAndCall", [await BridgedEcoERC20Logic.getAddress(), "0x"]);
+
+      await expect(hackedProxyAdmin.functionMultiCallWithValue(
+        [proxy, proxy],
+        [upgradeCalldata],
+        [0]
+      )).reverted;
+      await expect(hackedProxyAdmin.functionMultiCallWithValue(
+        [proxy],
+        [upgradeCalldata, upgradeCalldata],
+        [0]
+      )).reverted;
+      await expect(hackedProxyAdmin.functionMultiCallWithValue(
+        [proxy],
+        [upgradeCalldata],
+        [0,1]
+      )).reverted;
+
+      await expect(hackedProxyAdmin.functionMultiCallWithValue(
+        [proxy],
+        [upgradeCalldata],
+        [0],
+        {value: 1}
+      )).reverted;
+
+      await expect(hackedProxyAdmin.connect(owner).functionMultiCallWithValue(
+        [proxy],
+        [upgradeCalldata],
+        [0]
+      )).reverted;
+
+      await expect(hackedProxyAdmin.functionMultiCallWithValue(
+        [proxy],
+        [upgradeCalldata],
+        [0]
+      )).not.reverted;
+
+      expect(await upgradeInst.REMOTE_TOKEN()).eq(ZeroAddress);
+
+      const delegateCalldata = hackedProxyAdmin.interface.encodeFunctionData("transferOwnership", [owner.address]);
+      await expect(hackedProxyAdmin.connect(owner).functionDelegateCall(hackedProxyAdmin, delegateCalldata)).reverted;
+      await expect(hackedProxyAdmin.functionDelegateCall(hackedProxyAdmin, delegateCalldata)).not.reverted;
+      expect(await proxyAdmin.owner()).eq(owner.address);
     });
 
     it("Proxy Admin call Proxy fail check", async function () {
-      const { erc20Logic, EcoTUPWithAdminLogic, owner, users } = await loadFixture(fixtureProxyConfig);
+      const { erc20Logic, EcoTUPWithAdminLogic, owner } = await loadFixture(fixtureProxyConfig);
 
       const TestProxyAdminFail = await hre.ethers.getContractFactory("TestProxyAdminFail");
       const testProxyAdminLogic = await TestProxyAdminFail.deploy();

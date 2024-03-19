@@ -66,4 +66,8 @@ contract TestEcoOwnable is EcoOwnable {
     function initTestEcoOwnable(address initalOwner) public initializer {
         _initEcoOwnable(initalOwner);
     }
+
+    function initEcoOwnableFail(address initalOwner) public {
+        _initEcoOwnable(initalOwner);
+    }
 }

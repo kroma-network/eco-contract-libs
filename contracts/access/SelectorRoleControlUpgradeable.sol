@@ -22,6 +22,9 @@ interface IMulticall {
 }
 
 interface ISelectorControl is IAccessControl {
+    error SelectorRoleExist();
+    error SelectorRoleNotExist();
+
     function hasSelectorRole(bytes4 role, address account) external view returns (bool);
 
     function getSelectorRoleAdmin(bytes4 role) external view returns (bytes32);
@@ -63,11 +66,11 @@ contract SelectorRoleControlUpgradeable is
     }
 
     function grantSelectorRole(bytes4 selector, address account) public virtual override onlyAdmin {
-        require(_grantRole(selector, account), "role exist");
+        if (!_grantRole(selector, account)) revert SelectorRoleExist();
     }
 
     function revokeSelectorRole(bytes4 selector, address account) public virtual override onlyAdmin {
-        require(_revokeRole(selector, account), "role not exist");
+        if (!_revokeRole(selector, account)) revert SelectorRoleNotExist();
     }
 
     function paused() public view virtual override returns (bool) {
@@ -92,7 +95,8 @@ contract SelectorRoleControlUpgradeable is
     }
 
     function renounceSelectorRole(bytes4 role, address callerConfirmation) external override {
-        return renounceRole(role, callerConfirmation);
+        if (callerConfirmation != _msgSender()) revert AccessControlBadConfirmation();
+        if (!_revokeRole(role, callerConfirmation)) revert SelectorRoleNotExist();
     }
 
     function getSelectorRoleMember(bytes4 role, uint256 index) external view override returns (address) {
