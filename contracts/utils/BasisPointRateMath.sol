@@ -91,7 +91,7 @@ library UbpMath {
     function toUbp(uint numerator, uint denominator) internal pure returns (Ubp bp) {
         if (denominator == 0) revert ZeroDivision();
         assembly {
-            bp := div(mul(numerator, UintBase), denominator)
+            bp := div(mul(numerator, UbpBase), denominator)
         }
     }
 }
@@ -175,7 +175,7 @@ library IbpMath {
     function toIbp(uint numerator, uint denominator) internal pure returns (Ibp bp) {
         if (denominator == 0) revert ZeroDivision();
         unchecked {
-            return wrap((numerator * UintBase) / denominator);
+            return wrap((numerator * UbpBase) / denominator);
         }
     }
 }
