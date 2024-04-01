@@ -57,17 +57,3 @@ abstract contract EcoOwnable is IEcoOwnable, Initializable, Ownable2StepUpgradea
         return super._transferOwnership(newOwner);
     }
 }
-
-contract TestEcoOwnable is EcoOwnable {
-    constructor() {
-        initTestEcoOwnable(_msgSender());
-    }
-
-    function initTestEcoOwnable(address initalOwner) public initializer {
-        _initEcoOwnable(initalOwner);
-    }
-
-    function initEcoOwnableFail(address initalOwner) public {
-        _initEcoOwnable(initalOwner);
-    }
-}
