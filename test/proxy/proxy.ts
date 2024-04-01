@@ -88,39 +88,16 @@ describe("Proxy Test", function () {
 
       const upgradeCalldata = proxyInterface.encodeFunctionData("upgradeToAndCall", [await BridgedEcoERC20Logic.getAddress(), "0x"]);
 
-      await expect(hackedProxyAdmin.functionMultiCallWithValue(
-        [proxy, proxy],
-        [upgradeCalldata],
-        [0]
-      )).reverted;
-      await expect(hackedProxyAdmin.functionMultiCallWithValue(
-        [proxy],
-        [upgradeCalldata, upgradeCalldata],
-        [0]
-      )).reverted;
-      await expect(hackedProxyAdmin.functionMultiCallWithValue(
-        [proxy],
-        [upgradeCalldata],
-        [0,1]
+      await expect(hackedProxyAdmin.connect(owner).functionCallWithValue(
+        proxy,
+        upgradeCalldata,
+        0
       )).reverted;
 
-      await expect(hackedProxyAdmin.functionMultiCallWithValue(
-        [proxy],
-        [upgradeCalldata],
-        [0],
-        {value: 1}
-      )).reverted;
-
-      await expect(hackedProxyAdmin.connect(owner).functionMultiCallWithValue(
-        [proxy],
-        [upgradeCalldata],
-        [0]
-      )).reverted;
-
-      await expect(hackedProxyAdmin.functionMultiCallWithValue(
-        [proxy],
-        [upgradeCalldata],
-        [0]
+      await expect(hackedProxyAdmin.functionCallWithValue(
+        proxy,
+        upgradeCalldata,
+        0
       )).not.reverted;
 
       expect(await upgradeInst.REMOTE_TOKEN()).eq(ZeroAddress);
