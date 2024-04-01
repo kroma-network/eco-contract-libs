@@ -65,14 +65,3 @@ contract EcoProxyForProxyAdmin is ERC1967Proxy {
         address initialOwner
     ) ERC1967Proxy(proxyAdminLogic, abi.encodeWithSelector(IEcoProxyAdmin.initEcoProxyAdmin.selector, initialOwner)) {}
 }
-
-contract TestProxyAdminFail is EcoProxyAdmin {
-    constructor() EcoProxyAdmin(_msgSender()) {}
-
-    function command(address to, uint256 value, bytes memory data) public payable returns (bytes memory) {
-        bool success;
-        (success, data) = to.call{ value: value }(data);
-        require(success, "call fail");
-        return data;
-    }
-}

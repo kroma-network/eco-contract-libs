@@ -134,13 +134,13 @@ describe("Proxy Test", function () {
     it("Proxy Admin call Proxy fail check", async function () {
       const { erc20Logic, EcoTUPWithAdminLogic, owner } = await loadFixture(fixtureProxyConfig);
 
-      const TestProxyAdminFail = await hre.ethers.getContractFactory("TestProxyAdminFail");
-      const testProxyAdminLogic = await TestProxyAdminFail.deploy();
+      const Mock_TestProxyAdminFail = await hre.ethers.getContractFactory("Mock_TestProxyAdminFail");
+      const testProxyAdminLogic = await Mock_TestProxyAdminFail.deploy();
 
       const initData = erc20Logic.interface.encodeFunctionData("initEcoERC20", [owner.address, name, symbol, 18n]);
       const proxy = await EcoTUPWithAdminLogic.deploy(testProxyAdminLogic, erc20Logic, initData);
 
-      const proxyAdmin = await hre.ethers.getContractAt("TestProxyAdminFail", await getAdminAddress(proxy), owner);
+      const proxyAdmin = await hre.ethers.getContractAt("Mock_TestProxyAdminFail", await getAdminAddress(proxy), owner);
 
       const failInput = erc20Logic.interface.encodeFunctionData("name");
 

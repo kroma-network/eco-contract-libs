@@ -6,7 +6,7 @@ describe("EcoOwnable", function () {
   async function fixtureEcoOwnableDeploy() {
     const [initialOwner, nextOwner] = await hre.ethers.getSigners();
 
-    const EcoOwnable = await hre.ethers.getContractFactory("TestEcoOwnable");
+    const EcoOwnable = await hre.ethers.getContractFactory("Mock_TestEcoOwnable");
     const ecoOwnable = await EcoOwnable.connect(initialOwner).deploy();
 
     return { ecoOwnable, initialOwner, nextOwner };
@@ -27,7 +27,7 @@ describe("EcoOwnable", function () {
       expect(await ecoOwnable.pendingOwner()).equal(hre.ethers.ZeroAddress);
 
       await expect(ecoOwnable.initEcoOwnableFail(initialOwner)).reverted;
-      await expect(ecoOwnable.initTestEcoOwnable(initialOwner)).reverted;
+      await expect(ecoOwnable.initMock_TestEcoOwnable(initialOwner)).reverted;
     });
 
     it("transfer onwer", async function () {
