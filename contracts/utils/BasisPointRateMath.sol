@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.0;
 
+import { SafeCast } from "@openzeppelin/contracts/utils/math/SafeCast.sol";
+
 /*
  1000000 = 1.0 = 100%
  10000 = 0.01 = 1%
@@ -21,15 +23,12 @@ type Ibp is int32;
 error ZeroDivision();
 
 library UbpMath {
-    error ErrorUbp();
-
     function base() internal pure returns (Ubp) {
         return Ubp.wrap(UbpBase);
     }
 
     function wrap(Ibp bp) internal pure returns (Ubp) {
-        if (IbpMath.lt(bp, 0)) revert ErrorUbp();
-        return Ubp.wrap(uint32(Ibp.unwrap(bp)));
+        return Ubp.wrap(SafeCast.toUint32(SafeCast.toUint256(Ibp.unwrap(bp))));
     }
 
     function add(Ubp a, Ubp b) internal pure returns (Ubp) {
@@ -102,11 +101,11 @@ library IbpMath {
     }
 
     function wrap(uint256 underlying) internal pure returns (Ibp) {
-        return Ibp.wrap(int32(uint32(underlying)));
+        return wrap(SafeCast.toInt256(underlying));
     }
 
     function wrap(int256 underlying) internal pure returns (Ibp) {
-        return Ibp.wrap(int32(underlying));
+        return Ibp.wrap(SafeCast.toInt32(underlying));
     }
 
     function unwrap(Ibp bp) internal pure returns (int256) {
@@ -114,7 +113,7 @@ library IbpMath {
     }
 
     function unwrap(Ubp bp) internal pure returns (int32) {
-        return int32(Ubp.unwrap(bp));
+        return SafeCast.toInt32(SafeCast.toInt256(Ubp.unwrap(bp)));
     }
 
     function add(Ibp a, Ibp b) internal pure returns (Ibp) {
@@ -143,7 +142,7 @@ library IbpMath {
 
     function mul(Ibp a, uint b) internal pure returns (int256) {
         unchecked {
-            return (unwrap(a) * int256(b)) / IbpBase;
+            return (unwrap(a) * SafeCast.toInt256(b)) / IbpBase;
         }
     }
 
@@ -172,10 +171,10 @@ library IbpMath {
         return unwrap(a) < b;
     }
 
-    function toIbp(uint numerator, uint denominator) internal pure returns (Ibp bp) {
+    function toIbp(int256 numerator, int256 denominator) internal pure returns (Ibp bp) {
         if (denominator == 0) revert ZeroDivision();
         unchecked {
-            return wrap((numerator * UbpBase) / denominator);
+            return wrap((numerator * IbpBase) / denominator);
         }
     }
 }

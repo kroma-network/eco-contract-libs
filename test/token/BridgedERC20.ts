@@ -54,6 +54,7 @@ describe("Bridged ERC20", function () {
         await expect(erc20.mint(users[0], amount)).not.reverted;
         await expect(erc20.connect(bridge).mint(users[0], amount)).not.reverted;
       });
+
       it("Shouldn't fail mint with the right role access account", async function () {
         const { erc20, users } = await loadFixture(NFT_Mintable_Fixture);
 
