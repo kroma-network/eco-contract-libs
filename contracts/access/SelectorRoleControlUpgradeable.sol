@@ -10,8 +10,6 @@ import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/P
 import { IAccessControlEnumerable, IAccessControl } from "@openzeppelin/contracts/access/extensions/IAccessControlEnumerable.sol";
 
 interface IPausable {
-    // function paused() external view returns (bool); already defined & implemented
-
     function pause() external;
 
     function unpause() external;
@@ -71,10 +69,6 @@ contract SelectorRoleControlUpgradeable is
 
     function revokeSelectorRole(bytes4 selector, address account) public virtual override onlyAdmin {
         if (!_revokeRole(selector, account)) revert SelectorRoleNotExist();
-    }
-
-    function paused() public view virtual override returns (bool) {
-        return super.paused();
     }
 
     // IPausable

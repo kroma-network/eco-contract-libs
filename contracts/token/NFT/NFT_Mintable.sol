@@ -32,10 +32,6 @@ contract NFT_Mintable is
         __ERC721_init(name, symbol);
     }
 
-    function paused() public view virtual override(PausableUpgradeable, SelectorRoleControlUpgradeable) returns (bool) {
-        return super.paused();
-    }
-
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual override(ERC721SequencialMintUpbradeable, ERC721Upgradeable, IERC165) returns (bool) {
