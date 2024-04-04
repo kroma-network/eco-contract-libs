@@ -13,7 +13,7 @@ interface IERC20Base is IERC20, IERC20Metadata, IERC20Errors {}
 
 interface IEcoERC20Metadata is IERC20Base {}
 
-interface IWETH is IERC20, IERC20Metadata {
+interface IWNative is IERC20, IERC20Metadata {
     event Deposit(address indexed acc, uint256 amount);
     event Withdrawal(address indexed acc, uint256 amount);
 
@@ -23,6 +23,8 @@ interface IWETH is IERC20, IERC20Metadata {
 
     receive() external payable;
 }
+
+interface IWETH is IWNative {}
 
 interface IERC20Burnable is IERC20Base {
     function burn(uint256 amount) external;
