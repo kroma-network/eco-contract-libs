@@ -10,7 +10,7 @@ export const Testnet = {
   testWemix: 1112n,
   Easel: 7789n,
 
-  testKroma: 2358n,
+  sepoliaKroma: 2358n,
   Sail: 7791n,
 };
 
@@ -29,7 +29,7 @@ export const Layer1 = {
 
 export const Layer2 = {
   Kroma: 255n,
-  testKroma: 2358n,
+  sepoliaKroma: 2358n,
   Sail: 7791n,
 };
 

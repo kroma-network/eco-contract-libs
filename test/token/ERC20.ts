@@ -38,7 +38,7 @@ describe("ERC20 Mintable", function () {
     });
   });
 
-  describe("Non Fungible Token", function () {
+  describe("ERC20 Feature", function () {
     describe("Mint", function () {
       it("Should revert with the right error if mint called from another account", async function () {
         const { erc20, users } = await loadFixture(NFT_Mintable_Fixture);
