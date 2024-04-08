@@ -6,7 +6,6 @@ pragma solidity ^0.8.0;
 import { AccessControlEnumerableUpgradeable, SelectorRoleControlUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
 
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import { IERC1155Errors } from "@openzeppelin/contracts/interfaces/draft-IERC6093.sol";
 
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import { ERC1155BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol";
@@ -23,7 +22,7 @@ abstract contract ERC1155MintableUpgradeable is
 {
     function supportsInterface(
         bytes4 interfaceId
-    ) public view override(IERC165, AccessControlEnumerableUpgradeable, ERC1155Upgradeable) returns (bool) {
+    ) public view virtual override(IERC165, AccessControlEnumerableUpgradeable, ERC1155Upgradeable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
