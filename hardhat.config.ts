@@ -1,13 +1,13 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
-import "./tasks/utils";
+import "./eco-tasks/utils";
 
 import "hardhat-tracer";
 import "solidity-coverage";
 import "hardhat-contract-sizer";
 
-import "./tasks/namespace-slot";
+import "./eco-tasks/namespace-slot";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -38,9 +38,9 @@ const config: HardhatUserConfig = {
       initialBaseFeePerGas: 0,
       // brownie expects calls and transactions to throw on revert
       throwOnTransactionFailures: true,
-      throwOnCallFailures: true
-    }
-  }
+      throwOnCallFailures: true,
+    },
+  },
 };
 
 export default config;
