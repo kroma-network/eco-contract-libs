@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC721/extensions/ERC721Pausable.sol)
+// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC1155/extensions/ERC1155Pausable.sol)
 
 pragma solidity ^0.8.20;
 
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
-import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 
 /**
- * @dev ERC721 token with pausable token transfers, minting and burning.
+ * @dev ERC1155 token with pausable token transfers, minting and burning.
  *
  * Useful for scenarios such as preventing trades until the end of an evaluation
  * period, or having an emergency switch for freezing all token transfers in the
@@ -20,23 +20,26 @@ import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC
  * access control, e.g. using {AccessControl} or {Ownable}. Not doing so will
  * make the contract pause mechanism of the contract unreachable, and thus unusable.
  */
-abstract contract ERC721PausableUpgradeable is
-    Initializable,
-    PausableUpgradeable,
-    ERC721Upgradeable // inheritance layout changed from origin oz
-{
+abstract contract ERC1155PausableUpgradeable is Initializable, PausableUpgradeable, ERC1155Upgradeable {
+    function __ERC1155Pausable_init() internal onlyInitializing {
+        __Pausable_init_unchained();
+    }
+
+    function __ERC1155Pausable_init_unchained() internal onlyInitializing {}
+
     /**
-     * @dev See {ERC721-_update}.
+     * @dev See {ERC1155-_update}.
      *
      * Requirements:
      *
      * - the contract must not be paused.
      */
     function _update(
+        address from,
         address to,
-        uint256 tokenId,
-        address auth
-    ) internal virtual override whenNotPaused returns (address) {
-        return super._update(to, tokenId, auth);
+        uint256[] memory ids,
+        uint256[] memory values
+    ) internal virtual override whenNotPaused {
+        super._update(from, to, ids, values);
     }
 }
