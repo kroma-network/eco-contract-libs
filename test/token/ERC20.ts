@@ -78,7 +78,7 @@ describe("ERC20 Mintable", function () {
         await expect(erc20.transferFrom(users[0], users[1], await erc20.balanceOf(users[0]))).not.reverted;
         await expect(erc20.transferFrom(users[0], users[1], amount)).reverted;
         await expect(erc20.connect(users[1]).transferFrom(users[1], users[0], await erc20.balanceOf(users[1])))
-          .reverted;
+          .reverted; // should use transfer, owner == spender not allowed
         await erc20.connect(users[1]).approve(owner, hre.ethers.MaxUint256);
         await expect(erc20.burnFrom(users[1], await erc20.balanceOf(users[1]))).not.reverted;
       });
