@@ -10,7 +10,12 @@ import { ERC1155URIStorageUpgradeable } from "@openzeppelin/contracts-upgradeabl
 
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 
-contract EcoERC1155 is ERC1155MintableUpgradeable, EcoERC1155URIControl {
+contract EcoERC1155Upgradeable is ERC1155MintableUpgradeable, EcoERC1155URIControl {
+    function initEcoERC1155(address initialOwner, string memory baseURI) public initializer {
+        _initEcoOwnable(initialOwner);
+        __ERC1155_init(baseURI);
+    }
+
     function supportsInterface(
         bytes4 interfaceId
     ) public view override(ERC1155MintableUpgradeable, EcoERC1155URIControl) returns (bool) {
