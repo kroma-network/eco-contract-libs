@@ -46,7 +46,7 @@ describe("ERC20 Mintable", function () {
   const symbol = "M ERC20";
 
   const amount = hre.ethers.parseEther("100");
-  async function NFT_Mintable_Fixture() {
+  async function Proxy_ERC20_Fixture() {
     // TODO: apply proxyFactory
     const [owner, ...users] = await hre.ethers.getSigners();
 
@@ -71,21 +71,21 @@ describe("ERC20 Mintable", function () {
   }
 
 
-  describe("Non Fungible Token", function () {
+  describe("Proxy ERC20", function () {
     describe("Mint", function () {
       it("Should revert with the right error if mint called from another account", async function () {
-        const { pErc20, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { pErc20, users } = await loadFixture(Proxy_ERC20_Fixture);
         const user_connected_nft = pErc20.connect(users[0]);
         await expect(user_connected_nft.mint(users[0], amount)).reverted;
       });
 
       it("Shouldn't fail mint with the right owner", async function () {
-        const { pErc20, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { pErc20, users } = await loadFixture(Proxy_ERC20_Fixture);
         await expect(pErc20.mint(users[0], amount)).not.reverted;
       });
 
       it("Shouldn't fail mint with the right role access account", async function () {
-        const { pErc20, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { pErc20, users } = await loadFixture(Proxy_ERC20_Fixture);
 
         await expect(pErc20.grantSelectorRole(getSelector(pErc20.mint), users[0])).not.reverted;
 
@@ -99,7 +99,7 @@ describe("ERC20 Mintable", function () {
 
     describe("Transfer", function () {
       it("Should revert with the right error if mint called from another account", async function () {
-        const { owner, pErc20, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { owner, pErc20, users } = await loadFixture(Proxy_ERC20_Fixture);
         await expect(pErc20.mint(users[0], amount)).not.reverted;
 
         await pErc20.connect(users[0]).approve(owner, hre.ethers.MaxUint256);
