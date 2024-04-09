@@ -13,10 +13,18 @@ interface IERC1155URIControl is ISelectorRoleControl, IERC1155MetadataURI {
     function setBaseURI(string memory baseURI) external;
 }
 
+interface IERC1155Supply is IERC1155 {
+    function totalSupply(uint256 id) external view returns (uint256);
+
+    function totalSupply() external view returns (uint256);
+
+    function exists(uint256 id) external view returns (bool);
+}
+
 interface IERC1155Mintable is ISelectorRoleControl, IERC1155 {
     function mint(address to, uint256 id, uint256 value, bytes calldata data) external;
 
     function mintBatch(address to, uint256[] calldata ids, uint256[] calldata values, bytes calldata data) external;
 }
 
-interface IEcoERC1155 is IERC1155Mintable, IERC1155URIControl {}
+interface IEcoERC1155 is IERC1155Supply, IERC1155Mintable, IERC1155URIControl {}
