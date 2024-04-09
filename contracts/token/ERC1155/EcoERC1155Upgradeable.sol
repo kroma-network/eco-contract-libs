@@ -2,7 +2,8 @@
 
 pragma solidity ^0.8.0;
 
-import { IERC1155MetadataURI, IEcoERC1155 } from "./IERC1155.sol";
+import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import { IERC1155MetadataURI, IEcoERC1155, IERC1155Supply } from "./IERC1155.sol";
 
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import { ERC1155MintableUpgradeable } from "./ERC1155MintableUpgradeable.sol";
@@ -15,6 +16,7 @@ import { ERC1155SupplyUpgradeable } from "@openzeppelin/contracts-upgradeable/to
 import { ERC1155PausableUpgradeable } from "./ERC1155PausableUpgradeable.sol";
 
 contract EcoERC1155Upgradeable is
+    IEcoERC1155,
     ERC1155MintableUpgradeable,
     EcoERC1155URIControl,
     ERC1155BurnableUpgradeable,
@@ -28,7 +30,12 @@ contract EcoERC1155Upgradeable is
 
     function supportsInterface(
         bytes4 interfaceId
-    ) public view override(ERC1155MintableUpgradeable, ERC1155Upgradeable, EcoERC1155URIControl) returns (bool) {
+    )
+        public
+        view
+        override(ERC1155MintableUpgradeable, ERC1155Upgradeable, EcoERC1155URIControl, IERC165)
+        returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
 
@@ -51,5 +58,17 @@ contract EcoERC1155Upgradeable is
         returns (string memory)
     {
         return super.uri(id);
+    }
+
+    function totalSupply(uint256 id) public view override(ERC1155SupplyUpgradeable, IERC1155Supply) returns (uint256) {
+        return super.totalSupply(id);
+    }
+
+    function totalSupply() public view override(ERC1155SupplyUpgradeable, IERC1155Supply) returns (uint256) {
+        return super.totalSupply();
+    }
+
+    function exists(uint256 id) public view override(ERC1155SupplyUpgradeable, IERC1155Supply) returns (bool) {
+        return super.exists(id);
     }
 }
