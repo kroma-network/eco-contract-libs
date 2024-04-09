@@ -74,7 +74,7 @@ describe("ERC1155 Mintable", function () {
         await erc1155.connect(users[0]).setApprovalForAll(owner, true);
         await expect(erc1155.safeTransferFrom(users[0], users[1], default1155Id, await erc1155.balanceOf(users[0], default1155Id), "0x")).not.reverted;
         await expect(erc1155.safeTransferFrom(users[0], users[1], default1155Id, amount, "0x")).reverted;
-        console.log(await erc1155.balanceOf(users[1], default1155Id));
+
         await expect(erc1155.connect(users[1]).safeTransferFrom(users[1], users[0], default1155Id, await erc1155.balanceOf(users[1], default1155Id)/2n, "0x"))
           .not.reverted; // this allowed, openzeppelin transfer imple differ from erc20
         await erc1155.connect(users[1]).setApprovalForAll(owner, true);
