@@ -13,7 +13,23 @@ interface IERC20Base is IERC20, IERC20Metadata, IERC20Errors {}
 
 interface IEcoERC20Metadata is IERC20Base {}
 
-interface IWNative is IERC20, IERC20Metadata {
+interface IERC20Stake is IERC20Base {
+    function stake(uint256 value) external;
+
+    function unstake(uint256 value) external;
+}
+
+interface IERC20Rebased is IERC20Base {
+    function totalShares() external view returns (uint256);
+
+    function shareOf(address account) external view returns (uint256);
+
+    function calcShare(uint256 balance) external view returns (uint256);
+
+    function calcBalance(uint256 share) external view returns (uint256);
+}
+
+interface IWNative is IERC20Base {
     event Deposit(address indexed acc, uint256 amount);
     event Withdrawal(address indexed acc, uint256 amount);
 
