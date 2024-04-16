@@ -8,27 +8,29 @@ import { ISelectorRoleControl, IPausable, IEcoOwnable, SelectorRoleControlUpgrad
 import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import { ERC20BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import { ERC20PermitUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
+import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
+import { ERC4626Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
-import { IERC20, IERC20Metadata, IERC20Burnable, IEcoERC20 } from "./IERC20.sol";
+import { IERC20, IERC20Metadata, IERC20Burnable, IEcoERC20, IEcoERC4626 } from "./IERC20.sol";
 
 import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
 import { ERC20MintableUpgradeable } from "./ERC20MintableUpgradeable.sol";
 
-contract EcoERC20Upgradeable is IEcoERC20, ERC20MetadataUpgradeable, ERC20MintableUpgradeable, ERC20PermitUpgradeable {
-    function initEcoERC20(
-        address initialOwner,
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals
-    ) public virtual initializer {
-        _initEcoOwnable(initialOwner);
-        _initEcoERC20Metadata(_name, _symbol, _decimals);
+abstract contract EcoERC4626Upgradeable is
+    IEcoERC4626,
+    ERC20BurnableUpgradeable,
+    ERC20MetadataUpgradeable,
+    ERC20PermitUpgradeable,
+    ERC4626Upgradeable
+{
+    function initEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) public initializer {
+        __ERC4626_init(IERC20(asset));
+        _initEcoERC20Metadata(_name, _symbol, decimals());
     }
 
     function name()
         public
         view
-        virtual
         override(ERC20MetadataUpgradeable, ERC20Upgradeable, IERC20Metadata)
         returns (string memory)
     {
@@ -38,7 +40,6 @@ contract EcoERC20Upgradeable is IEcoERC20, ERC20MetadataUpgradeable, ERC20Mintab
     function symbol()
         public
         view
-        virtual
         override(ERC20MetadataUpgradeable, ERC20Upgradeable, IERC20Metadata)
         returns (string memory)
     {
@@ -48,29 +49,17 @@ contract EcoERC20Upgradeable is IEcoERC20, ERC20MetadataUpgradeable, ERC20Mintab
     function decimals()
         public
         view
-        virtual
-        override(ERC20MetadataUpgradeable, ERC20Upgradeable, IERC20Metadata)
+        override(ERC20MetadataUpgradeable, ERC20Upgradeable, ERC4626Upgradeable, IERC20Metadata)
         returns (uint8)
     {
         return super.decimals();
     }
 
-    function burn(uint256 amount) public virtual override(ERC20MintableUpgradeable, IERC20Burnable) {
-        super.burn(amount);
-    }
-
-    function burnFrom(
-        address account,
-        uint256 amount
-    ) public virtual override(ERC20MintableUpgradeable, IERC20Burnable) {
-        super.burnFrom(account, amount);
-    }
-
-    function totalSupply() public view virtual override(ERC20Upgradeable, IERC20) returns (uint256) {
+    function totalSupply() public view override(ERC20Upgradeable, IERC20) returns (uint256) {
         return super.totalSupply();
     }
 
-    function balanceOf(address account) public view virtual override(ERC20Upgradeable, IERC20) returns (uint256) {
+    function balanceOf(address account) public view override(ERC20Upgradeable, IERC20) returns (uint256) {
         return super.balanceOf(account);
     }
 
@@ -81,7 +70,7 @@ contract EcoERC20Upgradeable is IEcoERC20, ERC20MetadataUpgradeable, ERC20Mintab
     function allowance(
         address owner,
         address spender
-    ) public view virtual override(ERC20Upgradeable, IERC20) returns (uint256) {
+    ) public view override(ERC20Upgradeable, IERC20) returns (uint256) {
         return super.allowance(owner, spender);
     }
 
@@ -95,5 +84,16 @@ contract EcoERC20Upgradeable is IEcoERC20, ERC20MetadataUpgradeable, ERC20Mintab
         uint256 value
     ) public virtual override(ERC20Upgradeable, IERC20) returns (bool) {
         return super.transferFrom(from, to, value);
+    }
+
+    function burn(uint256 amount) public virtual override(ERC20BurnableUpgradeable, IERC20Burnable) {
+        super.burn(amount);
+    }
+
+    function burnFrom(
+        address account,
+        uint256 amount
+    ) public virtual override(ERC20BurnableUpgradeable, IERC20Burnable) {
+        super.burnFrom(account, amount);
     }
 }
