@@ -9,6 +9,8 @@ import { IERC20Errors } from "@openzeppelin/contracts/interfaces/draft-IERC6093.
 
 import { ISelectorRoleControl } from "../../access/SelectorRoleControlUpgradeable.sol";
 
+import { IERC4626 } from "@openzeppelin/contracts/interfaces/IERC4626.sol";
+
 interface IERC20Base is IERC20, IERC20Metadata, IERC20Errors {}
 
 interface IEcoERC20Metadata is IERC20Base {}
@@ -55,3 +57,5 @@ interface IERC20Mintable is IERC20Burnable {
 interface IEcoERC20Mintable is IERC20Mintable {}
 
 interface IEcoERC20 is IEcoERC20Mintable, ISelectorRoleControl {}
+
+interface IEcoERC4626 is IEcoERC20, IERC4626 {}
