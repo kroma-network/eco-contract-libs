@@ -3,14 +3,15 @@
 
 pragma solidity ^0.8.0;
 
-import { IERC20Burnable, IERC20Mintable, IEcoERC20 } from "./IERC20.sol";
+import { IERC20Burnable, IERC20Mintable, IERC20Permit, IEcoERC20 } from "./IERC20.sol";
 import { ERC20MintableUpgradeable } from "./ERC20MintableUpgradeable.sol";
 import { EcoERC20Upgradeable } from "./EcoERC20Upgradeable.sol";
+import { ERC20PermitUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
 
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import { AccessControlEnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 
-interface IL2BridgeERC20 is IEcoERC20, IERC165 {
+interface IL2BridgeERC20 is IEcoERC20 {
     function REMOTE_TOKEN() external view returns (address);
 
     function BRIDGE() external view returns (address);
@@ -64,7 +65,7 @@ contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, EcoERC20Upgradeable {
 
     function supportsInterface(
         bytes4 interfaceId
-    ) public view override(AccessControlEnumerableUpgradeable, IERC165) returns (bool) {
+    ) public view override(AccessControlEnumerableUpgradeable) returns (bool) {
         return interfaceId == type(IKromaBridgedERC20).interfaceId || super.supportsInterface(interfaceId);
     }
 
@@ -90,5 +91,9 @@ contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, EcoERC20Upgradeable {
 
     function burn(address from, uint256 amount) public override onlyAdmin {
         _burn(from, amount);
+    }
+
+    function nonces(address owner) public view virtual override(EcoERC20Upgradeable, IERC20Permit) returns (uint256) {
+        return super.nonces(owner);
     }
 }
