@@ -7,6 +7,8 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { IERC20Errors } from "@openzeppelin/contracts/interfaces/draft-IERC6093.sol";
 
+import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
+
 import { ISelectorRoleControl } from "../../access/SelectorRoleControlUpgradeable.sol";
 
 import { IERC4626 } from "@openzeppelin/contracts/interfaces/IERC4626.sol";
@@ -56,6 +58,6 @@ interface IERC20Mintable is IERC20Burnable {
 
 interface IEcoERC20Mintable is IERC20Mintable {}
 
-interface IEcoERC20 is IEcoERC20Mintable, ISelectorRoleControl {}
+interface IEcoERC20 is IEcoERC20Mintable, ISelectorRoleControl, IERC20Permit {}
 
 interface IEcoERC4626 is IEcoERC20, IERC4626 {}

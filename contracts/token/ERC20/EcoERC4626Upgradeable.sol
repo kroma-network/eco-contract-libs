@@ -11,7 +11,7 @@ import { ERC20PermitUpgradeable } from "@openzeppelin/contracts-upgradeable/toke
 import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
 import { ERC4626Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
-import { IERC20, IERC20Metadata, IERC20Burnable, IEcoERC20, IEcoERC4626 } from "./IERC20.sol";
+import { IERC20, IERC20Metadata, IERC20Burnable, IERC20Permit, IEcoERC20, IEcoERC4626 } from "./IERC20.sol";
 
 import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
 import { ERC20MintableUpgradeable } from "./ERC20MintableUpgradeable.sol";
@@ -95,5 +95,11 @@ abstract contract EcoERC4626Upgradeable is
         uint256 amount
     ) public virtual override(ERC20BurnableUpgradeable, IERC20Burnable) {
         super.burnFrom(account, amount);
+    }
+
+    function nonces(
+        address owner
+    ) public view virtual override(ERC20PermitUpgradeable, IERC20Permit) returns (uint256) {
+        return super.nonces(owner);
     }
 }
