@@ -3,18 +3,16 @@
 
 pragma solidity ^0.8.0;
 
-import { ISelectorRoleControl, IPausable, IEcoOwnable, SelectorRoleControlUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
-
 import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import { ERC20BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 import { ERC20PermitUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
 import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
+
 import { ERC4626Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
 import { IERC20, IERC20Metadata, IERC20Burnable, IERC20Permit, IEcoERC20, IEcoERC4626 } from "./IERC20.sol";
 
 import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
-import { ERC20MintableUpgradeable } from "./ERC20MintableUpgradeable.sol";
 
 abstract contract EcoERC4626Upgradeable is
     IEcoERC4626,
@@ -23,7 +21,7 @@ abstract contract EcoERC4626Upgradeable is
     ERC20PermitUpgradeable,
     ERC4626Upgradeable
 {
-    function initEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) public initializer {
+    function _initEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) internal onlyInitializing {
         __ERC4626_init(IERC20(asset));
         _initEcoERC20Metadata(_name, _symbol, decimals());
     }

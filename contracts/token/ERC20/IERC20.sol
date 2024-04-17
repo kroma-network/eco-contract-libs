@@ -56,8 +56,8 @@ interface IERC20Mintable is IERC20Burnable {
     function mint(address to, uint256 amount) external;
 }
 
+interface IEcoERC4626 is IERC20Burnable, IERC20Permit, IERC4626 {}
+
 interface IEcoERC20Mintable is IERC20Mintable {}
 
 interface IEcoERC20 is IEcoERC20Mintable, ISelectorRoleControl, IERC20Permit {}
-
-interface IEcoERC4626 is IEcoERC20, IERC4626 {}
