@@ -18,12 +18,12 @@ interface IERC20Base is IERC20, IERC20Metadata, IERC20Errors {}
 interface IEcoERC20Metadata is IERC20Base {}
 
 interface IERC20Stake is IERC20Base {
-    function stake(uint256 value) external;
+    function stake(uint256 value, address receiver) external payable;
 
-    function unstake(uint256 value) external;
+    function unstake(uint256 value, address receiver) external;
 }
 
-interface IERC20Rebased is IERC20Base {
+interface IERC20Rebased is IERC20Stake {
     function totalShares() external view returns (uint256);
 
     function shareOf(address account) external view returns (uint256);

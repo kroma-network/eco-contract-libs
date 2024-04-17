@@ -44,13 +44,13 @@ describe("ERC20 Rebase Native", function () {
       it("Should not revert with any account call stake", async function () {
         const { owner, erc20, users } = await loadFixture(NFT_Rebase_Native_Fixture);
 
-        await expect(erc20.connect(users[0]).stake(amount)).reverted;
-        await expect(erc20.connect(users[0]).stake(amount, {value: amount})).not.reverted;
+        await expect(erc20.connect(users[0]).stake(amount, users[0])).reverted;
+        await expect(erc20.connect(users[0]).stake(amount, users[0], {value: amount})).not.reverted;
 
         expect(await erc20.totalSupply()).eq(amount);
         expect(await erc20.balanceOf(users[0])).eq(amount);
 
-        await expect(erc20.connect(users[1]).stake(amount, {value: amount})).not.reverted;
+        await expect(erc20.connect(users[1]).stake(amount, users[1], {value: amount})).not.reverted;
         expect(await erc20.totalSupply()).eq(amount*2n);
         expect(await erc20.balanceOf(users[0])).eq(amount);
         expect(await erc20.balanceOf(users[1])).eq(amount);
@@ -60,13 +60,13 @@ describe("ERC20 Rebase Native", function () {
         expect(await erc20.balanceOf(users[0])).eq(amount*2n);
         expect(await erc20.balanceOf(users[1])).eq(amount*2n);
 
-        await expect(erc20.connect(users[3]).stake(amount, {value: amount})).not.reverted;
+        await expect(erc20.connect(users[3]).stake(amount, users[3], {value: amount})).not.reverted;
         expect(await erc20.totalSupply()).eq(amount*5n);
         expect(await erc20.balanceOf(users[0])).eq(amount*2n);
         expect(await erc20.balanceOf(users[1])).eq(amount*2n);
         expect(await erc20.balanceOf(users[3])).eq(amount);
 
-        await expect(erc20.connect(users[3]).unstake(amount)).not.reverted;
+        await expect(erc20.connect(users[3]).unstake(amount, users[3])).not.reverted;
         expect(await erc20.totalSupply()).eq(amount*4n);
         expect(await erc20.balanceOf(users[0])).eq(amount*2n);
         expect(await erc20.balanceOf(users[1])).eq(amount*2n);

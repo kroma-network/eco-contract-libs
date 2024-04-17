@@ -74,6 +74,20 @@ abstract contract ERC20RebasedUpgradeable is
         return $._shares[account];
     }
 
+    function stake(uint256 value, address receiver) public payable override {
+        _receiveUnderlying(value, _msgSender());
+        _mint(receiver, value);
+    }
+
+    function _receiveUnderlying(uint256 value, address caller) internal virtual;
+
+    function unstake(uint256 value, address receiver) public override {
+        _burn(_msgSender(), value);
+        _sendUnderlying(receiver, value);
+    }
+
+    function _sendUnderlying(address receiver, uint256 value) internal virtual;
+
     function _totalSharesOrDefault() internal view returns (uint256) {
         uint256 _totalShares = totalShares();
         if (_totalShares == 0) _totalShares = totalSupply();
