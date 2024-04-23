@@ -28,4 +28,8 @@ abstract contract EcoERC1155URIControl is
     function setBaseURI(string memory baseURI) external onlyAdmin {
         _setBaseURI(baseURI);
     }
+
+    function setInitURI(string memory initURI) external onlyAdmin {
+        _setURI(initURI);
+    }
 }
