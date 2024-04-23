@@ -61,15 +61,17 @@ contract EcoERC1155Upgradeable is
         return super.uri(id);
     }
 
-    function totalSupply(uint256 id) public view override(ERC1155SupplyUpgradeable, IERC1155Supply) returns (uint256) {
+    function totalSupply(
+        uint256 id
+    ) public view virtual override(ERC1155SupplyUpgradeable, IERC1155Supply) returns (uint256) {
         return super.totalSupply(id);
     }
 
-    function totalSupply() public view override(ERC1155SupplyUpgradeable, IERC1155Supply) returns (uint256) {
+    function totalSupply() public view virtual override(ERC1155SupplyUpgradeable, IERC1155Supply) returns (uint256) {
         return super.totalSupply();
     }
 
-    function exists(uint256 id) public view override(ERC1155SupplyUpgradeable, IERC1155Supply) returns (bool) {
+    function exists(uint256 id) public view virtual override(ERC1155SupplyUpgradeable, IERC1155Supply) returns (bool) {
         return super.exists(id);
     }
 }
