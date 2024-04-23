@@ -7,3 +7,9 @@ struct ECDSA_Full_Signature {
     bytes32 r;
     bytes32 s;
 }
+
+struct Sig {
+    uint8 v;
+    bytes32 r;
+    bytes32 s;
+}
