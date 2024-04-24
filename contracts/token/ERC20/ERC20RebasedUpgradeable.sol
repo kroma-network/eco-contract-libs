@@ -94,8 +94,10 @@ abstract contract ERC20RebasedUpgradeable is
         return _totalShares;
     }
 
-    function calcBalance(uint256 share) public view override returns (uint256) {
-        return (totalSupply() * share) / _totalSharesOrDefault();
+    function calcBalance(uint256 share) public view override returns (uint256 balance) {
+        balance = _totalSharesOrDefault();
+        if (balance == 0) return 0;
+        else return (totalSupply() * share) / balance;
     }
 
     function calcShare(uint256 balance) public view override returns (uint256) {
@@ -113,8 +115,10 @@ abstract contract ERC20RebasedUpgradeable is
         return (_totalSharesOrDefault() * balance) / _effectiveSupply(balance);
     }
 
-    function _calcBurnShare(uint256 balance) public view returns (uint256) {
-        return (_totalSharesOrDefault() * balance) / totalSupply();
+    function _calcBurnShare(uint256 balance) public view returns (uint256 share) {
+        share = totalSupply();
+        if (share == 0) return 0;
+        else return (_totalSharesOrDefault() * balance) / share;
     }
 
     function _update(address from, address to, uint256 value) internal virtual override {
