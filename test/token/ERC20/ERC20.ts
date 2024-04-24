@@ -11,7 +11,7 @@ describe("ERC20 Mintable", function () {
 
   const amount = hre.ethers.parseEther("100");
 
-  async function NFT_Mintable_Fixture() {
+  async function ERC20_Mintable_Fixture() {
     const [owner, ...users] = await hre.ethers.getSigners();
 
     const ERC20 = await hre.ethers.getContractFactory("EcoERC20Upgradeable");
@@ -23,14 +23,14 @@ describe("ERC20 Mintable", function () {
 
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
-      const { erc20, owner } = await loadFixture(NFT_Mintable_Fixture);
+      const { erc20, owner } = await loadFixture(ERC20_Mintable_Fixture);
 
       expect(await erc20.owner()).to.equal(owner.address);
       await expect(erc20.initEcoERC20(owner, name, symbol, decimals)).reverted;
     });
 
     it("Should set the right metadata", async function () {
-      const { erc20 } = await loadFixture(NFT_Mintable_Fixture);
+      const { erc20 } = await loadFixture(ERC20_Mintable_Fixture);
 
       expect(await erc20.name()).to.equal(name);
       expect(await erc20.symbol()).to.equal(symbol);
@@ -39,7 +39,7 @@ describe("ERC20 Mintable", function () {
     });
 
     it("basic view", async function () {
-      const { owner, erc20 } = await loadFixture(NFT_Mintable_Fixture);
+      const { owner, erc20 } = await loadFixture(ERC20_Mintable_Fixture);
 
       expect(await erc20.nonces(owner)).to.equal(0n);
     });
@@ -48,18 +48,18 @@ describe("ERC20 Mintable", function () {
   describe("ERC20 Feature", function () {
     describe("Mint", function () {
       it("Should revert with the right error if mint called from another account", async function () {
-        const { erc20, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { erc20, users } = await loadFixture(ERC20_Mintable_Fixture);
         const user_connected_erc20 = erc20.connect(users[0]);
         await expect(user_connected_erc20.mint(users[0], amount)).reverted;
       });
 
       it("Shouldn't fail mint with the right owner", async function () {
-        const { erc20, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { erc20, users } = await loadFixture(ERC20_Mintable_Fixture);
         await expect(erc20.mint(users[0], amount)).not.reverted;
       });
 
       it("Shouldn't fail mint with the right role access account", async function () {
-        const { erc20, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { erc20, users } = await loadFixture(ERC20_Mintable_Fixture);
 
         await expect(erc20.grantSelectorRole(getSelector(erc20.mint), users[0])).not.reverted;
 
@@ -73,7 +73,7 @@ describe("ERC20 Mintable", function () {
 
     describe("Transfer", function () {
       it("Should revert with the right error if mint called from another account", async function () {
-        const { owner, erc20, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { owner, erc20, users } = await loadFixture(ERC20_Mintable_Fixture);
         await expect(erc20.mint(users[0], amount)).not.reverted;
         expect(await erc20.balanceOf(users[0])).equal(amount);
 
