@@ -4,7 +4,7 @@
 pragma solidity ^0.8.0;
 
 import { ERC20RebasedUpgradeable } from "./ERC20RebasedUpgradeable.sol";
-import { IERC20 } from "./IERC20.sol";
+import { IERC20, IERC20Metadata } from "./IERC20.sol";
 
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -12,13 +12,13 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 contract EcoERC20RebasedWithToken is ERC20RebasedUpgradeable {
     function _totalSupply() internal view virtual override returns (uint256) {
         ERC20RebasedUpgradeableStorage storage $ = _getERC20RebasedUpgradeableStorage();
-        return IERC20($.underlying).totalSupply();
+        return IERC20($.underlying).balanceOf(address(this));
     }
 
     function _checkRebaseUnderlying(address _underlying) internal virtual override {
-        require(msg.value == 0, "non payable");
-        require(_underlying != address(0));
-        require(IERC20(_underlying).totalSupply() != 0);
+        if (_underlying == address(0)) revert InvalidInitialization();
+        if (IERC20Metadata(_underlying).decimals() != decimals()) revert InvalidInitialization();
+        if (msg.value != 0 /* || address(this).balance != 0 */) revert InvalidInitialization();
     }
 
     function _receiveUnderlying(uint256 value, address caller) internal virtual override {
