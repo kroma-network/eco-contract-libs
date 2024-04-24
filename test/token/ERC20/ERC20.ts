@@ -35,6 +35,13 @@ describe("ERC20 Mintable", function () {
       expect(await erc20.name()).to.equal(name);
       expect(await erc20.symbol()).to.equal(symbol);
       expect(await erc20.decimals()).to.equal(decimals);
+      expect(await erc20.totalSupply()).to.equal(0n);
+    });
+
+    it("basic view", async function () {
+      const { owner, erc20 } = await loadFixture(NFT_Mintable_Fixture);
+
+      expect(await erc20.nonces(owner)).to.equal(0n);
     });
   });
 
@@ -68,8 +75,13 @@ describe("ERC20 Mintable", function () {
       it("Should revert with the right error if mint called from another account", async function () {
         const { owner, erc20, users } = await loadFixture(NFT_Mintable_Fixture);
         await expect(erc20.mint(users[0], amount)).not.reverted;
-        await expect(erc20.connect(users[0]).burn(amount)).not.reverted;
-        expect(await erc20.balanceOf(users[0])).equal(0);
+        expect(await erc20.balanceOf(users[0])).equal(amount);
+
+        await expect(erc20.connect(users[0]).transfer(users[1], amount)).not.reverted;
+        expect(await erc20.balanceOf(users[1])).equal(amount);
+
+        await expect(erc20.connect(users[1]).burn(amount)).not.reverted;
+        expect(await erc20.balanceOf(users[1])).equal(0);
 
         await expect(erc20.mint(users[0], amount)).not.reverted;
         await expect(erc20.mint(users[0], amount)).not.reverted;
