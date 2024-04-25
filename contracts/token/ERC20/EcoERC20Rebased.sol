@@ -45,7 +45,7 @@ contract EcoERC20RebasedWithNative is ERC20RebasedUpgradeable {
     }
 
     function _receiveUnderlying(uint256 value, address caller) internal virtual override {
-        require(_msgSender() == caller && msg.value == value);
+        require(msg.value == value && _msgSender() == caller);
     }
 
     function _sendUnderlying(address receiver, uint256 value) internal virtual override {
