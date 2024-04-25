@@ -3,22 +3,14 @@ import { expect } from "chai";
 import { ZeroAddress } from "ethers";
 import hre, { ethers } from "hardhat";
 
+import { ERC20_Rebase_Native_Fixture, erc20Decimals, erc20RebasedNativeName, erc20RebasedNativeSymbol, unitAmount } from "./helper";
+
 describe("ERC20 Rebase Native", function () {
-  const name = "Rebase Native Token";
-  const symbol = "M ERC20";
-  const decimals = 18;
+  const name = erc20RebasedNativeName;
+  const symbol = erc20RebasedNativeSymbol;
+  const decimals = erc20Decimals;
 
-  const amount = hre.ethers.parseEther("100");
-
-  async function ERC20_Rebase_Native_Fixture() {
-    const [owner, ...users] = await hre.ethers.getSigners();
-
-    const ERC20 = await hre.ethers.getContractFactory("EcoERC20RebasedWithNative");
-    const erc20Rebased = await ERC20.deploy();
-    await erc20Rebased.initEcoERC20Rebase(ZeroAddress, name, symbol, decimals);
-
-    return { erc20Rebased, owner, users };
-  }
+  const amount = unitAmount;
 
   describe("Deployment", function () {
     it("Should set the right init", async function () {

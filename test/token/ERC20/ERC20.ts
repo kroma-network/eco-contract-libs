@@ -4,22 +4,14 @@ import hre from "hardhat";
 
 import { getSelector } from "../../helper";
 
+import { ERC20_Mintable_Fixture, erc20Decimals, erc20Name, erc20Symbol, unitAmount } from "./helper";
+
 describe("ERC20 Mintable", function () {
-  const name = "Mintable Token";
-  const symbol = "M ERC20";
-  const decimals = 18;
+  const name = erc20Name;
+  const symbol = erc20Symbol;
+  const decimals = erc20Decimals;
 
-  const amount = hre.ethers.parseEther("100");
-
-  async function ERC20_Mintable_Fixture() {
-    const [owner, ...users] = await hre.ethers.getSigners();
-
-    const ERC20 = await hre.ethers.getContractFactory("EcoERC20Upgradeable");
-    const erc20 = await ERC20.deploy();
-    await erc20.initEcoERC20(owner, name, symbol, decimals);
-
-    return { erc20, owner, users };
-  }
+  const amount = unitAmount;
 
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
