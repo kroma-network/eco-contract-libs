@@ -14,13 +14,17 @@ import { IERC20, IERC20Metadata, IERC20Burnable, IERC20Permit, IEcoERC20, IEcoER
 
 import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
 
-abstract contract EcoERC4626Upgradeable is
+contract EcoERC4626Upgradeable is
     IEcoERC4626,
     ERC20BurnableUpgradeable,
     ERC20MetadataUpgradeable,
     ERC20PermitUpgradeable,
     ERC4626Upgradeable
 {
+    function initEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) public virtual initializer {
+        _initEcoERC4626(asset, _name, _symbol);
+    }
+
     function _initEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) internal onlyInitializing {
         __ERC4626_init(IERC20(asset));
         _initEcoERC20Metadata(_name, _symbol, decimals());
@@ -101,3 +105,11 @@ abstract contract EcoERC4626Upgradeable is
         return super.nonces(owner);
     }
 }
+
+// TODO: ERC4626 for ether
+// contract EcoERC4626ForNativeUpgradeable is EcoERC4626Upgradeable {
+//     function initEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) public virtual override {
+//         super.initEcoERC4626(asset, _name, _symbol);
+//         require(address(asset) == address(0));
+//     }
+// }
