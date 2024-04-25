@@ -3,31 +3,14 @@ import { expect } from "chai";
 import { MaxUint256 } from "ethers";
 import hre from "hardhat";
 
+import { ERC20_Rebase_Token_Fixture, erc20Decimals, erc20RebasedTokenName, erc20RebasedTokenSymbol } from "./helper";
+
 describe("ERC20 Rebase Token", function () {
-  const name = "Rebase Token Token";
-  const symbol = "M ERC20";
-  const decimals = 18;
+  const name = erc20RebasedTokenName;
+  const symbol = erc20RebasedTokenSymbol;
+  const decimals = erc20Decimals;
 
   const amount = hre.ethers.parseEther("100");
-
-  async function ERC20_Rebase_Token_Fixture() {
-    const [owner, ...users] = await hre.ethers.getSigners();
-
-    const ERC20underlying = await hre.ethers.getContractFactory("EcoERC20Upgradeable");
-    const erc20Underlying = await ERC20underlying.deploy();
-    await expect(erc20Underlying.initEcoERC20(owner, name, symbol, decimals)).not.reverted;
-
-    const ERC20Rebased = await hre.ethers.getContractFactory("EcoERC20RebasedWithToken");
-    const erc20Rebased = await ERC20Rebased.deploy();
-    await expect(erc20Rebased.initEcoERC20Rebase(erc20Underlying, name, symbol, decimals)).not.reverted;
-
-    await expect(erc20Underlying.mint(owner, 10n*amount)).not.reverted;
-    await expect(erc20Underlying.approve(erc20Rebased, MaxUint256)).not.reverted;
-    await Promise.all(users.slice(0, 4).map(user => expect(erc20Underlying.mint(user, 10n*amount)).not.reverted));
-    await Promise.all(users.slice(0, 4).map(user => expect(erc20Underlying.connect(user).approve(erc20Rebased, MaxUint256)).not.reverted));
-
-    return { erc20Underlying, erc20Rebased, owner, users };
-  }
 
   describe("Deployment", function () {
     it("Should set the right init", async function () {
