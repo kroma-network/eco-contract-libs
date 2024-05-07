@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { ZeroAddress } from "ethers";
 import hre, { ethers } from "hardhat";
 
-import { ERC20_Rebase_Native_Fixture, erc20Decimals, erc20RebasedNativeName, erc20RebasedNativeSymbol, unitAmount } from "./helper";
+import { ERC20_Rebase_Native_Base_Fixture, ERC20_Rebase_Native_Fixture, erc20Decimals, erc20RebasedNativeName, erc20RebasedNativeSymbol, unitAmount } from "./helper";
 
 describe("ERC20 Rebase Native", function () {
   const name = erc20RebasedNativeName;
@@ -13,6 +13,12 @@ describe("ERC20 Rebase Native", function () {
   const amount = unitAmount;
 
   describe("Deployment", function () {
+    it("Check Rebase Init Process", async function () {
+      const { erc20Rebased, owner, users } = await loadFixture(ERC20_Rebase_Native_Base_Fixture);
+      await expect(erc20Rebased.initEcoERC20Rebase(erc20Rebased, name, symbol, decimals)).reverted;
+      await expect(erc20Rebased.initEcoERC20Rebase(ZeroAddress, name, symbol, 6n)).reverted;
+    });
+
     it("Should set the right init", async function () {
       const { erc20Rebased } = await loadFixture(ERC20_Rebase_Native_Fixture);
 

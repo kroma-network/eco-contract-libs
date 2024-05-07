@@ -24,11 +24,18 @@ export async function ERC20_Mintable_Fixture() {
 export const erc20RebasedNativeName = "Rebase Native Token";
 export const erc20RebasedNativeSymbol = "M ERC20";
 
-export async function ERC20_Rebase_Native_Fixture() {
+export async function ERC20_Rebase_Native_Base_Fixture() {
   const [owner, ...users] = await hre.ethers.getSigners();
 
   const ERC20 = await hre.ethers.getContractFactory("EcoERC20RebasedWithNative");
   const erc20Rebased = await ERC20.deploy();
+
+  return { erc20Rebased, owner, users };
+}
+
+export async function ERC20_Rebase_Native_Fixture() {
+  const { erc20Rebased, owner, users } = await loadFixture(ERC20_Rebase_Native_Base_Fixture);
+
   await erc20Rebased.initEcoERC20Rebase(ZeroAddress, erc20RebasedNativeName, erc20RebasedNativeSymbol, erc20Decimals);
 
   return { erc20Rebased, owner, users };
@@ -37,7 +44,7 @@ export async function ERC20_Rebase_Native_Fixture() {
 export const erc20RebasedTokenName = "Rebase Token";
 export const erc20RebasedTokenSymbol = "M ERC20";
 
-export async function ERC20_Rebase_Token_Fixture() {
+export async function ERC20_Rebase_Token_Base_Fixture() {
   const [owner, ...users] = await hre.ethers.getSigners();
 
   const ERC20underlying = await hre.ethers.getContractFactory("EcoERC20Upgradeable");
@@ -46,6 +53,13 @@ export async function ERC20_Rebase_Token_Fixture() {
 
   const ERC20Rebased = await hre.ethers.getContractFactory("EcoERC20RebasedWithToken");
   const erc20Rebased = await ERC20Rebased.deploy();
+
+  return { erc20Underlying, erc20Rebased, owner, users };
+}
+
+export async function ERC20_Rebase_Token_Fixture() {
+  const { erc20Underlying, erc20Rebased, owner, users } = await loadFixture(ERC20_Rebase_Token_Base_Fixture);
+
   await expect(erc20Rebased.initEcoERC20Rebase(erc20Underlying, erc20RebasedTokenName, erc20RebasedTokenSymbol, erc20Decimals)).not.reverted;
 
   await expect(erc20Underlying.mint(owner, 10n*unitAmount)).not.reverted;
