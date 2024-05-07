@@ -11,3 +11,17 @@ REPORT_GAS=true yarn hardhat test
 yarn hardhat node
 yarn hardhat run scripts/deploy.ts
 ```
+
+# Solidity Tools
+
+1. [slither](https://github.com/crytic/slither)
+
+   `pip install -r requirements.txt`
+
+   `slither .`
+
+2. [echidna](https://github.com/crytic/echidna?tab=readme-ov-file)
+
+   `brew install echidna`
+
+   `echidna contracts/echidna.sol`
