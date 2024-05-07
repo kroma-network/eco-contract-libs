@@ -17,6 +17,8 @@ interface IERC20Base is IERC20, IERC20Metadata, IERC20Errors {}
 
 interface IEcoERC20Metadata is IERC20Base {}
 
+interface IEcoERC20Base is IERC20Base, IERC20Permit {}
+
 interface IERC20Stake is IERC20Base {
     function stake(uint256 value, address receiver) external payable;
 
