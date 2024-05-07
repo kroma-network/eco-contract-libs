@@ -5,11 +5,24 @@ import hre from "hardhat";
 
 import { getSelector } from "../../helper";
 
+export const unitAmount = hre.ethers.parseEther("100");
+
+export const wethName = "Wrapped Ether";
+export const wethSymbol = "WETH";
+
+
+export async function WETH_Fixture() {
+  const [owner, ...users] = await hre.ethers.getSigners();
+
+  const WETH = await hre.ethers.getContractFactory("WETH");
+  const weth = await WETH.deploy();
+
+  return { weth, owner, users };
+}
+
 export const erc20Name = "Mintable Token";
 export const erc20Symbol = "M ERC20";
 export const erc20Decimals = 18;
-
-export const unitAmount = hre.ethers.parseEther("100");
 
 export async function ERC20_Mintable_Fixture() {
   const [owner, ...users] = await hre.ethers.getSigners();
