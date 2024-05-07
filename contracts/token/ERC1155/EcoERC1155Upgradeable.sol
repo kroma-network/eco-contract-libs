@@ -27,6 +27,7 @@ contract EcoERC1155Upgradeable is
         _initEcoOwnable(initialOwner);
         __ERC1155_init(baseURI);
         _setBaseURI(baseURI);
+        __ERC1155Pausable_init();
     }
 
     function supportsInterface(
