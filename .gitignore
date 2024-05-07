@@ -26,3 +26,6 @@ scripts/*.py
 
 # eco
 abi
+
+# echidna
+crytic-export
