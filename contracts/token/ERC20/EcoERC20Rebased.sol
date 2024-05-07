@@ -18,7 +18,6 @@ contract EcoERC20RebasedWithToken is ERC20RebasedUpgradeable {
     function _checkRebaseUnderlying(address _underlying) internal virtual override {
         if (_underlying == address(0)) revert InvalidInitialization();
         if (IERC20Metadata(_underlying).decimals() != decimals()) revert InvalidInitialization();
-        if (msg.value != 0 /* || address(this).balance != 0 */) revert InvalidInitialization();
     }
 
     function _receiveUnderlying(uint256 value, address caller) internal virtual override {

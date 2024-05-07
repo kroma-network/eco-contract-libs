@@ -1,9 +1,9 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { expect } from "chai";
-import { MaxUint256 } from "ethers";
+import { MaxUint256, ZeroAddress } from "ethers";
 import hre from "hardhat";
 
-import { ERC20_Rebase_Token_Fixture, erc20Decimals, erc20RebasedTokenName, erc20RebasedTokenSymbol } from "./helper";
+import { ERC20_Rebase_Token_Base_Fixture, ERC20_Rebase_Token_Fixture, erc20Decimals, erc20RebasedTokenName, erc20RebasedTokenSymbol } from "./helper";
 
 describe("ERC20 Rebase Token", function () {
   const name = erc20RebasedTokenName;
@@ -13,6 +13,12 @@ describe("ERC20 Rebase Token", function () {
   const amount = hre.ethers.parseEther("100");
 
   describe("Deployment", function () {
+    it("Check Rebase Init Process", async function () {
+      const { erc20Underlying, erc20Rebased } = await loadFixture(ERC20_Rebase_Token_Base_Fixture);
+      await expect(erc20Rebased.initEcoERC20Rebase(ZeroAddress, name, symbol, decimals)).reverted;
+      await expect(erc20Rebased.initEcoERC20Rebase(erc20Underlying, name, symbol, 6n)).reverted;
+    });
+
     it("Should set the right init", async function () {
       const { erc20Underlying, erc20Rebased } = await loadFixture(ERC20_Rebase_Token_Fixture);
 
