@@ -25,3 +25,11 @@ yarn hardhat run scripts/deploy.ts
    `brew install echidna`
 
    `echidna contracts/echidna.sol`
+
+3. [scribble](https://github.com/Consensys/scribble])
+
+   `npm install -g eth-scribble`
+
+   `scribble contracts/test/scribble.sol --output-mode files --arm --instrumentation-metadata-file md.json`
+
+   `scribble contracts/test/scribble.sol --output-mode files --disarm --instrumentation-metadata-file md.json`
