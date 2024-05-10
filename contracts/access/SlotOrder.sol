@@ -17,7 +17,7 @@ abstract contract SlotOrder is ISlotOrder, EcoOwnable {
         StorageSlot.getBytes32Slot(slot).value = value;
     }
 
-    function getSlot(bytes32 slot) public view override onlyOwner returns (bytes32 value) {
+    function getSlot(bytes32 slot) public view override returns (bytes32 value) {
         return StorageSlot.getBytes32Slot(slot).value;
     }
 }
