@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 import { EcoOwnable } from "./EcoOwnable.sol";
+import { SelectorRoleControlUpgradeable } from "./SelectorRoleControlUpgradeable.sol";
 
 contract Mock_TestEcoOwnable is EcoOwnable {
     constructor() {
@@ -15,5 +16,11 @@ contract Mock_TestEcoOwnable is EcoOwnable {
 
     function initEcoOwnableFail(address initalOwner) public {
         _initEcoOwnable(initalOwner);
+    }
+}
+
+contract Test_SelectorRoleControlUpgradeable is SelectorRoleControlUpgradeable {
+    constructor(address initialOnwer) {
+        initSelectorRoleControl(initialOnwer);
     }
 }
