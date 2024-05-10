@@ -26,8 +26,10 @@ contract EcoERC4626Upgradeable is
     }
 
     function _initEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) internal onlyInitializing {
-        __ERC4626_init(IERC20(asset));
+        __ERC20Burnable_init();
         _initEcoERC20Metadata(_name, _symbol, decimals());
+        __ERC20Permit_init(name());
+        __ERC4626_init(IERC20(asset));
     }
 
     function name()

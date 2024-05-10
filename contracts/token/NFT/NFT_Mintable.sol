@@ -30,6 +30,9 @@ contract NFT_Mintable is
     function initNFT_Mintable(address initialOwner, string memory name, string memory symbol) public initializer {
         __Ownable_init(initialOwner);
         __ERC721_init(name, symbol);
+        __ERC721Burnable_init();
+        __ERC721Enumerable_init();
+        __Pausable_init();
     }
 
     function supportsInterface(

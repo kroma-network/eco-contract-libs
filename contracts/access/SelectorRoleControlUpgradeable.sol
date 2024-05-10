@@ -51,6 +51,8 @@ contract SelectorRoleControlUpgradeable is
 {
     function initSelectorRoleControl(address initialOnwer) public initializer {
         _initEcoOwnable(initialOnwer);
+        __Pausable_init();
+        __AccessControlEnumerable_init();
     }
 
     modifier onlyAdmin() {

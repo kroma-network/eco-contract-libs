@@ -15,6 +15,7 @@ contract WrappingNativeCoin is IWNative, ERC20Upgradeable, ERC20BurnableUpgradea
 
     function initWrappingNativeCoin(string memory name, string memory symbol) public initializer {
         __ERC20_init(name, symbol);
+        __ERC20Burnable_init();
     }
 
     receive() external payable {

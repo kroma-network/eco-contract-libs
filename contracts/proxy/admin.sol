@@ -39,6 +39,7 @@ contract EcoProxyAdmin is IEcoProxyAdmin, EcoOwnable, CallOrder, SlotOrder, Mult
 
     function initEcoProxyAdmin(address initialOwner) public override initializer {
         _initEcoOwnable(initialOwner);
+        __Multicall_init();
     }
 
     /**
