@@ -53,7 +53,7 @@ contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, EcoERC20Upgradeable {
         address remoteToken,
         address bridge
     ) public initializer {
-        _initEcoOwnable(initialOwner);
+        _initEcoOwnable(_msgSender());
         _initEcoERC20Metadata(name, symbol, decimals);
 
         ERC20L2BridgedStorage storage $ = _getERC20L2BridgedStorage();
@@ -61,6 +61,7 @@ contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, EcoERC20Upgradeable {
         $.BRIDGE = bridge;
         grantSelectorRole(IERC20Mintable.mint.selector, bridge);
         grantSelectorRole(IKromaBridgedERC20.burn.selector, bridge);
+        if (_msgSender() != initialOwner) _initEcoOwnable(initialOwner);
     }
 
     function supportsInterface(
