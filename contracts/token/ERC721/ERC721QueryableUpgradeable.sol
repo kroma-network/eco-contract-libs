@@ -47,32 +47,37 @@ abstract contract ERC721QueryableUpgradeable is IERC721Queryable, ERC721Sequenci
         uint256 start,
         uint256 stop
     ) public view virtual override returns (uint256[] memory tokenIds) {
+        tokenIds = tokensOfOwner(owner);
+        uint256 len = tokenIds.length;
+
+        uint256 _tmp = nextMintId();
+        if (stop > _tmp) stop = _tmp;
+        if (stop < start) revert InvalidQueryRange();
+
         unchecked {
-            uint256 _tmp = nextMintId();
-            if (stop > _tmp) stop = _tmp;
-
-            if (stop < start) revert InvalidQueryRange();
-
-            _tmp = balanceOf(owner);
-            tokenIds = new uint256[](_tmp < stop - start ? stop - start : _tmp);
-
-            _tmp = 0; // tokenIdsLength
-            while (start < stop) {
-                if (_ownerOf(start) == owner) {
-                    tokenIds[_tmp++] = start;
+            for (uint256 i; i < len; ) {
+                if (tokenIds[i] < start || stop < tokenIds[i]) {
+                    len--;
+                    (tokenIds[i], tokenIds[len]) = (tokenIds[len], tokenIds[i]);
+                } else {
+                    i++;
                 }
-                start++;
             }
-
-            // Downsize the array to fit.
-            assembly {
-                mstore(tokenIds, _tmp)
-            }
-            return tokenIds;
         }
+
+        assembly {
+            mstore(tokenIds, len)
+        }
+
+        return tokenIds;
     }
 
-    function tokensOfOwner(address owner) external view virtual override returns (uint256[] memory) {
-        return tokensOfOwnerIn(owner, 1, nextMintId());
+    function tokensOfOwner(address owner) public view virtual override returns (uint256[] memory tokens) {
+        tokens = new uint256[](balanceOf(owner));
+        unchecked {
+            for (uint256 i; i < tokens.length; i++) {
+                tokens[i] = tokenOfOwnerByIndex(owner, i);
+            }
+        }
     }
 }
