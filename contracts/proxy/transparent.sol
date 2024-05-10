@@ -36,7 +36,7 @@ contract EcoTUPWithAdmin is ERC1967Proxy {
     /**
      * @dev Returns the admin of this proxy.
      */
-    function _proxyAdmin() internal virtual returns (address) {
+    function _proxyAdmin() internal view virtual returns (address) {
         return _admin;
     }
 
