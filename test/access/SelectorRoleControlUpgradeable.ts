@@ -8,10 +8,8 @@ describe("SelectorRoleControlUpgradeable", function () {
   async function fixtureSelectorRoleControlUpgradeableDeploy() {
     const [initialOwner, admin] = await hre.ethers.getSigners();
 
-    const SelectorRoleControlUpgradeable = await hre.ethers.getContractFactory("SelectorRoleControlUpgradeable");
-    const role = await SelectorRoleControlUpgradeable.connect(initialOwner).deploy();
-
-    await expect(role.initSelectorRoleControl(initialOwner)).not.reverted;
+    const testRole = await hre.ethers.getContractFactory("Test_SelectorRoleControlUpgradeable");
+    const role = await testRole.connect(initialOwner).deploy(initialOwner);
 
     return { role, initialOwner, admin };
   }

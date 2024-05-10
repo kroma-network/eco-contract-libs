@@ -42,7 +42,7 @@ interface ISelectorControlEnumerable is IAccessControlEnumerable, ISelectorContr
 
 interface ISelectorRoleControl is ISelectorControlEnumerable, IPausable {}
 
-contract SelectorRoleControlUpgradeable is
+abstract contract SelectorRoleControlUpgradeable is
     Initializable,
     ISelectorRoleControl,
     EcoOwnable,
