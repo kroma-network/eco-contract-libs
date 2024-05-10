@@ -4,7 +4,7 @@
 pragma solidity ^0.8.0;
 
 import { IERC20Burnable, IERC20Mintable, IERC20Permit, IEcoERC20 } from "./IERC20.sol";
-import { ERC20MintableUpgradeable } from "./ERC20MintableUpgradeable.sol";
+import { EcoERC20MintableUpgradeable } from "./EcoERC20MintableUpgradeable.sol";
 import { EcoERC20Upgradeable } from "./EcoERC20Upgradeable.sol";
 import { ERC20PermitUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
 
@@ -77,7 +77,7 @@ contract ERC20L2BridgedUpgradeable is IL2BridgeERC20, EcoERC20Upgradeable {
         super.burnFrom(account, amount);
     }
 
-    function mint(address to, uint256 amount) public override(ERC20MintableUpgradeable, IERC20Mintable) {
+    function mint(address to, uint256 amount) public override(EcoERC20MintableUpgradeable, IERC20Mintable) {
         super.mint(to, amount);
     }
 

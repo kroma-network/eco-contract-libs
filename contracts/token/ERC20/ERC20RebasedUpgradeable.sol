@@ -39,6 +39,7 @@ abstract contract ERC20RebasedUpgradeable is
     ) public initializer {
         _initEcoERC20Metadata(_name, _symbol, _decimals);
         _initERC20Rebased(_underlying);
+        __ERC20Permit_init(name());
     }
 
     function _initERC20Rebased(address _underlying) internal onlyInitializing {

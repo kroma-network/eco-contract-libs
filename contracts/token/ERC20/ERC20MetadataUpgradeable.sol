@@ -33,6 +33,7 @@ abstract contract ERC20MetadataUpgradeable is IEcoERC20Metadata, ERC20Upgradeabl
         $.name = _name;
         $.symbol = _symbol;
         $.decimals = _decimals;
+        __ERC20_init("", "");
     }
 
     function name() public view virtual override(ERC20Upgradeable, IERC20Metadata) returns (string memory) {

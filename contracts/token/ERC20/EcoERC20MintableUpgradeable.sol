@@ -10,14 +10,26 @@ import { ERC20BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/to
 
 import { IERC20Metadata, IERC20Burnable, IEcoERC20Mintable } from "./IERC20.sol";
 
-import { ERC20MintableUpgradeable } from "./ERC20MintableUpgradeable.sol";
+import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
 
-abstract contract ERC20MintableUpgradeable is
+abstract contract EcoERC20MintableUpgradeable is
     IEcoERC20Mintable,
     SelectorRoleControlUpgradeable,
     ERC20Upgradeable,
+    ERC20MetadataUpgradeable,
     ERC20BurnableUpgradeable
 {
+    function _initEcoERC20Mintable(
+        address initialOwner,
+        string memory _name,
+        string memory _symbol,
+        uint8 _decimals
+    ) internal onlyInitializing {
+        _initEcoOwnable(initialOwner); // SelectorRoleControlUpgradeable
+        _initEcoERC20Metadata(_name, _symbol, _decimals);
+        __ERC20Burnable_init();
+    }
+
     function mint(address to, uint256 amount) public virtual override onlyAdmin {
         _mint(to, amount);
     }
@@ -31,5 +43,35 @@ abstract contract ERC20MintableUpgradeable is
         uint256 amount
     ) public virtual override(IERC20Burnable, ERC20BurnableUpgradeable) {
         return super.burnFrom(account, amount);
+    }
+
+    function name()
+        public
+        view
+        virtual
+        override(ERC20MetadataUpgradeable, ERC20Upgradeable, IERC20Metadata)
+        returns (string memory)
+    {
+        return super.name();
+    }
+
+    function symbol()
+        public
+        view
+        virtual
+        override(ERC20MetadataUpgradeable, ERC20Upgradeable, IERC20Metadata)
+        returns (string memory)
+    {
+        return super.symbol();
+    }
+
+    function decimals()
+        public
+        view
+        virtual
+        override(ERC20MetadataUpgradeable, ERC20Upgradeable, IERC20Metadata)
+        returns (uint8)
+    {
+        return super.decimals();
     }
 }

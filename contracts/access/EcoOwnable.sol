@@ -27,6 +27,7 @@ interface IEcoOwnable is IOwnable2Step {
 abstract contract EcoOwnable is IEcoOwnable, Initializable, Ownable2StepUpgradeable {
     function _initEcoOwnable(address initialOwner) internal onlyInitializing {
         __Ownable_init(initialOwner);
+        __Ownable2Step_init();
     }
 
     function owner() public view virtual override(IOwnable, OwnableUpgradeable) returns (address) {

@@ -159,7 +159,7 @@ export class ProxyInstanceFactory extends AsyncConstructor {
 }
 
 async function test() {
-  const logicFactory = await hre.ethers.getContractFactory("ERC20MintableUpgradeable");
+  const logicFactory = await hre.ethers.getContractFactory("EcoERC20MintableUpgradeable");
   const EcoTUPFactory = new ProxyInstanceFactory();
   const logic = await logicFactory.deploy("a", "a");
 
