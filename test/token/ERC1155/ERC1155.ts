@@ -15,7 +15,7 @@ describe("ERC1155 Mintable", function () {
 
   const defaultHex = "0x";
 
-  const erc1155InterfaceId = "0x00000000"; // TODO: fix interface id
+  const mockInterfaceId = "0x00000000";
 
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
@@ -41,9 +41,9 @@ describe("ERC1155 Mintable", function () {
       expect(await erc1155["totalSupply()"]()).to.equal(0n);
       expect(await erc1155["totalSupply(uint256)"](0n)).to.equal(0n);
 
-      expect(await erc1155.exists(default1155Id)).to.equal(false); // TODO: fix interface id
+      expect(await erc1155.exists(default1155Id)).to.equal(false);
 
-      expect(await erc1155.supportsInterface(erc1155InterfaceId)).to.equal(false);
+      expect(await erc1155.supportsInterface(mockInterfaceId)).to.equal(false);
 
       const erc1155IdUri = "1.json";
       expect(await erc1155.uri(1n)).to.equal(erc1155URI);

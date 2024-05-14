@@ -61,7 +61,6 @@ describe("SelectorRoleControlUpgradeable", function () {
       await expect(role.connect(admin).unpause()).not.reverted;
       await expect(role.connect(admin).unpause()).reverted;
 
-      // TODO: unpause revoke test?
       await expect(role.revokeSelectorRole(getSelector(role.pause), admin)).not.reverted;
       await expect(role.revokeSelectorRole(getSelector(role.pause), admin)).reverted;
 

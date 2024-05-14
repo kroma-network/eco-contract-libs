@@ -47,7 +47,7 @@ describe("ERC20 Mintable", function () {
 
   const amount = hre.ethers.parseEther("100");
   async function Proxy_ERC20_Fixture() {
-    // TODO: apply proxyFactory
+
     const [owner, ...users] = await hre.ethers.getSigners();
 
     const EcoProxyAdmin = await hre.ethers.getContractFactory("EcoProxyAdmin");

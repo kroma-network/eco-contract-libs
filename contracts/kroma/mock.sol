@@ -60,7 +60,7 @@ contract Mock_L1KromaBridge is MockKromaBridgeBase {
         uint32,
         bytes memory _extraData
     ) public {
-        //TODO: should check liquidity..
+        // only test: should check liquidity..
         address _from = _msgSender();
         IEcoERC20(_localToken).transferFrom(_from, address(this), _amount);
         remoteBridge.finalizeBridgeERC20(_localToken, _remoteToken, _from, _to, _amount, _extraData);
@@ -98,7 +98,7 @@ contract Mock_L2KromaBridge is MockKromaBridgeBase {
         uint32,
         bytes memory _extraData
     ) public {
-        //TODO: should check liquidity..
+        // only test: should check liquidity..
         address _from = _msgSender();
         IL2BridgeERC20(_localToken).burn(_from, _amount);
         remoteBridge.finalizeBridgeERC20(_localToken, _remoteToken, _from, _to, _amount, _extraData);
