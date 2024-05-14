@@ -108,7 +108,7 @@ abstract contract ERC20RebasedUpgradeable is
     function _effectiveSupply(uint256 balance) internal view returns (uint256) {
         uint256 totalSupply_ = totalSupply();
         if (totalSupply_ == balance) return totalSupply_;
-        // TODO: verify error if "totalSupply_ < balance"
+        // "totalSupply_ < balance" is not expected, but adding underflow protection is advisable for robustness.
         return totalSupply_ - balance;
     }
 
