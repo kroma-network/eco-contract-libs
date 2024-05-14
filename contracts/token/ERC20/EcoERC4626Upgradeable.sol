@@ -107,11 +107,3 @@ contract EcoERC4626Upgradeable is
         return super.nonces(owner);
     }
 }
-
-// TODO: ERC4626 for ether
-// contract EcoERC4626ForNativeUpgradeable is EcoERC4626Upgradeable {
-//     function initEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) public virtual override {
-//         super.initEcoERC4626(asset, _name, _symbol);
-//         require(address(asset) == address(0));
-//     }
-// }
