@@ -4,31 +4,14 @@
 pragma solidity ^0.8.0;
 
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import { IERC721 } from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import { IERC4906 } from "@openzeppelin/contracts/interfaces/IERC4906.sol";
-import { IERC721Metadata } from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
-import { IERC721Errors } from "@openzeppelin/contracts/interfaces/draft-IERC6093.sol";
 
-import { ISelectorRoleControl, SelectorRoleControlUpgradeable, AccessControlEnumerableUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
+import { SelectorRoleControlUpgradeable, AccessControlEnumerableUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
+
+import { IERC721SequencialMintUpbradeable } from "./IERC721.sol";
 
 import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import { ERC721BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
 import { ERC721EnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
-
-interface IERC721SequencialMintUpbradeable is
-    ISelectorRoleControl,
-    IERC165,
-    IERC721,
-    IERC4906,
-    IERC721Metadata,
-    IERC721Errors
-{
-    function nextMintId() external view returns (uint256 tokeId);
-
-    function nextMint(address to) external returns (uint256 tokenId);
-
-    function nextMintBatch(address to, uint256 amount) external returns (uint256[] memory tokenIds);
-}
 
 abstract contract ERC721SequencialMintUpbradeable is
     SelectorRoleControlUpgradeable,

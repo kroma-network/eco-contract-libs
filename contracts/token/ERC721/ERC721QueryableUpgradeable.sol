@@ -3,43 +3,8 @@
 
 pragma solidity ^0.8.0;
 
-import { IERC721SequencialMintUpbradeable, ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
-
-/**
- * @dev Interface of ERC721AQueryable.
- */
-interface IERC721Queryable is IERC721SequencialMintUpbradeable {
-    /**
-     * Invalid query range (`start` >= `stop`).
-     */
-    error InvalidQueryRange();
-
-    /**
-     * @dev Returns an array of token IDs owned by `owner`,
-     * in the range [`start`, `stop`)
-     * (i.e. `start <= tokenId < stop`).
-     *
-     * This function allows for tokens to be queried if the collection
-     * grows too big for a single call of {ERC721AQueryable-tokensOfOwner}.
-     *
-     * Requirements:
-     *
-     * - `start < stop`
-     */
-    function tokensOfOwnerIn(address owner, uint256 start, uint256 stop) external view returns (uint256[] memory);
-
-    /**
-     * @dev Returns an array of token IDs owned by `owner`.
-     *
-     * This function scans the ownership mapping and is O(`totalSupply`) in complexity.
-     * It is meant to be called off-chain.
-     *
-     * See {ERC721AQueryable-tokensOfOwnerIn} for splitting the scan into
-     * multiple smaller scans if the collection is large enough to cause
-     * an out-of-gas error (10K collections should be fine).
-     */
-    function tokensOfOwner(address owner) external view returns (uint256[] memory);
-}
+import { IERC721Queryable } from "./IERC721.sol";
+import { ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
 
 abstract contract ERC721QueryableUpgradeable is IERC721Queryable, ERC721SequencialMintUpbradeable {
     function tokensOfOwnerIn(
