@@ -3,38 +3,20 @@
 
 pragma solidity ^0.8.0;
 
+import { IERC721Typed } from "./IERC721.sol";
 import { IERC721Metadata } from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
 import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import { ERC721URIStorageUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
 
-import { IERC721SequencialMintUpbradeable, ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
+import { ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
 
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
-
-interface IERC721Typed is IERC721SequencialMintUpbradeable {
-    event TokenType(uint256 indexed tokenId, uint256 indexed _tokenType);
-
-    function tokenType(uint256 tokenId) external view returns (uint256);
-
-    function typeSupply(uint256 _tokenType) external view returns (uint256 supply);
-
-    function setBaseURI(string memory baseURI) external;
-
-    function setTokenType(uint256 tokenId, uint256 _tokenType) external;
-
-    function typedMint(address to, uint256 _tokenType) external returns (uint256 tokenId);
-}
-
-library ConcatChain {
-    function concat(string memory self, string memory other) internal pure returns (string memory) {
-        return string.concat(self, other);
-    }
-}
+import { StringConcat } from "../../utils/concat.sol";
 
 abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUpbradeable {
     using Strings for uint256;
-    using ConcatChain for string;
+    using StringConcat for string;
 
     struct ERC721TypedUpgradeableStorage {
         string baseURI;
