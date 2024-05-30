@@ -7,9 +7,6 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { StorageSlot } from "@openzeppelin/contracts/utils/StorageSlot.sol";
 
 interface ICallOrder {
-    error CallCount();
-    error ValueSum();
-
     function functionCallWithValue(
         address target,
         bytes memory data,
