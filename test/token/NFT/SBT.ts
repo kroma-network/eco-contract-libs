@@ -12,8 +12,8 @@ describe("SBT", function () {
     const [owner, admin, user0, user1] = await hre.ethers.getSigners();
 
     const SBT = await hre.ethers.getContractFactory("SBT");
-    const sbt = await SBT.connect(owner).deploy(name, symbol);
-    // await sbt.initSBT_Mintable(owner.address, name, symbol); only for proxy
+    const sbt = await SBT.connect(owner).deploy();
+    await sbt.initNFT_Mintable(owner.address, name, symbol);
 
     return { owner, admin, user0, user1, sbt };
   }
