@@ -23,10 +23,6 @@ contract NFT_Mintable is
     ERC721PausableUpgradeable,
     ERC721QueryableUpgradeable
 {
-    constructor(string memory name, string memory symbol) {
-        initNFT_Mintable(_msgSender(), name, symbol);
-    }
-
     function initNFT_Mintable(address initialOwner, string memory name, string memory symbol) public initializer {
         __Ownable_init(initialOwner);
         __ERC721_init(name, symbol);

@@ -19,8 +19,6 @@ import { INFT_Mintable, NFT_Mintable } from "./NFT_Mintable.sol";
 interface INFT_Typed is INFT_Mintable, IERC721Typed {}
 
 contract NFT_Typed is INFT_Typed, NFT_Mintable, ERC721TypedUpgradeable {
-    constructor(string memory name, string memory symbol) NFT_Mintable(name, symbol) {}
-
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual override(IERC165, ERC721SequencialMintUpbradeable, NFT_Mintable) returns (bool) {

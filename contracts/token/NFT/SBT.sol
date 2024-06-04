@@ -10,8 +10,6 @@ import { ERC721SoulBoundUpgradeable } from "../ERC721/ERC721SoulBoundUpgradeable
 import { NFT_Mintable } from "./NFT_Mintable.sol";
 
 contract SBT is NFT_Mintable, ERC721SoulBoundUpgradeable {
-    constructor(string memory name, string memory symbol) NFT_Mintable(name, symbol) {}
-
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual override(ERC721Upgradeable, NFT_Mintable) returns (bool) {
