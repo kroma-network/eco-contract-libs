@@ -25,7 +25,7 @@ describe("ERC1155 Mintable", function () {
       await expect(erc1155.initEcoERC1155(owner, erc1155URI)).reverted;
 
       const erc1155IdUri = "1.json";
-      expect(await erc1155.uri(0n)).to.equal(erc1155BaseURI);
+      expect(await erc1155.uri(0n)).to.equal(""); // not erc1155BaseURI
       await expect(erc1155.setInitURI(erc1155URI)).not.reverted;
       await expect(erc1155.setBaseURI(erc1155URI)).not.reverted;
       await expect(erc1155.setURI(1n, erc1155IdUri)).not.reverted;
@@ -46,7 +46,7 @@ describe("ERC1155 Mintable", function () {
       expect(await erc1155.supportsInterface(mockInterfaceId)).to.equal(false);
 
       const erc1155IdUri = "1.json";
-      expect(await erc1155.uri(1n)).to.equal(erc1155URI);
+      expect(await erc1155.uri(1n)).to.equal(""); // not erc1155URI
       await expect(erc1155.setURI(1n, erc1155IdUri)).not.reverted;
       expect(await erc1155.uri(1n)).to.equal(erc1155URI + erc1155IdUri);
     });
