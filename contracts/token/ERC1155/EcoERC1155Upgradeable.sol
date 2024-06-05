@@ -25,13 +25,12 @@ contract EcoERC1155Upgradeable is
 {
     function initEcoERC1155(address initialOwner, string memory baseURI) public initializer {
         _initEcoOwnable(initialOwner);
-        __ERC1155_init(baseURI);
         __ERC1155Burnable_init();
         __ERC1155Pausable_init();
         __ERC1155Supply_init();
 
-        _setBaseURI(baseURI);
         __ERC1155Pausable_init();
+        __ERC1155Pausable_init(baseURI);
     }
 
     function supportsInterface(
