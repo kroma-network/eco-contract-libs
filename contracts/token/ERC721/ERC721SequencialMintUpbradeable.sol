@@ -7,18 +7,14 @@ import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol
 
 import { SelectorRoleControlUpgradeable, AccessControlEnumerableUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
 
-import { IERC721SequencialMintUpbradeable } from "./IERC721.sol";
+import { IERC721Burnable, IERC721SequencialMintUpbradeable } from "./IERC721.sol";
 
-import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import { ERC721BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
-import { ERC721EnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import { EcoERC721Base } from "./EcoERC721Base.sol";
 
 abstract contract ERC721SequencialMintUpbradeable is
     SelectorRoleControlUpgradeable,
     IERC721SequencialMintUpbradeable,
-    ERC721Upgradeable,
-    ERC721BurnableUpgradeable,
-    ERC721EnumerableUpgradeable
+    EcoERC721Base
 {
     struct ERC721SequencialMintStorage {
         uint256 count;
@@ -35,14 +31,12 @@ abstract contract ERC721SequencialMintUpbradeable is
 
     function supportsInterface(
         bytes4 interfaceId
-    )
-        public
-        view
-        virtual
-        override(AccessControlEnumerableUpgradeable, ERC721EnumerableUpgradeable, ERC721Upgradeable, IERC165)
-        returns (bool)
-    {
+    ) public view virtual override(AccessControlEnumerableUpgradeable, EcoERC721Base, IERC165) returns (bool) {
         return super.supportsInterface(interfaceId);
+    }
+
+    function burn(uint256 tokenId) public virtual override(EcoERC721Base, IERC721Burnable) {
+        return super.burn(tokenId);
     }
 
     function nextMintId() public view override returns (uint256 tokeId) {
@@ -72,20 +66,5 @@ abstract contract ERC721SequencialMintUpbradeable is
         }
         _safeMint(to, tokenId);
         return tokenId;
-    }
-
-    function _update(
-        address to,
-        uint256 tokenId,
-        address auth
-    ) internal virtual override(ERC721EnumerableUpgradeable, ERC721Upgradeable) returns (address) {
-        return super._update(to, tokenId, auth);
-    }
-
-    function _increaseBalance(
-        address account,
-        uint128 amount
-    ) internal virtual override(ERC721EnumerableUpgradeable, ERC721Upgradeable) {
-        return super._increaseBalance(account, amount);
     }
 }

@@ -3,12 +3,10 @@
 
 pragma solidity ^0.8.0;
 
-import { IERC721Typed } from "./IERC721.sol";
-import { IERC721Metadata } from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
+import { IERC721Metadata, IERC721Burnable, IERC721Typed } from "./IERC721.sol";
 
 import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import { ERC721URIStorageUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
-
 import { ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
 
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
@@ -92,7 +90,7 @@ abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUp
         return _setTokenType(tokenId, tokenType(tokenId), _tokenType);
     }
 
-    function burn(uint256 tokenId) public virtual override {
+    function burn(uint256 tokenId) public virtual override(ERC721SequencialMintUpbradeable, IERC721Burnable) {
         unchecked {
             _getERC721TypedUpgradeable().typeSupply[tokenType(tokenId)] -= 1;
         }
