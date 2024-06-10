@@ -3,7 +3,7 @@
 
 pragma solidity ^0.8.0;
 
-import { IERC721Queryable } from "./IERC721.sol";
+import { IERC721Burnable, IERC721Queryable } from "./IERC721.sol";
 import { ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
 
 abstract contract ERC721QueryableUpgradeable is IERC721Queryable, ERC721SequencialMintUpbradeable {
@@ -44,5 +44,9 @@ abstract contract ERC721QueryableUpgradeable is IERC721Queryable, ERC721Sequenci
                 tokens[i] = tokenOfOwnerByIndex(owner, i);
             }
         }
+    }
+
+    function burn(uint256 tokenId) public virtual override(ERC721SequencialMintUpbradeable, IERC721Burnable) {
+        return super.burn(tokenId);
     }
 }
