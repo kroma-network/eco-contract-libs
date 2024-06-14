@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import { IERC1155MetadataURI, IEcoERC1155, IERC1155Supply } from "./IERC1155.sol";
+import { IERC1155Burnable, IERC1155Supply, IERC1155MetadataURI, IEcoERC1155 } from "./IERC1155.sol";
 
 import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import { ERC1155MintableUpgradeable } from "./ERC1155MintableUpgradeable.sol";
@@ -53,16 +53,20 @@ contract EcoERC1155Upgradeable is
         super._update(from, to, ids, values);
     }
 
-    function uri(
-        uint256 id
-    )
-        public
-        view
-        virtual
-        override(ERC1155URIStorageUpgradeable, ERC1155Upgradeable, IERC1155MetadataURI)
-        returns (string memory)
-    {
-        return super.uri(id);
+    function burn(
+        address account,
+        uint256 id,
+        uint256 value
+    ) public virtual override(ERC1155BurnableUpgradeable, IERC1155Burnable) {
+        return super.burn(account, id, value);
+    }
+
+    function burnBatch(
+        address account,
+        uint256[] memory ids,
+        uint256[] memory values
+    ) public virtual override(ERC1155BurnableUpgradeable, IERC1155Burnable) {
+        return super.burnBatch(account, ids, values);
     }
 
     function totalSupply(
@@ -77,5 +81,17 @@ contract EcoERC1155Upgradeable is
 
     function exists(uint256 id) public view virtual override(ERC1155SupplyUpgradeable, IERC1155Supply) returns (bool) {
         return super.exists(id);
+    }
+
+    function uri(
+        uint256 id
+    )
+        public
+        view
+        virtual
+        override(ERC1155URIStorageUpgradeable, ERC1155Upgradeable, IERC1155MetadataURI)
+        returns (string memory)
+    {
+        return super.uri(id);
     }
 }
