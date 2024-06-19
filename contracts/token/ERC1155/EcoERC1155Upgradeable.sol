@@ -29,8 +29,7 @@ contract EcoERC1155Upgradeable is
         __ERC1155Pausable_init();
         __ERC1155Supply_init();
 
-        __ERC1155Pausable_init();
-        __ERC1155Pausable_init(baseURI);
+        __EcoERC1155URIControl_init(baseURI);
     }
 
     function supportsInterface(

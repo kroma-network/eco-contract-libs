@@ -21,7 +21,7 @@ abstract contract EcoERC1155URIControl is
         return super.supportsInterface(interfaceId);
     }
 
-    function __ERC1155Pausable_init(string memory baseURI) internal onlyInitializing {
+    function __EcoERC1155URIControl_init(string memory baseURI) internal onlyInitializing {
         __ERC1155_init("");
         _setBaseURI(baseURI);
     }
