@@ -1,6 +1,6 @@
 import math
 
-class LCG:
+class LCGState:
     def __init__(self, state=0):
         self.a = 41     # 곱셈 상수 조건: a-1이 m의 소인수로 나누어 떨어져야한다.
         self.c = 1      # 증가 상수 조건: m과 서로소

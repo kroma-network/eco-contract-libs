@@ -1,6 +1,6 @@
 from brownie import *
 import matplotlib.pyplot as plt
-from lcg import LCG
+from lcg import LCGState
 
 import random
 
@@ -35,7 +35,7 @@ for i in range(1000):
 
     xorSeed = reduce_xor(digest)
 
-    lcg = LCG(xorSeed)
+    lcg = LCGState(xorSeed)
 
     keccak_gen = KeccakGen(digest)
     keccak_gen2 = KeccakGen2(digest) # regen if output > 59999
@@ -70,7 +70,7 @@ ax[1][0].set_xlabel('Value in 10000')
 ax[1][0].set_ylabel('Count')
 
 ax[1][1].bar(lcg_probability.keys(), lcg_probability.values(), color='magenta', width=1)
-ax[1][1].set_title('LCG Probability')
+ax[1][1].set_title('LCGState Probability')
 ax[1][1].set_xlabel('Value in 10000')
 ax[1][1].set_ylabel('Count')
 
