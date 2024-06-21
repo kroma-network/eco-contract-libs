@@ -12,9 +12,7 @@ networks:
   development:
     gas_limit: max
     gas_buffer: 1.2
-    gas_price: 0
-    max_fee: null
-    priority_fee: null
+    gas_price: auto
     reverting_tx_gas_limit: max
     default_contract_owner: true
     cmd_settings:

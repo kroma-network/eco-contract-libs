@@ -20,7 +20,7 @@ __pycache__
 build/
 reports/
 
-scripts/*.py
+scripts/*test*.py
 !scripts/defaults.py
 !scripts/load_key.py
 

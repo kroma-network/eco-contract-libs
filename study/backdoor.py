@@ -1,6 +1,6 @@
 from brownie import *
 import matplotlib.pyplot as plt
-from lcg import LCG
+from lcg import LCGState
 
 import random
 
@@ -34,7 +34,7 @@ for i in range(256):
 
     seeding = KeccakSeeding(xorSeed)
     for i in range(256):
-        lcg = LCG(seeding.gen())
+        lcg = LCGState(seeding.gen())
 
         for i in range(pending_size):
             rand = lcg.gen()
