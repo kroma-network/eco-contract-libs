@@ -11,8 +11,6 @@ from scripts.lib.prng import LCG, KeccakRNG
 def main():
     accounts.default = accounts[0]
 
-
-
     sol_prng = TestPRNG.deploy()
 
     call_count = 10

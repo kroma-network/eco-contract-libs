@@ -1,8 +1,7 @@
 from brownie import *
 import math
 from hexbytes import HexBytes
-from .math_utils import reduceXOR
-import json
+from math_utils import reduceXOR
 
 def coprime_list(n):
     return [i for i in range(1, n) if math.gcd(i, n) == 1]
