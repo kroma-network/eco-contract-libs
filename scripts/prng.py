@@ -5,7 +5,7 @@ import math
 
 import json
 
-from scripts.lib.math_utils import reduceXOR
+from scripts.lib.math_utils import reduceXOR64
 from scripts.lib.prng import LCG, KeccakRNG
 
 def main():
