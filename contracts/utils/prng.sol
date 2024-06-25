@@ -3,12 +3,21 @@
 pragma solidity ^0.8.0;
 
 function bytes32ReduceXOR64(bytes32 data) pure returns (bytes8) {
-    return bytes8((data ^ (data << 64)) ^ ((data << 128) ^ (data << 192)));
+    return bytes8(data ^ (data << 64) ^ (data << 128) ^ (data << 192));
 }
 
-// function bytes32ReduceXOR32(bytes32 data) pure returns (bytes8) {
-//     return bytes8((data ^ (data << 64)) ^ ((data << 128) ^ (data << 192)));
-// }
+function reduceXOR32(bytes32 data) pure returns (bytes4) {
+    return bytes4(reduceXOR(data, 32));
+}
+
+function reduceXOR(bytes32 data, uint256 out_bits) pure returns (bytes32) {
+    require(256 % out_bits == 0);
+    bytes32 tmp;
+    for (uint256 bit_shift; bit_shift < 256; bit_shift += out_bits) {
+        tmp ^= data << bit_shift;
+    }
+    return tmp;
+}
 
 function uint256Keccak(uint256 data) pure returns (bytes32) {
     return bytes32Keccak(bytes32(data));
@@ -74,7 +83,8 @@ library LCG10000 {
     function init(bytes32 seedLikeHash, uint128 normalizeRange) internal pure returns (LCGState memory lcg) {
         lcg.normalizeRange = normalizeRange;
         unchecked {
-            lcg.state = nomalize(uint64(bytes32ReduceXOR64(seedLikeHash)), normalizeRange, 2 ** 64);
+            // lcg.state = nomalize(uint64(bytes32ReduceXOR64(seedLikeHash)), normalizeRange, 2 ** 64);
+            lcg.state = uint32(reduceXOR32(seedLikeHash));
         }
     }
 
