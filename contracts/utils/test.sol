@@ -2,14 +2,26 @@
 
 pragma solidity ^0.8.0;
 
-import "../utils/prng.sol";
+import "./prng.sol";
 
 using Keccak256RG for Keccak256RG.KeccakRGState;
 using LCG10000 for LCG10000.LCGState;
 
 contract TestPRNG {
-    function reduceXOR(bytes32 data) public pure returns (bytes8) {
+    function keccakBytes32(bytes32 word) public pure returns (bytes32) {
+        return keccak256(abi.encode(word));
+    }
+
+    function keccakNumber(uint256 number) public pure returns (bytes32) {
+        return keccak256(abi.encode(number));
+    }
+
+    function reduceXOR64(bytes32 data) public pure returns (bytes32) {
         return bytes32ReduceXOR64(data);
+    }
+
+    function reduceXORbits(bytes32 data, uint256 bits) public pure returns (bytes32) {
+        return reduceXOR(data, bits);
     }
 
     function genKeccak(bytes32 seed, uint256 count) public pure returns (uint256[] memory randoms) {
