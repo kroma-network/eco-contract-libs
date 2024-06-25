@@ -4,6 +4,8 @@ import hexbytes
 from scipy.stats import chisquare
 import numpy as np
 
+import functools
+
 def coprime_list(n):
     return [i for i in range(1, n) if math.gcd(i, n) == 1]
 
@@ -55,7 +57,7 @@ def generate_possible_c(m):
     possible_c = [c for c in range(1, m) if math.gcd(c, m) == 1]
     return possible_c
 
-def reduceXOR(data: hexbytes.main.HexBytes):
+def reduceXOR64(data: hexbytes.main.HexBytes):
     # HexBytes를 정수로 변환
     data_int = int.from_bytes(data, byteorder='big')
 
@@ -65,6 +67,14 @@ def reduceXOR(data: hexbytes.main.HexBytes):
     # 결과를 다시 HexBytes로 변환
     result_bytes = result.to_bytes((result.bit_length() + 7) // 8, byteorder='big')
     return hexbytes.HexBytes(result_bytes[32-8:32])
+
+def reduceXOR(data: hexbytes.main.HexBytes, out_bits=256):
+    if 256 % out_bits != 0: raise RuntimeError("reduceXOR")
+
+    data_int = int.from_bytes(data, byteorder='big')
+    result_int = functools.reduce(lambda a, b: a ^ b, [data_int >> (i * out_bits) for i in range(256//out_bits)])
+    result_bytes = result_int.to_bytes(32, byteorder='big')
+    return hexbytes.HexBytes(result_bytes[32-out_bits//8:32])
 
 def chisquare_test_for_uniform_distribution(data_dict):
     # 관측된 빈도
