@@ -7,6 +7,7 @@ import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol
 
 import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 
+import { IERC721Metadata } from "../ERC721/IERC721.sol";
 import { EcoERC721Base } from "../ERC721/EcoERC721Base.sol";
 import { ERC721SequencialMintUpbradeable } from "../ERC721/ERC721SequencialMintUpbradeable.sol";
 import { ERC721SoulBoundUpgradeable } from "../ERC721/ERC721SoulBoundUpgradeable.sol";
@@ -33,5 +34,11 @@ contract SBT is NFT_Mintable, ERC721SoulBoundUpgradeable {
         address auth
     ) internal virtual override(ERC721SoulBoundUpgradeable, EcoERC721Base) returns (address) {
         return super._update(to, tokenId, auth);
+    }
+
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override(ERC721Upgradeable, EcoERC721Base, IERC721Metadata) returns (string memory) {
+        return super.tokenURI(tokenId);
     }
 }

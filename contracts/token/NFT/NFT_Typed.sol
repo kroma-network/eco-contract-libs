@@ -10,6 +10,7 @@ import { INFT_Mintable, NFT_Mintable } from "./NFT_Mintable.sol";
 import { SelectorRoleControlUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
 
 import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import { EcoERC721Base } from "../ERC721/EcoERC721Base.sol";
 import { ERC721SequencialMintUpbradeable } from "../ERC721/ERC721SequencialMintUpbradeable.sol";
 import { ERC721TypedUpgradeable } from "../ERC721/ERC721TypedUpgradeable.sol";
 
@@ -21,6 +22,8 @@ contract NFT_Typed is INFT_Typed, NFT_Mintable, ERC721TypedUpgradeable {
     ) public view virtual override(ERC721SequencialMintUpbradeable, IERC165) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
+
+    function _checkBaseURI() internal view override {}
 
     function _baseURI()
         internal
@@ -34,7 +37,7 @@ contract NFT_Typed is INFT_Typed, NFT_Mintable, ERC721TypedUpgradeable {
 
     function tokenURI(
         uint256 tokenId
-    ) public view virtual override(IERC721Metadata, ERC721Upgradeable, ERC721TypedUpgradeable) returns (string memory) {
+    ) public view virtual override(IERC721Metadata, EcoERC721Base, ERC721TypedUpgradeable) returns (string memory) {
         return super.tokenURI(tokenId);
     }
 

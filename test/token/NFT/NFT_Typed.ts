@@ -9,7 +9,7 @@ describe("NFT Typed", function () {
   async function NFT_Typed_Fixture() {
     const [owner, admin, user0, user1] = await hre.ethers.getSigners();
 
-    const NFT = await hre.ethers.getContractFactory("NFT_Typed");
+    const NFT = await hre.ethers.getContractFactory("Test_NFT_Typed");
     const nft = await NFT.connect(owner).deploy();
     await nft.initNFT_Mintable(owner.address, name, symbol);
 

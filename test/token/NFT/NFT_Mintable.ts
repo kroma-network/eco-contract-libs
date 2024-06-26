@@ -11,7 +11,7 @@ describe("NFT Mintable", function () {
   async function NFT_Mintable_Fixture() {
     const [owner, admin, user0, user1] = await hre.ethers.getSigners();
 
-    const NFT = await hre.ethers.getContractFactory("NFT_Mintable");
+    const NFT = await hre.ethers.getContractFactory("Test_NFT_Mintable");
     const nft = await NFT.connect(owner).deploy();
     await nft.initNFT_Mintable(owner.address, name, symbol);
 
