@@ -11,7 +11,7 @@ describe("SBT", function () {
   async function SBT_Mintable_Fixture() {
     const [owner, admin, user0, user1] = await hre.ethers.getSigners();
 
-    const SBT = await hre.ethers.getContractFactory("SBT");
+    const SBT = await hre.ethers.getContractFactory("Test_SBT");
     const sbt = await SBT.connect(owner).deploy();
     await sbt.initNFT_Mintable(owner.address, name, symbol);
 

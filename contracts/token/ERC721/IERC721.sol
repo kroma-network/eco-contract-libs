@@ -13,13 +13,19 @@ import { IERC721Receiver } from "@openzeppelin/contracts/token/ERC721/IERC721Rec
 
 import { ISelectorRoleControl } from "../../access/SelectorRoleControlUpgradeable.sol";
 
-interface IEcoERC721Base is IERC165, IERC721, IERC4906, IERC721Metadata, IERC721Errors {}
+interface IERC721Base is IERC165, IERC721, IERC4906, IERC721Metadata, IERC721Errors {}
 
-interface IERC721Burnable is IEcoERC721Base {
+interface IERC721Burnable is IERC721Base {
     function burn(uint256 tokenId) external;
 }
 
-interface IERC721SequencialMintUpbradeable is ISelectorRoleControl, IERC721Burnable {
+interface IEcoERC721URIStorage is IERC721Base {
+    function setTokenURI(uint256 tokenId, string memory _tokenURI) external;
+}
+
+interface IEcoERC721Base is IERC721Burnable, IEcoERC721URIStorage {}
+
+interface IERC721SequencialMintUpbradeable is ISelectorRoleControl, IEcoERC721Base {
     function nextMintId() external view returns (uint256 tokeId);
 
     function nextMint(address to) external returns (uint256 tokenId);
@@ -55,4 +61,4 @@ interface IERC721Queryable is IERC721SequencialMintUpbradeable {
     function tokensOfOwner(address owner) external view returns (uint256[] memory);
 }
 
-interface IEcoERC721 is IERC721SequencialMintUpbradeable {}
+interface IEcoERC721 is IERC721Queryable {}
