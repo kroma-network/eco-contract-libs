@@ -42,3 +42,27 @@ contract TestPRNG {
         }
     }
 }
+
+import "./rate.sol";
+
+contract TestRate {
+    function rateApply(Rate rate, uint value) public pure returns (uint) {
+        return RateMath.rateApply(rate, value);
+    }
+
+    function rateAdd(Rate rate, uint value) public pure returns (uint) {
+        return RateMath.rateAdd(rate, value);
+    }
+
+    function rateSub(Rate rate, uint value) public pure returns (uint) {
+        return RateMath.rateSub(rate, value);
+    }
+
+    function down(Rate rate, Rate basisPoint) public pure returns (Rate result) {
+        return RateMath.down(rate, basisPoint);
+    }
+
+    function up(Rate rate, Rate basisPoint) public pure returns (Rate result) {
+        return RateMath.up(rate, basisPoint);
+    }
+}
