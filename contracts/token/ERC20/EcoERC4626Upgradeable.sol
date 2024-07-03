@@ -107,3 +107,9 @@ contract EcoERC4626Upgradeable is
         return super.nonces(owner);
     }
 }
+
+contract TestEcoERC4626Upgradeable is EcoERC4626Upgradeable {
+    function testInitEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) public {
+        _initEcoERC4626(asset, _name, _symbol);
+    }
+}

@@ -179,3 +179,24 @@ abstract contract ERC20RebasedUpgradeable is
         return super.decimals();
     }
 }
+
+contract TestERC20RebasedUpgradeable is ERC20RebasedUpgradeable {
+    function testInitERC20Rebased(address _underlying) public {
+        _initERC20Rebased(_underlying);
+    }
+
+    function testVirtual() public {
+        _checkRebaseUnderlying(address(0));
+        _totalSupply();
+        _receiveUnderlying(0, address(0));
+        _sendUnderlying(address(0), 0);
+    }
+
+    function _checkRebaseUnderlying(address _underlying) internal virtual override {}
+
+    function _totalSupply() internal view virtual override returns (uint256) {}
+
+    function _receiveUnderlying(uint256 value, address caller) internal virtual override {}
+
+    function _sendUnderlying(address receiver, uint256 value) internal virtual override {}
+}
