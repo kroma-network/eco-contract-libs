@@ -46,6 +46,11 @@ describe("ERC20 Rebase Native", function () {
       expect(await erc20Rebased.calcShare(0n)).to.equal(0n);
       await expect(erc20Rebased.connect(users[0]).transfer(users[1], amount)).reverted;
     });
+
+    it("receive success", async function () {
+      const { owner, erc20Rebased, users } = await loadFixture(ERC20_Rebase_Native_Fixture);
+      await expect(owner.sendTransaction({to:erc20Rebased})).not.reverted;
+    });
   });
 
   describe("ERC20 Rebase Feature", function () {
