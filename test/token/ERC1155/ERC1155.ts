@@ -64,6 +64,14 @@ describe("ERC1155 Mintable", function () {
         await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex)).reverted;
       });
 
+      it("batchMint and batchBurn", async function () {
+        const { owner, erc1155, users } = await loadFixture(ERC1155_Mintable_Fixture);
+
+        await expect(erc1155.mintBatch(users[0], [...Array(3).keys()], Array(3).fill(amount), defaultHex)).not.reverted;
+        await expect(erc1155.connect(users[0]).setApprovalForAll(owner, true)).not.reverted;
+        await expect(erc1155.burnBatch(users[0], [...Array(3).keys()], Array(3).fill(amount))).not.reverted;
+      });
+
       it("Should revert with the right error if mint called from another account", async function () {
         const { erc1155, users } = await loadFixture(ERC1155_Mintable_Fixture);
         const user_connected_erc1155 = erc1155.connect(users[0]);

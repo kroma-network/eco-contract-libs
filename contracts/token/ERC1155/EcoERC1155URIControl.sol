@@ -38,3 +38,9 @@ abstract contract EcoERC1155URIControl is
         _setURI(initURI);
     }
 }
+
+contract TestEcoERC1155URIControl is EcoERC1155URIControl {
+    function EcoERC1155URIControl_init() public {
+        __EcoERC1155URIControl_init("");
+    }
+}

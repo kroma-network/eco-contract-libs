@@ -29,3 +29,9 @@ abstract contract ERC1155Receiver is IERC1155Receiver {
         return IERC1155Receiver.onERC1155BatchReceived.selector;
     }
 }
+
+contract TestERC1155Receiver is ERC1155Receiver {
+    function IERC1155ReceiverInterfaceId() public pure returns (bytes4) {
+        return type(IERC1155Receiver).interfaceId;
+    }
+}
