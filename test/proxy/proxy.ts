@@ -81,6 +81,7 @@ describe("Proxy Test", function () {
       const ownableSlot = "0x9016d09d72d40fdae2fd8ceac6b6234c7706214fd39c1cd1e609a0528c199300";
 
       expect(await proxyAdmin.getSlot(ownableSlot)).eq(ethers.zeroPadValue(owner.address, 32));
+      await expect( proxyAdmin.connect(users[0]).setSlot(ownableSlot, ethers.zeroPadValue(users[0].address, 32))).reverted;
       await expect( proxyAdmin.setSlot(ownableSlot, ethers.zeroPadValue(users[0].address, 32))).not.reverted;
       expect(await proxyAdmin.owner()).eq(users[0].address);
 
