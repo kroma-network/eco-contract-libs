@@ -2,8 +2,12 @@
 
 pragma solidity ^0.8.0;
 
-function bytes32ReduceXOR64(bytes32 data) pure returns (bytes8) {
-    return bytes8(data ^ (data << 64) ^ (data << 128) ^ (data << 192));
+function bytes32Keccak(bytes32 data) pure returns (bytes32) {
+    assembly {
+        mstore(0x00, data)
+        data := keccak256(0x00, 0x20)
+    }
+    return data;
 }
 
 function reduceXOR32(bytes32 data) pure returns (bytes4) {
@@ -13,22 +17,13 @@ function reduceXOR32(bytes32 data) pure returns (bytes4) {
 function reduceXOR(bytes32 data, uint256 out_bits) pure returns (bytes32) {
     require(256 % out_bits == 0);
     bytes32 tmp;
-    for (uint256 bit_shift; bit_shift < 256; bit_shift += out_bits) {
-        tmp ^= data << bit_shift;
+    unchecked {
+        for (uint256 bit_shift; bit_shift < 256; bit_shift += out_bits) {
+            tmp ^= data << bit_shift;
+        }
+        out_bits = 256 - out_bits;
     }
-    return tmp;
-}
-
-function uint256Keccak(uint256 data) pure returns (bytes32) {
-    return bytes32Keccak(bytes32(data));
-}
-
-function bytes32Keccak(bytes32 data) pure returns (bytes32) {
-    assembly {
-        mstore(0x00, data)
-        data := keccak256(0x00, 0x20)
-    }
-    return data;
+    return ((tmp >> out_bits) << out_bits);
 }
 
 function nomalize(uint256 value, uint256 nomalizeRange, uint256 valueRange) pure returns (uint128) {
