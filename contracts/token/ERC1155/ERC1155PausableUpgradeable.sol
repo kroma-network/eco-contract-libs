@@ -23,6 +23,7 @@ import { ERC1155Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ER
 abstract contract ERC1155PausableUpgradeable is Initializable, PausableUpgradeable, ERC1155Upgradeable {
     function __ERC1155Pausable_init() internal onlyInitializing {
         __Pausable_init_unchained();
+        __ERC1155Pausable_init_unchained();
     }
 
     function __ERC1155Pausable_init_unchained() internal onlyInitializing {}
@@ -41,5 +42,15 @@ abstract contract ERC1155PausableUpgradeable is Initializable, PausableUpgradeab
         uint256[] memory values
     ) internal virtual override whenNotPaused {
         super._update(from, to, ids, values);
+    }
+}
+
+contract TestERC1155PausableUpgradeable is ERC1155PausableUpgradeable {
+    function ERC1155Pausable_init() public {
+        __ERC1155Pausable_init();
+    }
+
+    function ERC1155Pausable_init_unchained() public {
+        __ERC1155Pausable_init_unchained();
     }
 }
