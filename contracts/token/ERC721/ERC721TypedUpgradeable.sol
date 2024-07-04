@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.9.0) (token/ERC721/ERC721.sol)
 
 pragma solidity ^0.8.0;
 
@@ -10,11 +9,9 @@ import { EcoERC721Base } from "./EcoERC721Base.sol";
 import { ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
 
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
-import { StringConcat } from "../../utils/concat.sol";
 
 abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUpbradeable {
     using Strings for uint256;
-    using StringConcat for string;
 
     struct ERC721TypedUpgradeableStorage {
         string baseURI;
@@ -41,7 +38,10 @@ abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUp
     ) public view virtual override(EcoERC721Base, IERC721Metadata) returns (string memory) {
         string memory baseURI = _baseURI();
 
-        return bytes(baseURI).length > 0 ? baseURI.concat(tokenType(tokenId).toString()).concat(".json") : "";
+        return
+            bytes(baseURI).length > 0
+                ? string.concat(string.concat(baseURI, tokenType(tokenId).toString()), ".json")
+                : "";
     }
 
     function tokenType(uint256 tokenId) public view override returns (uint256) {
