@@ -11,7 +11,7 @@ describe("Bridged ERC20", function () {
 
   const amount = hre.ethers.parseEther("100");
 
-  async function NFT_Mintable_Fixture() {
+  async function Bridged_ERC20_Fixture() {
     const [owner, remoteToken, bridge, ...users] = await hre.ethers.getSigners();
 
     const L2ERC20 = await hre.ethers.getContractFactory("ERC20L2BridgedUpgradeable");
@@ -23,13 +23,13 @@ describe("Bridged ERC20", function () {
 
   describe("Deployment", function () {
     it("Check init", async function () {
-      const { erc20, owner, remoteToken, bridge } = await loadFixture(NFT_Mintable_Fixture);
+      const { erc20, owner, remoteToken, bridge } = await loadFixture(Bridged_ERC20_Fixture);
 
       await expect(erc20.initERC20L2Bridged(owner, name, symbol, decimals, remoteToken, bridge)).reverted;
     });
 
     it("Check init data", async function () {
-      const { erc20, owner, remoteToken, bridge } = await loadFixture(NFT_Mintable_Fixture);
+      const { erc20, owner, remoteToken, bridge } = await loadFixture(Bridged_ERC20_Fixture);
 
       expect(await erc20.owner()).to.equal(owner.address);
 
@@ -45,7 +45,7 @@ describe("Bridged ERC20", function () {
   describe("Bridged ERC20", function () {
     describe("Mint", function () {
       it("mint", async function () {
-        const { erc20, owner, remoteToken, bridge, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { erc20, owner, remoteToken, bridge, users } = await loadFixture(Bridged_ERC20_Fixture);
 
         const amountBig = 1000000n;
         const amount = 10000n;
@@ -56,7 +56,7 @@ describe("Bridged ERC20", function () {
       });
 
       it("Shouldn't fail mint with the right role access account", async function () {
-        const { erc20, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { erc20, users } = await loadFixture(Bridged_ERC20_Fixture);
 
         await expect(erc20.grantSelectorRole(getSelector(erc20.mint), users[0])).not.reverted;
 
@@ -70,7 +70,7 @@ describe("Bridged ERC20", function () {
 
     describe("Transfer", function () {
       it("Should revert with the right error if mint called from another account", async function () {
-        const { owner, erc20, users } = await loadFixture(NFT_Mintable_Fixture);
+        const { owner, erc20, users } = await loadFixture(Bridged_ERC20_Fixture);
         await expect(erc20.mint(users[0], amount)).not.reverted;
         await expect(erc20.connect(users[0]).burn(amount)).not.reverted;
         expect(await erc20.balanceOf(users[0])).equal(0);
