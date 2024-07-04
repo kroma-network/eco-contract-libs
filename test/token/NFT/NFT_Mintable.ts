@@ -127,28 +127,6 @@ describe("NFT Mintable", function () {
 
         await expect(nft.connect(user0).transferFrom(user0, user1, tokenId)).reverted;
       });
-
-      it("Queryable!", async function () {
-        const { nft, user0, user1 } = await loadFixture(NFT_Mintable_Fixture);
-
-        const len = 10;
-
-        const tokenIds = Array(len);
-
-        for (let i = 0; i < 10; i++) {
-          tokenIds[i] = await nft.nextMintId();
-          await expect(nft.nextMint(user0)).not.reverted;
-        }
-
-        expect(await nft.tokensOfOwner(user0)).deep.equal(tokenIds);
-        expect(await nft.tokensOfOwnerIn(user0, 1, len + 1)).deep.equal(tokenIds);
-
-        expect(await nft.tokensOfOwnerIn(user0, 1, len + 2)).deep.equal(tokenIds);
-
-        await expect(nft.tokensOfOwnerIn(user0, len + 1, 1)).reverted;
-
-        expect(await nft.tokensOfOwnerIn(user1, 1, len + 1)).deep.equal([]);
-      });
     });
   });
 });

@@ -14,3 +14,5 @@ abstract contract ERC721Receiver is IERC721Receiver {
         return IERC721Receiver.onERC721Received.selector;
     }
 }
+
+contract TestERC721Receiver is ERC721Receiver {}
