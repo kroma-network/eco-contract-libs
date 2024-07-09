@@ -1,16 +1,13 @@
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { AsyncConstructor } from "async-constructor";
-import { BaseContract, Signer, BytesLike, Addressable, ContractFactory, ZeroAddress } from "ethers";
+import { BaseContract, Addressable, ZeroAddress } from "ethers";
 import hre from "hardhat";
 
 import {
-  EcoTUPWithAdmin,
   EcoTUPWithAdminLogic__factory,
   EcoProxyAdmin__factory,
   EcoProxyAdmin,
   EcoTUPWithAdminLogic,
-  KGHManager__factory,
-  KGHManager,
 } from "../typechain-types";
 
 export interface TraitCF<CT> {
@@ -169,13 +166,6 @@ export class ProxyFactory extends ContractInstance<EcoProxyAdmin__factory, EcoPr
   }
 }
 
-async function testing() {
-  const factory = await hre.ethers.getContractFactory("KGHManager");
-  const test1 = await new ContractInstance("test", KGHManager__factory);
-  console.log(await test1.inst.getSellSteps());
-  const test2 = await ProxyFactory.getInstance();
-}
-
 export class ProxiedInstance<
   CF extends TraitCF<Awaited<ReturnType<CF["deploy"]>>>,
   CT extends Awaited<ReturnType<CF["deploy"]>>,
@@ -267,8 +257,4 @@ export class ProxiedInstance<
       throw "exportInstanceInfo: not deployed";
     }
   }
-}
-
-async function testing2() {
-  const kgh = await new ProxiedInstance("launch", KGHManager__factory);
 }
