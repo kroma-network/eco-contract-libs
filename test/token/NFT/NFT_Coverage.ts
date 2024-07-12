@@ -10,25 +10,25 @@ describe("NFT Coverage", function () {
   const symbol = "CNFT";
   const baseURI = "https://test.com/";
 
-  async function NFT_Mintable_Fixture() {
+  async function NFT_SeqMintable_Fixture() {
     const [owner, admin, user0, user1] = await hre.ethers.getSigners();
 
-    const NFT = await hre.ethers.getContractFactory("Test_NFT_Mintable");
+    const NFT = await hre.ethers.getContractFactory("Test_NFT_SeqMintable");
     const nft = await NFT.connect(owner).deploy();
-    await nft.initNFT_Mintable(owner.address, name, symbol);
+    await nft.initNFT_SeqMintable(owner.address, name, symbol);
 
     return { owner, admin, user0, user1, nft };
   }
 
-  it("NFT_Mintable (init revert)", async function () {
+  it("NFT_SeqMintable (init revert)", async function () {
     const [owner, admin, user0, user1] = await hre.ethers.getSigners();
-    const NFT = await hre.ethers.getContractFactory("NFT_Mintable");
+    const NFT = await hre.ethers.getContractFactory("NFT_SeqMintable");
     const nft = await NFT.connect(owner).deploy();
-    await expect(nft.initNFT_Mintable(owner.address, name, symbol)).reverted;
+    await expect(nft.initNFT_SeqMintable(owner.address, name, symbol)).reverted;
   });
 
   it("EcoERC721Base(view)", async function () {
-    const { nft, user0, user1 } = await loadFixture(NFT_Mintable_Fixture);
+    const { nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
 
     const tokenId = await nft.nextMintId();
     await expect(nft.nextMint(user0)).not.reverted;
@@ -36,7 +36,7 @@ describe("NFT Coverage", function () {
   });
 
   it("EcoERC721URIStorage (view & set)", async function () {
-    const { nft, user0, user1 } = await loadFixture(NFT_Mintable_Fixture);
+    const { nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
 
     const tokenId = await nft.nextMintId();
     await expect(nft.nextMint(user0)).not.reverted;
@@ -46,11 +46,10 @@ describe("NFT Coverage", function () {
     await expect(nft.setTokenURI(tokenId, extraURIPath + tokenId)).not.reverted;
     await expect(nft.connect(user0).setTokenURI(tokenId, extraURIPath + tokenId)).reverted;
     expect(await nft.tokenURI(tokenId)).eq(baseURI + extraURIPath + tokenId + ".json");
-
   });
 
-  it("ERC721QueryableUpgradeable", async function () {
-    const { nft, user0, user1 } = await loadFixture(NFT_Mintable_Fixture);
+  it("EcoERC721SequencialQueryable", async function () {
+    const { nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
 
     const len = 10;
 
@@ -72,15 +71,15 @@ describe("NFT Coverage", function () {
 
     // for coverage
     await expect(nft.nextMintBatch(user1, len)).not.reverted;
-    expect(await nft.tokensOfOwnerIn(user0, len-5, len+5)).deep.equal( [10n, 9n, 8n, 7n, 5n, 6n] );
-    expect(await nft.tokensOfOwnerIn(user1, len-5, len+5)).deep.equal( [11n, 12n, 13n, 14n, 15n] );
+    expect(await nft.tokensOfOwnerIn(user0, len - 5, len + 5)).deep.equal([10n, 9n, 8n, 7n, 5n, 6n]);
+    expect(await nft.tokensOfOwnerIn(user1, len - 5, len + 5)).deep.equal([11n, 12n, 13n, 14n, 15n]);
   });
 
   it("SBT (view)", async function () {
     const [owner, admin, user0, user1] = await hre.ethers.getSigners();
     const SBT = await hre.ethers.getContractFactory("Test_SBT");
     const sbt = await SBT.connect(owner).deploy();
-    await sbt.initNFT_Mintable(owner.address, name, symbol);
+    await sbt.initNFT_SeqMintable(owner.address, name, symbol);
 
     const tokenId = await sbt.nextMintId();
     await expect(sbt.nextMint(user0)).not.reverted;
@@ -88,7 +87,7 @@ describe("NFT Coverage", function () {
   });
 
   it("ERC721Receiver", async function () {
-    const { nft, user0, user1 } = await loadFixture(NFT_Mintable_Fixture);
+    const { nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
 
     const factory = await ethers.getContractFactory("TestERC721Receiver");
     const receiver_contract = await factory.deploy();

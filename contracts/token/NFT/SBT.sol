@@ -11,9 +11,9 @@ import { EcoERC721Base } from "../ERC721/EcoERC721Base.sol";
 import { ERC721SequencialMintUpbradeable } from "../ERC721/ERC721SequencialMintUpbradeable.sol";
 import { ERC721SoulBoundUpgradeable } from "../ERC721/ERC721SoulBoundUpgradeable.sol";
 
-import { NFT_Mintable } from "./NFT_Mintable.sol";
+import { NFT_SeqMintable } from "./NFT_SeqMintable.sol";
 
-contract SBT is NFT_Mintable, ERC721SoulBoundUpgradeable {
+contract SBT is NFT_SeqMintable, ERC721SoulBoundUpgradeable {
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual override(ERC721SequencialMintUpbradeable, ERC721Upgradeable, IERC165) returns (bool) {

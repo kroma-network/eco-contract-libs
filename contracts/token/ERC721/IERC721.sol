@@ -49,7 +49,7 @@ interface IERC721Typed is IERC721SequencialMintUpbradeable {
 /**
  * @dev Interface of ERC721AQueryable.
  */
-interface IERC721Queryable is IERC721SequencialMintUpbradeable {
+interface IERC721Queryable is IEcoERC721Base {
     /**
      * Invalid query range (`start` >= `stop`).
      */
@@ -60,4 +60,8 @@ interface IERC721Queryable is IERC721SequencialMintUpbradeable {
     function tokensOfOwner(address owner) external view returns (uint256[] memory);
 }
 
-interface IEcoERC721 is IERC721Queryable {}
+interface IEcoERC721 is IERC721SequencialMintUpbradeable, IERC721Queryable {}
+
+interface IEcoERC721Mintable is ISelectorRoleControl, IEcoERC721Base, IERC721Queryable {
+    function mint(address account, uint256 tokenId) external;
+}
