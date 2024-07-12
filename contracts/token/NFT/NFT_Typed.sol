@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import { IERC721Metadata, IERC721Burnable, IERC721Typed } from "../ERC721/IERC721.sol";
-import { INFT_Mintable, NFT_Mintable } from "./NFT_Mintable.sol";
+import { INFT_SeqMintable, NFT_SeqMintable } from "./NFT_SeqMintable.sol";
 
 import { SelectorRoleControlUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
 
@@ -13,9 +13,9 @@ import { EcoERC721Base } from "../ERC721/EcoERC721Base.sol";
 import { ERC721SequencialMintUpbradeable } from "../ERC721/ERC721SequencialMintUpbradeable.sol";
 import { ERC721TypedUpgradeable } from "../ERC721/ERC721TypedUpgradeable.sol";
 
-interface INFT_Typed is INFT_Mintable, IERC721Typed {}
+interface INFT_Typed is INFT_SeqMintable, IERC721Typed {}
 
-contract NFT_Typed is INFT_Typed, NFT_Mintable, ERC721TypedUpgradeable {
+contract NFT_Typed is INFT_Typed, NFT_SeqMintable, ERC721TypedUpgradeable {
     function supportsInterface(
         bytes4 interfaceId
     ) public view virtual override(ERC721SequencialMintUpbradeable, IERC165) returns (bool) {
@@ -46,7 +46,7 @@ contract NFT_Typed is INFT_Typed, NFT_Mintable, ERC721TypedUpgradeable {
         return super._nextMint(to);
     }
 
-    function burn(uint256 tokenId) public virtual override(ERC721TypedUpgradeable, IERC721Burnable, NFT_Mintable) {
+    function burn(uint256 tokenId) public virtual override(ERC721TypedUpgradeable, IERC721Burnable, NFT_SeqMintable) {
         return super.burn(tokenId);
     }
 }

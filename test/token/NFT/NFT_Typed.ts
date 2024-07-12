@@ -11,7 +11,7 @@ describe("NFT Typed", function () {
 
     const NFT = await hre.ethers.getContractFactory("Test_NFT_Typed");
     const nft = await NFT.connect(owner).deploy();
-    await nft.initNFT_Mintable(owner.address, name, symbol);
+    await nft.initNFT_SeqMintable(owner.address, name, symbol);
 
     return { owner, admin, user0, user1, nft };
   }
@@ -20,7 +20,7 @@ describe("NFT Typed", function () {
     it("Basic Initialize", async function () {
       const { nft, owner } = await loadFixture(NFT_Typed_Fixture);
 
-      await expect(nft.initNFT_Mintable(owner.address, name, symbol)).reverted;
+      await expect(nft.initNFT_SeqMintable(owner.address, name, symbol)).reverted;
 
       expect(await nft.owner()).to.equal(owner.address);
 
@@ -65,8 +65,7 @@ describe("NFT Typed", function () {
         await expect(nft.connect(user0).setTokenType(i + 1, 0)).reverted;
         const typedSupply = await nft.typeSupply(i);
         expect(typedSupply).not.equal(BigInt(0));
-        if(i!=0)
-          await expect(nft.setTokenType(i + 1, 0)).not.reverted;
+        if (i != 0) await expect(nft.setTokenType(i + 1, 0)).not.reverted;
 
         totalTypedSupply += typedSupply;
       }

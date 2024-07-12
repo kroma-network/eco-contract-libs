@@ -13,7 +13,7 @@ describe("SBT", function () {
 
     const SBT = await hre.ethers.getContractFactory("Test_SBT");
     const sbt = await SBT.connect(owner).deploy();
-    await sbt.initNFT_Mintable(owner.address, name, symbol);
+    await sbt.initNFT_SeqMintable(owner.address, name, symbol);
 
     return { owner, admin, user0, user1, sbt };
   }
