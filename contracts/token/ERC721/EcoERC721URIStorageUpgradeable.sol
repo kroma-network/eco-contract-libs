@@ -24,6 +24,10 @@ abstract contract EcoERC721URIStorageUpgradeable is
         return super.supportsInterface(interfaceId);
     }
 
+    function getBaseURI() public view virtual returns (string memory baseURI) {
+        return _baseURI();
+    }
+
     function tokenURI(
         uint256 tokenId
     ) public view virtual override(ERC721URIStorageUpgradeable, IERC721Metadata) returns (string memory) {

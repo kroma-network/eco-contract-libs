@@ -19,6 +19,8 @@ interface IERC721Burnable is IERC721Base {
 }
 
 interface IEcoERC721URIStorage is IERC721Base {
+    function getBaseURI() external view returns (string memory baseURI);
+
     function setTokenURI(uint256 tokenId, string memory _tokenURI) external;
 }
 
