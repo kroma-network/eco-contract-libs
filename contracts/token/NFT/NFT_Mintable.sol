@@ -56,6 +56,12 @@ contract NFT_MintableBase is IEcoERC721Mintable, EcoERC721Base, EcoERC721Queryab
         return _mint(account, tokenId);
     }
 
+    function mints(address account, uint256[] calldata tokenIds) public override onlyAdmin {
+        for (uint256 i; i < tokenIds.length; i++) {
+            _mint(account, tokenIds[i]);
+        }
+    }
+
     function burn(uint256 tokenId) public virtual override(EcoERC721Base, IERC721Burnable) {
         return super.burn(tokenId);
     }
