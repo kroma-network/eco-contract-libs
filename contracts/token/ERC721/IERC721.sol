@@ -66,4 +66,6 @@ interface IEcoERC721 is IERC721SequencialMintUpbradeable, IERC721Queryable {}
 
 interface IEcoERC721Mintable is ISelectorRoleControl, IEcoERC721Base, IERC721Queryable {
     function mint(address account, uint256 tokenId) external;
+
+    function mints(address account, uint256[] calldata tokenIds) external;
 }
