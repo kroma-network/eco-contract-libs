@@ -82,11 +82,11 @@ abstract contract SelectorRoleControlUpgradeable is
         _unpause();
     }
 
-    function hasSelectorRole(bytes4 role, address account) external view override returns (bool) {
+    function hasSelectorRole(bytes4 role, address account) public view override returns (bool) {
         return hasRole(role, account);
     }
 
-    function getSelectorRoleAdmin(bytes4 role) external view override returns (bytes32) {
+    function getSelectorRoleAdmin(bytes4 role) public view override returns (bytes32) {
         return getRoleAdmin(role);
     }
 
@@ -95,11 +95,11 @@ abstract contract SelectorRoleControlUpgradeable is
         if (!_revokeRole(role, callerConfirmation)) revert SelectorRoleNotExist();
     }
 
-    function getSelectorRoleMember(bytes4 role, uint256 index) external view override returns (address) {
+    function getSelectorRoleMember(bytes4 role, uint256 index) public view override returns (address) {
         return getRoleMember(role, index);
     }
 
-    function getSelectorRoleMemberCount(bytes4 role) external view override returns (uint256) {
+    function getSelectorRoleMemberCount(bytes4 role) public view override returns (uint256) {
         return getRoleMemberCount(role);
     }
 }
