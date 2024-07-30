@@ -64,10 +64,7 @@ describe("NFT Mintable", function () {
       const { nft, admin, user0 } = await loadFixture(NFT_SeqMintable_Fixture);
 
       expect(await nft.totalSupply()).eq(0);
-      await expect(nft.mint(user0, 1)).not.reverted;
-      await expect(nft.mint(user0, 3)).not.reverted;
-      await expect(nft.mint(user0, 5)).not.reverted;
-      await expect(nft.mint(user0, 7)).not.reverted;
+      await expect(nft.mints(user0, [1, 3, 5, 7])).not.reverted;
       expect(await nft.totalSupply()).eq(4);
 
       expect(await nft.tokensOfOwnerIn(user0, 1, 9)).deep.eq([1, 3, 5, 7]);

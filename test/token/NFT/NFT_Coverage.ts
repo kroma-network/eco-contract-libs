@@ -38,6 +38,8 @@ describe("NFT Coverage", function () {
   it("EcoERC721URIStorage (view & set)", async function () {
     const { nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
 
+    expect(await nft.getBaseURI()).eq(baseURI);
+
     const tokenId = await nft.nextMintId();
     await expect(nft.nextMint(user0)).not.reverted;
     expect(await nft.tokenURI(tokenId)).eq(baseURI + tokenId + ".json");
