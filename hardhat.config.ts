@@ -103,6 +103,11 @@ const config: HardhatUserConfig = {
     },
 
     // testnet L1
+    holesky: {
+      chainId: 17000,
+      url: "http://api-l1.holesky.kroma.cc:8545/",
+      accounts: TESTNET_ACCOUNTS,
+    },
     sepolia: {
       chainId: 11155111,
       url: ALCHEMY_SEPOLIA_RPC ?? "",
@@ -136,6 +141,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       mainnet: ETHERSCAN_API_KROMAECO,
       ethereum: ETHERSCAN_API_KROMAECO,
+      holesky: ETHERSCAN_API_KROMAECO,
       sepolia: ETHERSCAN_API_KROMAECO,
 
       kroma: KROMASCAN_API_KROMAECO,
@@ -151,7 +157,10 @@ const config: HardhatUserConfig = {
         }
       }
     ]
-  }
+  },
+  // sourcify: {
+  //   enabled: true
+  // }
 };
 
 export default config;
