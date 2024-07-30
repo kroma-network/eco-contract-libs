@@ -9,7 +9,7 @@ import { IEcoERC721Base, IERC721Burnable, IERC721Metadata } from "./IERC721.sol"
 import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import { ERC721PausableUpgradeable } from "./ERC721PausableUpgradeable.sol";
 import { ERC721BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
-import { EcoERC721URIStorageUpgradeable, ERC721URIStorageUpgradeable } from "./EcoERC721URIStorageUpgradeable.sol";
+import { EcoERC721URIStorageUpgradeable } from "./EcoERC721URIStorageUpgradeable.sol";
 import { ERC721EnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 
 abstract contract EcoERC721Base is
