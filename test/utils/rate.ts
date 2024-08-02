@@ -14,8 +14,8 @@ describe("Rate Math in utils", function () {
     return { rateMath };
   }
 
-  describe("Bits Utils", function () {
-    it("keccak", async function () {
+  describe("Rate Utils", function () {
+    it("logic", async function () {
       const { rateMath } = await loadFixture(RateMath_Fixture);
       const defaultRate = 10000;
       const defaultValue = 1000;
