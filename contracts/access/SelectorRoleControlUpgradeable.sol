@@ -7,6 +7,8 @@ import { IEcoOwnable, EcoOwnable } from "./EcoOwnable.sol";
 import { AccessControlEnumerableUpgradeable, AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
 import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 
+import { UUPSUpgradeable } from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+
 import { IAccessControlEnumerable, IAccessControl } from "@openzeppelin/contracts/access/extensions/IAccessControlEnumerable.sol";
 
 interface IPausable {
@@ -46,6 +48,7 @@ abstract contract SelectorRoleControlUpgradeable is
     Initializable,
     ISelectorRoleControl,
     EcoOwnable,
+    UUPSUpgradeable,
     PausableUpgradeable,
     AccessControlEnumerableUpgradeable
 {
@@ -54,6 +57,8 @@ abstract contract SelectorRoleControlUpgradeable is
         __Pausable_init();
         __AccessControlEnumerable_init();
     }
+
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
     modifier onlyAdmin() {
         _onlyAdmin(_msgSender());
