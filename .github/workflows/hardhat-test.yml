@@ -48,8 +48,5 @@ jobs:
       - name: Compile solidity
         run: yarn hardhat compile
 
-      - name: Launch local hardhat node
-        run: yarn hardhat node &
-
       - name: Testing
         run: yarn hardhat test
