@@ -29,3 +29,6 @@ abi
 
 # echidna
 crytic-export
+
+# dev & testing
+scripts/*test*.ts
