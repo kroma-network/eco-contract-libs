@@ -12,15 +12,15 @@ jobs:
           submodules: true
           token: ${{ secrets.KROMA_GIT_TOKEN }}
 
-      - name: Setup Node.js
+      - name: Setup node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18.x"
+          node-version: "lts/*"
 
-      - name: Enable Corepack
+      - name: Enable corepack
         run: corepack enable && corepack prepare yarn@stable --activate
 
-      - name: Cache Yarn dependencies
+      - name: Cache yarn dependencies
         id: yarn-cache
         uses: actions/cache@v3
         with:
@@ -31,10 +31,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - run: yarn
-        shell: bash
+      - name: Install yarn dependencies
+        run: yarn
 
-      - name: Caching solidity compiler
+      - name: Cache solidity compiler
         uses: actions/cache@v3
         with:
           path: |
@@ -46,5 +46,5 @@ jobs:
       - name: Compile solidity
         run: yarn hardhat compile
 
-      - name: Testing
+      - name: Test solidity
         run: yarn hardhat test
