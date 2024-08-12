@@ -32,3 +32,9 @@ crytic-export
 
 # dev & testing
 scripts/*test*.ts
+
+# yarn4 not zero install
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
