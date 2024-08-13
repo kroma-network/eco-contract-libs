@@ -67,6 +67,7 @@ describe("NFT Mintable", function () {
       await expect(nft.mints(user0, [1, 3, 5, 7])).not.reverted;
       expect(await nft.totalSupply()).eq(4);
 
+      await expect(nft.tokensOfOwnerIn(user0, 9, 1)).reverted;
       expect(await nft.tokensOfOwnerIn(user0, 1, 9)).deep.eq([1, 3, 5, 7]);
       expect(await nft.tokensOfOwnerIn(user0, 2, 6)).deep.eq([5, 3]);
       expect(await nft.tokensOfOwner(user0)).deep.eq([1, 3, 5, 7]);

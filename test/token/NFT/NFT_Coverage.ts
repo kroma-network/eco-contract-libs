@@ -50,6 +50,25 @@ describe("NFT Coverage", function () {
     expect(await nft.tokenURI(tokenId)).eq(baseURI + extraURIPath + tokenId + ".json");
   });
 
+  it("NFT_SeqMintableIdenticalURI (view & set)", async function () {
+    const { owner, nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
+
+    const seqIdentical = await (await ethers.getContractFactory("Test_NFT_SeqMintableIdenticalURI")).deploy();
+    await expect(seqIdentical.initNFT_SeqMintable(
+      owner,
+      "SeqMintableIdenticalURI",
+      "SMIURI"
+    )).not.reverted;
+
+    const tokenId = await seqIdentical.nextMintId();
+    await expect(seqIdentical.nextMint(user0)).not.reverted;
+    expect(await seqIdentical.tokenURI(tokenId)).eq(baseURI + "metadata.json");
+
+    await expect(seqIdentical.setTokenURI(tokenId, "")).reverted;
+    expect(await seqIdentical.supportsInterface("0x00000000")).eq(false);
+    await expect(seqIdentical.connect(user0).burn(tokenId)).not.reverted;
+  });
+
   it("EcoERC721SequencialQueryable", async function () {
     const { nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
 
