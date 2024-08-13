@@ -38,3 +38,18 @@ abstract contract EcoERC721URIStorageUpgradeable is
         return _setTokenURI(tokenId, _tokenURI);
     }
 }
+
+abstract contract EcoERC721IdenticalURIUpgradeable is EcoERC721URIStorageUpgradeable {
+    error ERC721Identical();
+
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        _requireOwned(tokenId);
+
+        string memory baseURI = _baseURI();
+        return bytes(baseURI).length > 0 ? string.concat(baseURI, "metadata.json") : "";
+    }
+
+    function setTokenURI(uint256, string memory) public virtual override {
+        revert ERC721Identical();
+    }
+}
