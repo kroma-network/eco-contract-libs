@@ -248,17 +248,14 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
 
   async importContractInfo() {
     this.checkUnbind();
-
     try {
       const instancePath = path.join(DefaultInfoDir, this.chainId.toString(), this.domain, this.label + ".json");
       const jsonString = fs.readFileSync(instancePath, "utf-8");
       return JSON.parse(jsonString) as EcoContractInfo;
-    } catch (error: any) {
-      if (error.code === "ENOENT") {
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException)?.code === "ENOENT") {
         return { label: this.label, address: "", deployAt: 0, abi: "" } as EcoContractInfo;
-      } else {
-        throw error;
-      }
+      } else throw error;
     }
   }
 
