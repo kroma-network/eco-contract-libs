@@ -5,6 +5,31 @@ import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { AsyncConstructor } from "async-constructor";
 import { AddressLike, BaseContract, BytesLike, ContractFactory, ContractTransactionResponse } from "ethers";
 import hre from "hardhat";
+import { Test_SelectorRoleControlUpgradeable__factory, Test_SelectorRoleControlUpgradeable } from "../typechain-types";
+
+type EcoDeploymentDetail = {
+  deployedBlockNumber: number;
+  address: string;
+} & {
+  waitForDeployment(): any;
+  upgradeToAndCall(newImplementation: AddressLike, data: BytesLike): Promise<void>;
+  deploymentTransaction(): ContractTransactionResponse
+} & BaseContract;
+
+// IContractFactory 인터페이스 정의
+export interface IContractFactory<CT> {
+  deploy(...args: any[]): Promise<CT>;
+  connect(...args: any[]): IContractFactory<CT>;
+}
+
+// ContractFactoryType 및 ReturnCT 정의
+export type ContractFactoryType<CT> = IContractFactory<CT>;
+export type ReturnCT<CF extends IContractFactory<unknown>> = (CF extends IContractFactory<infer CT> ? CT : never);
+
+// EcoCF와 CFConstructor 타입 정의
+export type EcoCF<CF extends IContractFactory<unknown>> = ContractFactoryType<ReturnCT<CF>>;
+export type EcoCT<CF extends IContractFactory<unknown>> = ReturnCT<CF> & EcoDeploymentDetail;
+export type CFConstructor<CF> = new (...args: any[]) => CF;
 
 export function filesInDirectory(startPath: string, filter = RegExp(/\.json$/)): string[] {
   let results: string[] = [];
@@ -45,29 +70,6 @@ export function createDirectoryIfNotExists(dirPath: string) {
   }
 }
 
-export type EcoContractFactory<CT> = {
-  deploy(...args: any[]): Promise<CT>;
-  attach(...args: any[]): CT;
-  connect(...args: any[]): EcoContractFactory<CT>;
-};
-
-export type EcoCF<CF extends EcoContractFactory<EcoContract<CF>>> = EcoContractFactory<EcoContract<CF>>;
-
-interface ContractVerbose {
-  deployedBlockNumber: number;
-  address: string;
-}
-
-interface IEcoUUPSUpgradeable {
-  upgradeToAndCall(newImplementation: AddressLike, data: BytesLike): Promise<void>;
-}
-export type EcoContract<CF extends EcoContractFactory<EcoContract<CF>>> = Awaited<ReturnType<CF["deploy"]>> & {
-  waitForDeployment(): Promise<EcoContract<CF>>;
-} & { deploymentTransaction(): ContractTransactionResponse } & BaseContract &
-  IEcoUUPSUpgradeable &
-  ContractVerbose;
-type CFConstructor<CF> = new (...args: any[]) => CF | ContractFactory;
-
 export function getSelector(contractMethod: { fragment: { selector: string } }): string {
   return contractMethod.fragment.selector;
 }
@@ -98,59 +100,41 @@ export class EcoProxyFactory extends AsyncConstructor {
     return EcoProxyFactory.instance;
   }
 
-  private async _deployProxy<CF extends EcoContractFactory<EcoContract<CF>>>(
-    impl: EcoContract<CF>,
-    initData: BytesLike,
-    deployer?: HardhatEthersSigner,
-  ) {
+  async _deployProxy<CF extends EcoCF<CF>>(logic:EcoCT<CF>, initData: BytesLike, deployer?:HardhatEthersSigner) {
     const _deployer = deployer ?? this.deployer;
-    const proxy = await this.factory.connect(_deployer).deploy(impl, initData);
-    const inst = (await proxy.waitForDeployment()) as EcoContract<CF>;
+    const proxy = await this.factory.connect(_deployer).deploy(logic, initData);
+    const inst = await proxy.waitForDeployment() as unknown as EcoCT<CF>;
     inst.address = await proxy.getAddress();
     inst.deployedBlockNumber = proxy.deploymentTransaction()!.blockNumber!;
     return inst;
   }
 
-  // async deployInstance(deployer?:HardhatEthersSigner) {
-  //   const _deployer = deployer ? deployer : this.deployer;
-  //   const proxy = this._deployProxy()
-  //   // await proxy.waitForDeployment();
-  //   // proxy.deploymentTransaction()!.blockNumber;
-  // }
-
-  async _deployImpl<CF extends EcoContractFactory<EcoContract<CF>>>(
+  async _deployLogic<CF extends EcoCF<CF>>(
     implFactory: CF,
     implConstructArgs?: unknown[],
     deployer?: HardhatEthersSigner,
-  ): Promise<EcoContract<CF>> {
+  ): Promise<EcoCT<CF>> {
     const _deployer = deployer ?? this.deployer;
     const _implFactory = implFactory.connect(_deployer);
-    const impl = implConstructArgs ? await _implFactory.deploy(implConstructArgs) : await _implFactory.deploy();
-    await impl.waitForDeployment();
+    const logic = (implConstructArgs ? await _implFactory.deploy(implConstructArgs) : await _implFactory.deploy()) as EcoCT<CF>;
+    await logic.waitForDeployment();
 
-    impl.address = await impl.getAddress();
-    impl.deployedBlockNumber = impl.deploymentTransaction()!.blockNumber!;
-    return impl;
+    logic.address = await logic.getAddress();
+    logic.deployedBlockNumber = logic.deploymentTransaction()!.blockNumber!;
+    return logic as EcoCT<CF>;
   }
 
-  async deployWithImpl<CF extends EcoContractFactory<EcoContract<CF>>>(
+  async deployWithImpl<CF extends EcoCF<CF>>(
     implFactory: CF,
     proxyInitData: BytesLike,
     implConstructArgs?: unknown[],
-    deployer?: HardhatEthersSigner,
-  ) {
+    deployer?: HardhatEthersSigner
+  ): Promise<EcoCT<CF>> {
     const _deployer = deployer ?? this.deployer;
-    const impl = await this._deployImpl(implFactory, implConstructArgs, _deployer);
-    const inst = await this._deployProxy(impl, proxyInitData, _deployer);
-    return inst;
+    const logic = await this._deployLogic(implFactory, implConstructArgs, _deployer);
+    const inst = await this._deployProxy(logic, proxyInitData, _deployer);
+    return inst as EcoCT<CF>;
   }
-
-  // async reuse(deployer?:HardhatEthersSigner) {
-  //   const _deployer = deployer ? deployer : this.deployer;
-  //   const proxy = await this.factory.connect(_deployer).deploy(impl, initData);
-  // }
-
-  // async upgrade
 }
 
 export class EcoInstanceBase extends AsyncConstructor {
@@ -209,7 +193,8 @@ interface EcoContractInfo {
 }
 
 export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
-  inst!: EcoContract<CF>;
+  logic!: EcoCT<CF>;
+  inst!: EcoCT<CF>;
   label!: string;
   factory!: CF;
 
@@ -230,20 +215,32 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
     );
   }
 
-  async use(inputBuilder?: () => Promise<string>, implArgs?: unknown[]) {
-    this.checkUnbind();
+  async deployLogic(implArgs?:unknown[]) {
+    this.logic = await this.proxyFactory._deployLogic(this.factory, implArgs, this.deployer);
+  }
 
+  async useLogic(implArgs?:unknown[]) {
+    if(!this.logic) this.deployLogic(implArgs);
+  }
+
+  async deploy(inputBuilder?: () => Promise<string>, implArgs?:unknown[]) {
+    await this.useLogic(implArgs);
     const input = inputBuilder ? await inputBuilder() : "0x";
-    this.inst = await this.proxyFactory.deployWithImpl(this.factory, input, implArgs, this.deployer);
+    this.inst = await this.proxyFactory._deployProxy(this.logic, input, this.deployer);
     this._bindingDeployInfo(this.inst.address, this.inst.deployedBlockNumber);
   }
 
-  async upgrade(inputBuilder?: () => Promise<string>, implArgs?: unknown[]) {
+  async use(inputBuilder?: () => Promise<string>, implArgs?:unknown[]) {
+    if(!this.isBind()) this.deploy(inputBuilder, implArgs);
+  }
+
+  async upgrade(inputBuilder?: () => Promise<string>, implArgs?:unknown[]) {
     this.checkBind();
 
-    const impl = await this.proxyFactory._deployImpl(this.factory, implArgs, this.deployer);
+    await this.deployLogic(implArgs);
+
     const input = inputBuilder ? await inputBuilder() : "0x";
-    await this.inst.upgradeToAndCall(impl, input);
+    await this.inst.upgradeToAndCall!(this.logic, input);
   }
 
   async importContractInfo() {
@@ -281,4 +278,26 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
     createDirectoryIfNotExists(servicePath);
     fs.writeFileSync(path.join(servicePath, this.label + ".json"), JSON.stringify(instInfo, null, 2), "utf8");
   }
+}
+
+export class Testing<CF extends EcoCF<CF>> extends EcoUUPS<Test_SelectorRoleControlUpgradeable__factory> {
+  constructor(
+    asyncContructor?: () => Promise<void>,
+    deployer?: HardhatEthersSigner
+  ) {
+    super(
+      Test_SelectorRoleControlUpgradeable__factory,
+      "test",
+      asyncContructor,
+      deployer
+    );
+  }
+}
+
+async function test() {
+  const tt = await new EcoUUPS(Test_SelectorRoleControlUpgradeable__factory);
+  tt.inst.owner();
+
+  const ww = await new Testing();
+  ww.inst.owner();
 }
