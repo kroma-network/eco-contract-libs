@@ -5,7 +5,6 @@ import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { AsyncConstructor } from "async-constructor";
 import { AddressLike, BaseContract, BytesLike, ContractFactory, ContractTransactionResponse } from "ethers";
 import hre from "hardhat";
-import { Test_SelectorRoleControlUpgradeable__factory, Test_SelectorRoleControlUpgradeable } from "../typechain-types";
 
 type EcoDeploymentDetail = {
   deployedBlockNumber: number;
@@ -104,8 +103,10 @@ export class EcoProxyFactory extends AsyncConstructor {
   async _deployProxy<CF extends EcoCF<CF>>(logic:EcoCT<CF>, initData: BytesLike, deployer?:HardhatEthersSigner) {
     const _deployer = deployer ?? this.deployer;
     const proxy = await this.factory.connect(_deployer).deploy(logic, initData);
-    const inst = await proxy.waitForDeployment() as unknown as EcoCT<CF>;
-    inst.address = await proxy.getAddress();
+    await proxy.waitForDeployment();
+    const address = await proxy.getAddress();
+    const inst = logic.attach(address) as unknown as EcoCT<CF>;
+    inst.address = address
     inst.deployedBlockNumber = proxy.deploymentTransaction()!.blockNumber!;
     return inst;
   }
@@ -117,7 +118,7 @@ export class EcoProxyFactory extends AsyncConstructor {
   ): Promise<EcoCT<CF>> {
     const _deployer = deployer ?? this.deployer;
     const _implFactory = implFactory.connect(_deployer);
-    const logic = (implConstructArgs ? await _implFactory.deploy(implConstructArgs) : await _implFactory.deploy()) as EcoCT<CF>;
+    const logic = (implConstructArgs ? await _implFactory.deploy(...implConstructArgs) : await _implFactory.deploy()) as EcoCT<CF>;
     await logic.waitForDeployment();
 
     logic.address = await logic.getAddress();
@@ -185,6 +186,10 @@ export class EcoInstanceBase extends AsyncConstructor {
     });
   }
 
+  async logicInput() {
+    return undefined as unknown as unknown[];
+  }
+
   async _bindingAddress(address: string) {
     this.checkUnbind();
     this.address = address;
@@ -206,7 +211,7 @@ export class EcoInstanceBase extends AsyncConstructor {
     if (!this.isBind()) throw new Error("Unbinded");
   }
 
-  async getAddres(): Promise<string> {
+  async getAddress(): Promise<string> {
     this.checkBind();
     return this.address;
   }
@@ -250,12 +255,12 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
   }
 
   async deployLogic(implArgs?:unknown[]) {
-    this.logic = await this.proxyFactory._deployLogic(this.factory, implArgs, this.deployer);
+    this.logic = await this.proxyFactory._deployLogic(this.factory, implArgs ?? await this.logicInput(), this.deployer);
   }
 
   async useLogic(implArgs?:unknown[]) {
     if(!this.logic) {
-      this.deployLogic(implArgs);
+      await this.deployLogic(implArgs);
       return true;
     }
     return false;
@@ -271,7 +276,7 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
 
   async use(inputBuilder?: () => Promise<string>, implArgs?:unknown[]) {
     if(!this.isBind()) {
-      this.deploy(inputBuilder, implArgs);
+      await this.deploy(inputBuilder, implArgs);
       return true;
     }
     return false;
@@ -296,6 +301,7 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
 
   async attachFromInfo(info: EcoContractInfo) {
     this.checkUnbind()
+    console.log("load", this.label, info.address);
     this.inst = await this.factory.attach(info.address) as EcoCT<CF>;
     this.inst.address = info.address;
     this.inst.deployedBlockNumber = info.deployAt;
@@ -343,26 +349,4 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
     createDirectoryIfNotExists(servicePath);
     fs.writeFileSync(path.join(servicePath, this.label + ".json"), JSON.stringify(instInfo, null, 2), "utf8");
   }
-}
-
-export class Testing<CF extends EcoCF<CF>> extends EcoUUPS<Test_SelectorRoleControlUpgradeable__factory> {
-  constructor(
-    asyncContructor?: () => Promise<void>,
-    deployer?: HardhatEthersSigner
-  ) {
-    super(
-      Test_SelectorRoleControlUpgradeable__factory,
-      "test",
-      asyncContructor,
-      deployer
-    );
-  }
-}
-
-async function test() {
-  const tt = await new EcoUUPS(Test_SelectorRoleControlUpgradeable__factory);
-  tt.inst.owner();
-
-  const ww = await new Testing();
-  ww.inst.owner();
 }
