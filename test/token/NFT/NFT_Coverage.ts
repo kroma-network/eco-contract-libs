@@ -13,7 +13,7 @@ describe("NFT Coverage", function () {
   async function NFT_SeqMintable_Fixture() {
     const [owner, admin, user0, user1] = await hre.ethers.getSigners();
 
-    const NFT = await hre.ethers.getContractFactory("Test_NFT_SeqMintable");
+    const NFT = await hre.ethers.getContractFactory("HH_NFT_SeqMintable");
     const nft = await NFT.connect(owner).deploy();
     await nft.initNFT_SeqMintable(owner.address, name, symbol);
 
@@ -53,7 +53,7 @@ describe("NFT Coverage", function () {
   it("NFT_SeqMintableIdenticalURI (view & set)", async function () {
     const { owner, nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
 
-    const seqIdentical = await (await ethers.getContractFactory("Test_NFT_SeqMintableIdenticalURI")).deploy();
+    const seqIdentical = await (await ethers.getContractFactory("HH_NFT_SeqMintableIdenticalURI")).deploy();
     await expect(seqIdentical.initNFT_SeqMintable(
       owner,
       "SeqMintableIdenticalURI",
@@ -98,7 +98,7 @@ describe("NFT Coverage", function () {
 
   it("SBT (view)", async function () {
     const [owner, admin, user0, user1] = await hre.ethers.getSigners();
-    const SBT = await hre.ethers.getContractFactory("Test_SBT");
+    const SBT = await hre.ethers.getContractFactory("HH_SBT");
     const sbt = await SBT.connect(owner).deploy();
     await sbt.initNFT_SeqMintable(owner.address, name, symbol);
 
@@ -110,7 +110,7 @@ describe("NFT Coverage", function () {
   it("ERC721Receiver", async function () {
     const { nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
 
-    const factory = await ethers.getContractFactory("TestERC721Receiver");
+    const factory = await ethers.getContractFactory("HHERC721Receiver");
     const receiver_contract = await factory.deploy();
 
     expect(await receiver_contract.onERC721Received(ZeroAddress, ZeroAddress, 0, "0x")).eq("0x150b7a02");

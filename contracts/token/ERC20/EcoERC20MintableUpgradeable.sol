@@ -80,8 +80,8 @@ abstract contract EcoERC20MintableUpgradeable is
     }
 }
 
-contract TestEcoERC20MintableUpgradeable is EcoERC20MintableUpgradeable {
-    function testInitEcoERC20Mintable(address initialOwner, string memory _name, string memory _symbol, uint8 _decimals)
+contract HHEcoERC20MintableUpgradeable is EcoERC20MintableUpgradeable {
+    function hhInitEcoERC20Mintable(address initialOwner, string memory _name, string memory _symbol, uint8 _decimals)
         public
     {
         _initEcoERC20Mintable(initialOwner, _name, _symbol, _decimals);

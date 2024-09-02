@@ -6,7 +6,7 @@ import { TestPRNG__factory } from "../typechain-types";
 async function main() {
   const test = await new EcoUUPS(TestPRNG__factory);
   await test.use();
-  console.log(await test.inst.testBytes32Keccak(ZeroHash));
+  console.log(await test.inst.hhBytes32Keccak(ZeroHash));
 }
 
 main()

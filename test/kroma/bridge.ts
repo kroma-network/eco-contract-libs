@@ -4,11 +4,11 @@ import { ZeroAddress } from "ethers";
 import hre, { ethers } from "hardhat";
 
 describe("Echidna", function () {
-  async function KromaBridgeMock_Fixture() {
+  async function HHKromaBridgeFixture() {
     const [owner, ...users] = await hre.ethers.getSigners();
 
-    const bridgeL1Factory = await hre.ethers.getContractFactory("Mock_L1KromaBridge");
-    const bridgeL2Factory = await hre.ethers.getContractFactory("Mock_L2KromaBridge");
+    const bridgeL1Factory = await hre.ethers.getContractFactory("HHL1KromaBridge");
+    const bridgeL2Factory = await hre.ethers.getContractFactory("HHL2KromaBridge");
 
     const bridgeL1 = await bridgeL1Factory.deploy();
     const bridgeL2 = await bridgeL2Factory.deploy();
@@ -30,7 +30,7 @@ describe("Echidna", function () {
 
   describe("Basic", function () {
     it("Bridge", async function () {
-      const { owner, bridgeL1, bridgeL2, tokenL1, tokenL2 } = await loadFixture(KromaBridgeMock_Fixture);
+      const { owner, bridgeL1, bridgeL2, tokenL1, tokenL2 } = await loadFixture(HHKromaBridgeFixture);
       const amount = hre.ethers.parseEther("1");
       await tokenL1.mint(owner, 2n * amount);
       await tokenL1.approve(bridgeL1, 2n * amount);
@@ -45,7 +45,7 @@ describe("Echidna", function () {
     });
 
     it("BridgeTo", async function () {
-      const { owner, bridgeL1, bridgeL2, tokenL1, tokenL2 } = await loadFixture(KromaBridgeMock_Fixture);
+      const { owner, bridgeL1, bridgeL2, tokenL1, tokenL2 } = await loadFixture(HHKromaBridgeFixture);
       const amount = hre.ethers.parseEther("1");
       await tokenL1.mint(owner, amount);
       await tokenL1.approve(bridgeL1, amount);
@@ -60,7 +60,7 @@ describe("Echidna", function () {
     });
 
     it("Bridge Token Coverage(revert)", async function () {
-      const { owner, users, tokenL1, tokenL2, bridgeL2 } = await loadFixture(KromaBridgeMock_Fixture);
+      const { owner, users, tokenL1, tokenL2, bridgeL2 } = await loadFixture(HHKromaBridgeFixture);
 
       const amount = ethers.parseEther("1");
       await tokenL2.mint(users[0], amount);
@@ -72,13 +72,13 @@ describe("Echidna", function () {
     });
 
     it("Bridge Token Coverage(view)", async function () {
-      const { owner, users, tokenL2 } = await loadFixture(KromaBridgeMock_Fixture);
+      const { owner, users, tokenL2 } = await loadFixture(HHKromaBridgeFixture);
       expect(await tokenL2.supportsInterface("0x00000000")).eq(false);
       expect(await tokenL2.nonces(owner)).eq(0n);
     });
 
     it("Bridge Coverage(revert)", async function () {
-      const { owner, users, bridgeL1, bridgeL2 } = await loadFixture(KromaBridgeMock_Fixture);
+      const { owner, users, bridgeL1, bridgeL2 } = await loadFixture(HHKromaBridgeFixture);
       await expect(bridgeL1.bridgeETHTo(ZeroAddress, 0, "0x")).reverted;
       await expect(bridgeL1.bridgeETH(0, "0x")).reverted;
       await expect(bridgeL1.finalizeBridgeETH(ZeroAddress, ZeroAddress, 0, "0x")).reverted;

@@ -7,7 +7,7 @@ describe("Pseudo Random Generator", function () {
   async function PRNG_Fixture() {
     const [owner, ...users] = await hre.ethers.getSigners();
 
-    const prngFactory = await hre.ethers.getContractFactory("TestPRNG");
+    const prngFactory = await hre.ethers.getContractFactory("HHPRNG");
     const prng = await prngFactory.deploy();
 
     return { prng };
@@ -18,12 +18,12 @@ describe("Pseudo Random Generator", function () {
       const { prng } = await loadFixture(PRNG_Fixture);
 
       const hashedZeroHash = ethers.keccak256(ZeroHash);
-      expect(await prng.testBytes32Keccak(ZeroHash)).eq(hashedZeroHash);
+      expect(await prng.hhBytes32Keccak(ZeroHash)).eq(hashedZeroHash);
 
-      expect(await prng.testReduceXOR32(hashedZeroHash)).eq("0x1887660600000000000000000000000000000000000000000000000000000000");
+      expect(await prng.hhReduceXOR32(hashedZeroHash)).eq("0x1887660600000000000000000000000000000000000000000000000000000000");
 
-      await expect(prng.testReduceXOR(hashedZeroHash, 127)).reverted;
-      const reducedHashes = await Promise.all([...Array(9).keys()].map(async i => await prng.testReduceXOR(hashedZeroHash, 2**i)));
+      await expect(prng.hhReduceXOR(hashedZeroHash, 127)).reverted;
+      const reducedHashes = await Promise.all([...Array(9).keys()].map(async i => await prng.hhReduceXOR(hashedZeroHash, 2**i)));
       expect(reducedHashes).deep.eq([
         "0x0000000000000000000000000000000000000000000000000000000000000000",
         "0x0000000000000000000000000000000000000000000000000000000000000000",

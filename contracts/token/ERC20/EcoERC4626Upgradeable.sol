@@ -117,8 +117,8 @@ contract EcoERC4626Upgradeable is
     }
 }
 
-contract TestEcoERC4626Upgradeable is EcoERC4626Upgradeable {
-    function testInitEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) public {
+contract HHEcoERC4626Upgradeable is EcoERC4626Upgradeable {
+    function hhInitEcoERC4626(IERC20 asset, string memory _name, string memory _symbol) public {
         _initEcoERC4626(asset, _name, _symbol);
     }
 }
