@@ -1,7 +1,7 @@
 import * as chain from "./chain-list";
 
 interface InterfaceLogicAddress {
-  proxyAdmin?:string
+  proxyAdmin?: string;
 }
 
 export const MainnetLogicAddress: InterfaceLogicAddress = {
@@ -16,12 +16,12 @@ export const DevnetLogicAddress: InterfaceLogicAddress = {
   proxyAdmin: undefined,
 };
 
-export function LogicAddress(chainId:bigint): InterfaceLogicAddress {
+export function LogicAddress(chainId: bigint): InterfaceLogicAddress {
   return chain.isDevnet(chainId)
     ? DevnetLogicAddress
     : chain.isTestnet(chainId)
       ? TestnetLogicAddress
       : chain.isMainnet(chainId)
         ? MainnetLogicAddress
-        : {proxyAdmin: undefined};
+        : { proxyAdmin: undefined };
 }

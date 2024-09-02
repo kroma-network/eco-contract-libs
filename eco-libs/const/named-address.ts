@@ -22,7 +22,7 @@ export const MainnetAuthorizedAddress: InterfaceAuthorizedAddress = {
 
   questMasterVault: "0x83A0Cde8ED986A080Bfee9a6c466098a60882758",
   questMasterSigner: "0xcB9E7b777a7dEE9fC460Cde767898FdCE9800119",
-  kgh_vault: "0xB83F38bF7aB3Df8121846a611F97775400212a09"
+  kgh_vault: "0xB83F38bF7aB3Df8121846a611F97775400212a09",
 };
 
 export const HHnetAuthorizedAddress: InterfaceAuthorizedAddress = {
@@ -38,7 +38,7 @@ export const DevnetAuthorizedAddress: InterfaceAuthorizedAddress = {
   oracle_feeder: undefined,
 };
 
-export function AuthorizedAddress(chainId:bigint): InterfaceAuthorizedAddress {
+export function AuthorizedAddress(chainId: bigint): InterfaceAuthorizedAddress {
   return chain.isDevnet(chainId)
     ? DevnetAuthorizedAddress
     : chain.isTestnet(chainId)

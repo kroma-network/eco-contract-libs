@@ -59,19 +59,21 @@ export function isLayer2(id: bigint): boolean {
   return layer2Values.includes(id);
 }
 
-export function bridgeAddresss(id:bigint) {
-  switch(id) {
-  case 1n: return "0x827962404D7104202C5aaa6b929115C8211d9596";
-  case 11155111n: return "0x38C9a0a694AA0f92c05238484C3a9bdE1e85ddE4";
-  case 7789n: return "0x9a8164cA007ff0899140719E9aEC9a9C889CbF1E";
+export function bridgeAddresss(id: bigint) {
+  switch (id) {
+    case 1n:
+      return "0x827962404D7104202C5aaa6b929115C8211d9596";
+    case 11155111n:
+      return "0x38C9a0a694AA0f92c05238484C3a9bdE1e85ddE4";
+    case 7789n:
+      return "0x9a8164cA007ff0899140719E9aEC9a9C889CbF1E";
 
-  case 255n:
-  case 2358n:
-  case 7791n:
-    return "0x4200000000000000000000000000000000000009";
+    case 255n:
+    case 2358n:
+    case 7791n:
+      return "0x4200000000000000000000000000000000000009";
 
-  default:
-    throw "not exist: bridge";
-
+    default:
+      throw "not exist: bridge";
   }
 }

@@ -153,10 +153,10 @@ const config: HardhatUserConfig = {
         chainId: 255,
         urls: {
           apiURL: "https://api.kromascan.com/api",
-          browserURL: "https://kromascan.com/"
-        }
-      }
-    ]
+          browserURL: "https://kromascan.com/",
+        },
+      },
+    ],
   },
   // sourcify: {
   //   enabled: true

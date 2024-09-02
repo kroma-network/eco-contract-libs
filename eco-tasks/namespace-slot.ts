@@ -10,24 +10,22 @@ interface ERC7201NamespaceInfo {
   value: string;
 }
 
-task("namespace-slot", "check solidity files namespace slot value(ERC7201)")
-  .setAction(async (
-    taskArgs: TaskArguments,
-    hre: HardhatRuntimeEnvironment
-  ) => {
+task("namespace-slot", "check solidity files namespace slot value(ERC7201)").setAction(
+  async (taskArgs: TaskArguments, hre: HardhatRuntimeEnvironment) => {
     const contractsDir = hre.config.paths.sources;
     const ERC7201NamespaceInfo = findERC7201NamespaceInfo(contractsDir);
-    ERC7201NamespaceInfo.forEach(data => {
-      const calcSlot = "0x"+namespaceSlot(data.namespace, hre);
-      if(calcSlot !== data.value) {
+    ERC7201NamespaceInfo.forEach((data) => {
+      const calcSlot = "0x" + namespaceSlot(data.namespace, hre);
+      if (calcSlot !== data.value) {
         console.log(`File: ${data.file}\nNamespace: ${data.namespace}, Value: ${data.value}, Should: ${calcSlot}`);
       }
     });
-  });
+  },
+);
 
 function findERC7201NamespaceInfo(contractsDir: string) {
   const results: ERC7201NamespaceInfo[] = [];
-  walkDir(contractsDir, filePath => {
+  walkDir(contractsDir, (filePath) => {
     if (filePath.endsWith(".sol")) {
       const data = extractData(filePath);
       if (data) results.push(data);
@@ -37,7 +35,7 @@ function findERC7201NamespaceInfo(contractsDir: string) {
 }
 
 function walkDir(dir: string, callback: (filePath: string) => void) {
-  fs.readdirSync(dir).forEach(f => {
+  fs.readdirSync(dir).forEach((f) => {
     const dirPath = path.join(dir, f);
     const isDirectory = fs.statSync(dirPath).isDirectory();
     isDirectory ? walkDir(dirPath, callback) : callback(path.join(dir, f));
@@ -57,14 +55,14 @@ function extractData(filePath: string): ERC7201NamespaceInfo | null {
     return {
       file: filePath,
       namespace: namespaceMatch ? namespaceMatch[1] : "",
-      value: match[2]
+      value: match[2],
     };
   } else {
     return null;
   }
 }
 
-export function namespaceSlot(namespace: string, hre:HardhatRuntimeEnvironment) {
+export function namespaceSlot(namespace: string, hre: HardhatRuntimeEnvironment) {
   // keccak256(abi.encode(uint256(keccak256(namespace)) - 1)) & ~bytes32(uint256(0xff))
   const hashNamespace = hre.ethers.keccak256(hre.ethers.toUtf8Bytes(namespace));
 

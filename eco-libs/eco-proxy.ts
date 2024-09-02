@@ -19,7 +19,6 @@ export interface ContractFactoryTypeSupporter<CT extends BaseContract> {
   attach(target: string | Addressable): unknown;
 }
 
-
 export type EcoContractFactory<CT extends BaseContract> = ContractFactoryTypeSupporter<CT> & ContractFactory;
 
 export interface EcoProxyBaseProperties<CT> {
@@ -62,14 +61,12 @@ export class ProxyInstanceFactory extends AsyncConstructor {
     const chainId = (await hre.ethers.provider.getNetwork()).chainId;
     const reuseLogicAddress = reuseAddress.LogicAddress(chainId).proxyAdmin;
 
-    if(proxyAdminLogic !== undefined) {
+    if (proxyAdminLogic !== undefined) {
       this.proxyAdminLogic = proxyAdminLogic;
-
     } else if (reuseLogicAddress !== undefined && reuseLogicAddress !== hre.ethers.ZeroAddress) {
       this.proxyAdminLogic = this.proxyAdminFactory.attach(
-        reuseAddress.LogicAddress(chainId).proxyAdmin as string
+        reuseAddress.LogicAddress(chainId).proxyAdmin as string,
       ) as EcoProxyAdmin;
-
     } else {
       this.proxyAdminLogic = await this.loadByServiceInfo();
     }
@@ -77,7 +74,7 @@ export class ProxyInstanceFactory extends AsyncConstructor {
 
   async loadByServiceInfo() {
     const logicInfo = await importContractInfo("admin", "EcoProxyAdmin");
-    if(logicInfo.address !== hre.ethers.ZeroAddress) {
+    if (logicInfo.address !== hre.ethers.ZeroAddress) {
       return this.proxyAdminFactory.attach(logicInfo.address) as EcoProxyAdmin;
     } else {
       const deployedLogic = await this.proxyAdminFactory.deploy(this.deployer);
