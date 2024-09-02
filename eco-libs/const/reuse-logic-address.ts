@@ -8,7 +8,7 @@ export const MainnetLogicAddress: InterfaceLogicAddress = {
   proxyAdmin: undefined,
 };
 
-export const TestnetLogicAddress: InterfaceLogicAddress = {
+export const HHnetLogicAddress: InterfaceLogicAddress = {
   proxyAdmin: undefined,
 };
 
