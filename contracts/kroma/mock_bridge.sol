@@ -8,13 +8,13 @@ import {IKromaBridge} from "./interfaces.sol";
 import {IEcoERC20} from "../token/ERC20/IERC20.sol";
 import {IL2BridgeERC20} from "../token/ERC20/ERC20L2BridgedUpgradeable.sol";
 
-interface IMockKromaBridge is IKromaBridge, ISelectorRoleControl {
+interface IHHKromaBridge is IKromaBridge, ISelectorRoleControl {
     function remoteBridge() external view returns (IKromaBridge);
 
     function setRemoteBridge(IKromaBridge _remoteBridge) external;
 }
 
-abstract contract MockKromaBridgeBase is IMockKromaBridge, SelectorRoleControlUpgradeable {
+abstract contract HHKromaBridgeBase is IHHKromaBridge, SelectorRoleControlUpgradeable {
     error MockNotImplemented();
 
     IKromaBridge public override remoteBridge;
@@ -41,7 +41,7 @@ abstract contract MockKromaBridgeBase is IMockKromaBridge, SelectorRoleControlUp
     }
 }
 
-contract Mock_L1KromaBridge is MockKromaBridgeBase {
+contract HHL1KromaBridge is HHKromaBridgeBase {
     function bridgeERC20(
         address _localToken,
         address _remoteToken,
@@ -75,7 +75,7 @@ contract Mock_L1KromaBridge is MockKromaBridgeBase {
     }
 }
 
-contract Mock_L2KromaBridge is MockKromaBridgeBase {
+contract HHL2KromaBridge is HHKromaBridgeBase {
     function bridgeERC20(
         address _localToken,
         address _remoteToken,

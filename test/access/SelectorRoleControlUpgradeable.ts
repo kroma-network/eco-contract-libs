@@ -8,13 +8,13 @@ describe("SelectorRoleControlUpgradeable", function () {
   async function fixtureSelectorRoleControlUpgradeableDeploy() {
     const [initialOwner, admin] = await hre.ethers.getSigners();
 
-    const testRole = await hre.ethers.getContractFactory("Test_SelectorRoleControlUpgradeable");
+    const testRole = await hre.ethers.getContractFactory("HH_SelectorRoleControlUpgradeable");
     const role = await testRole.connect(initialOwner).deploy(initialOwner);
 
     return { role, initialOwner, admin };
   }
 
-  describe("Test on Deployment", function () {
+  describe("HH on Deployment", function () {
     it("check initialOwner", async function () {
       const { role, initialOwner } = await loadFixture(fixtureSelectorRoleControlUpgradeableDeploy);
       expect(await role.owner()).equal(initialOwner.address);

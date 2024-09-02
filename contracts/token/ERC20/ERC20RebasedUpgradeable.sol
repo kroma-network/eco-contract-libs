@@ -178,12 +178,12 @@ abstract contract ERC20RebasedUpgradeable is
     }
 }
 
-contract TestERC20RebasedUpgradeable is ERC20RebasedUpgradeable {
-    function testInitERC20Rebased(address _underlying) public {
+contract HHERC20RebasedUpgradeable is ERC20RebasedUpgradeable {
+    function hhInitERC20Rebased(address _underlying) public {
         _initERC20Rebased(_underlying);
     }
 
-    function testVirtual() public {
+    function hhVirtual() public {
         _checkRebaseUnderlying(address(0));
         _totalSupply();
         _receiveUnderlying(0, address(0));

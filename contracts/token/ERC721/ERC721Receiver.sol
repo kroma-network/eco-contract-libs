@@ -16,4 +16,4 @@ abstract contract ERC721Receiver is IERC721Receiver {
     }
 }
 
-contract TestERC721Receiver is ERC721Receiver {}
+contract HHERC721Receiver is ERC721Receiver {}

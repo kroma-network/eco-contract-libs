@@ -47,7 +47,7 @@ abstract contract EcoERC1155URIControl is
     }
 }
 
-contract TestEcoERC1155URIControl is EcoERC1155URIControl {
+contract HHEcoERC1155URIControl is EcoERC1155URIControl {
     function EcoERC1155URIControl_init() public {
         __EcoERC1155URIControl_init("");
     }

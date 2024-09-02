@@ -44,7 +44,7 @@ abstract contract ERC1155PausableUpgradeable is Initializable, PausableUpgradeab
     }
 }
 
-contract TestERC1155PausableUpgradeable is ERC1155PausableUpgradeable {
+contract HHERC1155PausableUpgradeable is ERC1155PausableUpgradeable {
     function ERC1155Pausable_init() public {
         __ERC1155Pausable_init();
     }

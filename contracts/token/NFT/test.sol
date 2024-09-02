@@ -9,27 +9,27 @@ import {NFT_SeqMintable, NFT_SeqMintableIdenticalURI} from "./NFT_SeqMintable.so
 import {NFT_Typed} from "./NFT_Typed.sol";
 import {SBT} from "./SBT.sol";
 
-contract Test_NFT_Mintable is NFT_MintableBase {
+contract HH_NFT_Mintable is NFT_MintableBase {
     function _baseURI() internal pure override returns (string memory) {
         return "https://test.com/";
     }
 }
 
-contract Test_NFT_SeqMintable is NFT_SeqMintable {
+contract HH_NFT_SeqMintable is NFT_SeqMintable {
     function _baseURI() internal pure override returns (string memory) {
         return "https://test.com/";
     }
 }
 
-contract Test_NFT_SeqMintableIdenticalURI is NFT_SeqMintableIdenticalURI {
+contract HH_NFT_SeqMintableIdenticalURI is NFT_SeqMintableIdenticalURI {
     function _baseURI() internal pure override returns (string memory) {
         return "https://test.com/";
     }
 }
 
-contract Test_NFT_Typed is NFT_Typed {} // already provide base uri
+contract HH_NFT_Typed is NFT_Typed {} // already provide base uri
 
-contract Test_SBT is SBT {
+contract HH_SBT is SBT {
     function _baseURI() internal pure override returns (string memory) {
         return "https://test.com/";
     }

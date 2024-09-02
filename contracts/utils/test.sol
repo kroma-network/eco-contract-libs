@@ -7,16 +7,16 @@ import "./prng.sol";
 using Keccak256RG for Keccak256RG.KeccakRGState;
 using LCG10000 for LCG10000.LCGState;
 
-contract TestPRNG {
-    function testBytes32Keccak(bytes32 data) public pure returns (bytes32) {
+contract HHPRNG {
+    function hhBytes32Keccak(bytes32 data) public pure returns (bytes32) {
         return bytes32Keccak(data);
     }
 
-    function testReduceXOR32(bytes32 word) public pure returns (bytes32) {
+    function hhReduceXOR32(bytes32 word) public pure returns (bytes32) {
         return reduceXOR32(word);
     }
 
-    function testReduceXOR(bytes32 word, uint256 out_bits) public pure returns (bytes32) {
+    function hhReduceXOR(bytes32 word, uint256 out_bits) public pure returns (bytes32) {
         return reduceXOR(word, out_bits);
     }
 
@@ -68,7 +68,7 @@ contract TestPRNG {
 
 import "./rate.sol";
 
-contract TestRate {
+contract HHRate {
     function rateApply(Rate rate, uint256 value) public pure returns (uint256) {
         return RateMath.rateApply(rate, value);
     }

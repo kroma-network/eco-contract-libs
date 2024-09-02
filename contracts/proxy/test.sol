@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 
 import {EcoProxyAdmin} from "./admin.sol";
 
-contract Mock_TestProxyAdminFail is EcoProxyAdmin {
+contract HHProxyAdminFail is EcoProxyAdmin {
     constructor() EcoProxyAdmin(_msgSender()) {}
 
     function command(address to, uint256 value, bytes memory data) public payable returns (bytes memory) {

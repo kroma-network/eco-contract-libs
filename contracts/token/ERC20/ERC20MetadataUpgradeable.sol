@@ -47,7 +47,7 @@ abstract contract ERC20MetadataUpgradeable is IEcoERC20Metadata, ERC20Upgradeabl
     }
 }
 
-contract TestERC20MetadataUpgradeable is ERC20MetadataUpgradeable {
+contract HHERC20MetadataUpgradeable is ERC20MetadataUpgradeable {
     function initEcoERC20Metadata(string memory _name, string memory _symbol, uint8 _decimals) public {
         _initEcoERC20Metadata(_name, _symbol, _decimals);
     }

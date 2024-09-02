@@ -6,7 +6,7 @@ describe("EcoOwnable", function () {
   async function fixtureEcoOwnableDeploy() {
     const [initialOwner, nextOwner] = await hre.ethers.getSigners();
 
-    const EcoOwnable = await hre.ethers.getContractFactory("Mock_TestEcoOwnable");
+    const EcoOwnable = await hre.ethers.getContractFactory("HHEcoOwnable");
     const ecoOwnable = await EcoOwnable.connect(initialOwner).deploy();
 
     return { ecoOwnable, initialOwner, nextOwner };
@@ -20,14 +20,14 @@ describe("EcoOwnable", function () {
     return { ecoOwnable, initialOwner, nextOwner };
   }
 
-  describe("Test on Deployment", function () {
+  describe("HH on Deployment", function () {
     it("check initialOwner", async function () {
       const { ecoOwnable, initialOwner } = await loadFixture(fixtureEcoOwnableDeploy);
       expect(await ecoOwnable.owner()).equal(initialOwner.address);
       expect(await ecoOwnable.pendingOwner()).equal(hre.ethers.ZeroAddress);
 
       await expect(ecoOwnable.initEcoOwnableFail(initialOwner)).reverted;
-      await expect(ecoOwnable.initMock_TestEcoOwnable(initialOwner)).reverted;
+      await expect(ecoOwnable.initHHEcoOwnable(initialOwner)).reverted;
     });
 
     it("transfer onwer", async function () {
@@ -68,7 +68,7 @@ describe("EcoOwnable", function () {
     });
   });
 
-  describe("Test on Registered pendingOwner", function () {
+  describe("HH on Registered pendingOwner", function () {
     it("check pendingOwner", async function () {
       const { ecoOwnable, initialOwner, nextOwner } = await loadFixture(fixtureEcoOwnablePendingRegistered);
       expect(await ecoOwnable.owner()).equal(initialOwner.address);

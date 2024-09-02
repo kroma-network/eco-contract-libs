@@ -8,7 +8,7 @@ describe("Rate Math in utils", function () {
   async function RateMath_Fixture() {
     const [owner, ...users] = await hre.ethers.getSigners();
 
-    const rateMathFactory = await hre.ethers.getContractFactory("TestRate");
+    const rateMathFactory = await hre.ethers.getContractFactory("HHRate");
     const rateMath = await rateMathFactory.deploy();
 
     return { rateMath };
