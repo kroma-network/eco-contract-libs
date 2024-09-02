@@ -24,7 +24,9 @@ interface IStandardBridge {
         bytes calldata _extraData
     ) external;
 
-    function finalizeBridgeETH(address _from, address _to, uint256 _amount, bytes calldata _extraData) external payable;
+    function finalizeBridgeETH(address _from, address _to, uint256 _amount, bytes calldata _extraData)
+        external
+        payable;
 
     function finalizeBridgeERC20(
         address _localToken,

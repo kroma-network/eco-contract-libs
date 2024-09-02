@@ -2,16 +2,18 @@
 
 pragma solidity ^0.8.0;
 
-import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import { ERC20BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
-import { ERC20PermitUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
-import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
+import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import {ERC20BurnableUpgradeable} from
+    "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
+import {ERC20PermitUpgradeable} from
+    "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
+import {ERC20MetadataUpgradeable} from "./ERC20MetadataUpgradeable.sol";
 
-import { ERC4626Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
+import {ERC4626Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
-import { IERC20, IERC20Metadata, IERC20Burnable, IERC20Permit, IEcoERC20, IEcoERC4626 } from "./IERC20.sol";
+import {IERC20, IERC20Metadata, IERC20Burnable, IERC20Permit, IEcoERC20, IEcoERC4626} from "./IERC20.sol";
 
-import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
+import {ERC20MetadataUpgradeable} from "./ERC20MetadataUpgradeable.sol";
 
 contract EcoERC4626Upgradeable is
     IEcoERC4626,
@@ -70,10 +72,12 @@ contract EcoERC4626Upgradeable is
         return super.transfer(to, value);
     }
 
-    function allowance(
-        address owner,
-        address spender
-    ) public view override(ERC20Upgradeable, IERC20) returns (uint256) {
+    function allowance(address owner, address spender)
+        public
+        view
+        override(ERC20Upgradeable, IERC20)
+        returns (uint256)
+    {
         return super.allowance(owner, spender);
     }
 
@@ -81,11 +85,12 @@ contract EcoERC4626Upgradeable is
         return super.approve(spender, value);
     }
 
-    function transferFrom(
-        address from,
-        address to,
-        uint256 value
-    ) public virtual override(ERC20Upgradeable, IERC20) returns (bool) {
+    function transferFrom(address from, address to, uint256 value)
+        public
+        virtual
+        override(ERC20Upgradeable, IERC20)
+        returns (bool)
+    {
         return super.transferFrom(from, to, value);
     }
 
@@ -93,16 +98,21 @@ contract EcoERC4626Upgradeable is
         super.burn(amount);
     }
 
-    function burnFrom(
-        address account,
-        uint256 amount
-    ) public virtual override(ERC20BurnableUpgradeable, IERC20Burnable) {
+    function burnFrom(address account, uint256 amount)
+        public
+        virtual
+        override(ERC20BurnableUpgradeable, IERC20Burnable)
+    {
         super.burnFrom(account, amount);
     }
 
-    function nonces(
-        address owner
-    ) public view virtual override(ERC20PermitUpgradeable, IERC20Permit) returns (uint256) {
+    function nonces(address owner)
+        public
+        view
+        virtual
+        override(ERC20PermitUpgradeable, IERC20Permit)
+        returns (uint256)
+    {
         return super.nonces(owner);
     }
 }

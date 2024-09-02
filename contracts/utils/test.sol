@@ -69,15 +69,15 @@ contract TestPRNG {
 import "./rate.sol";
 
 contract TestRate {
-    function rateApply(Rate rate, uint value) public pure returns (uint) {
+    function rateApply(Rate rate, uint256 value) public pure returns (uint256) {
         return RateMath.rateApply(rate, value);
     }
 
-    function rateAdd(Rate rate, uint value) public pure returns (uint) {
+    function rateAdd(Rate rate, uint256 value) public pure returns (uint256) {
         return RateMath.rateAdd(rate, value);
     }
 
-    function rateSub(Rate rate, uint value) public pure returns (uint) {
+    function rateSub(Rate rate, uint256 value) public pure returns (uint256) {
         return RateMath.rateSub(rate, value);
     }
 

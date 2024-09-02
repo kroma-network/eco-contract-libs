@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.20;
 
-import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
-import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 
 /**
  * @dev ERC721 token with pausable token transfers, minting and burning.
@@ -31,11 +31,13 @@ abstract contract ERC721PausableUpgradeable is
      *
      * - the contract must not be paused.
      */
-    function _update(
-        address to,
-        uint256 tokenId,
-        address auth
-    ) internal virtual override whenNotPaused returns (address) {
+    function _update(address to, uint256 tokenId, address auth)
+        internal
+        virtual
+        override
+        whenNotPaused
+        returns (address)
+    {
         return super._update(to, tokenId, auth);
     }
 }

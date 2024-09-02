@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.0;
 
-import { ERC1967Utils } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol";
-import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import { ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import {ERC1967Utils} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Utils.sol";
+import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {ITransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
-import { EcoProxyAdmin, EcoProxyForProxyAdmin } from "./admin.sol";
+import {EcoProxyAdmin, EcoProxyForProxyAdmin} from "./admin.sol";
 
 // EcoTransparentUpgradeableProxy
 contract EcoTUPWithAdmin is ERC1967Proxy {
@@ -68,16 +68,14 @@ contract EcoTUPWithAdmin is ERC1967Proxy {
 }
 
 contract EcoTUPDeployAdmin is EcoTUPWithAdmin {
-    constructor(
-        address _logic,
-        bytes memory _data
-    ) EcoTUPWithAdmin(address(new EcoProxyAdmin(msg.sender)), _logic, _data) {}
+    constructor(address _logic, bytes memory _data)
+        EcoTUPWithAdmin(address(new EcoProxyAdmin(msg.sender)), _logic, _data)
+    {}
 }
 
 contract EcoTUPWithAdminLogic is EcoTUPWithAdmin {
-    constructor(
-        address proxyAdminLogic,
-        address _logic,
-        bytes memory _data
-    ) payable EcoTUPWithAdmin(address(new EcoProxyForProxyAdmin(proxyAdminLogic, msg.sender)), _logic, _data) {}
+    constructor(address proxyAdminLogic, address _logic, bytes memory _data)
+        payable
+        EcoTUPWithAdmin(address(new EcoProxyForProxyAdmin(proxyAdminLogic, msg.sender)), _logic, _data)
+    {}
 }

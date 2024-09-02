@@ -7,21 +7,21 @@ uint32 constant BaseRateValue = 10000;
 type Rate is uint32;
 
 library RateMath {
-    function rateApply(Rate rate, uint value) internal pure returns (uint) {
+    function rateApply(Rate rate, uint256 value) internal pure returns (uint256) {
         assembly {
             value := div(mul(value, rate), BaseRateValue)
         }
         return value;
     }
 
-    function rateAdd(Rate rate, uint value) internal pure returns (uint) {
+    function rateAdd(Rate rate, uint256 value) internal pure returns (uint256) {
         assembly {
             value := add(value, div(mul(value, rate), BaseRateValue))
         }
         return value;
     }
 
-    function rateSub(Rate rate, uint value) internal pure returns (uint) {
+    function rateSub(Rate rate, uint256 value) internal pure returns (uint256) {
         assembly {
             value := sub(value, div(mul(value, rate), BaseRateValue))
         }

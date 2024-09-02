@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.0;
 
-import { EcoOwnable } from "./EcoOwnable.sol";
-import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { StorageSlot } from "@openzeppelin/contracts/utils/StorageSlot.sol";
+import {EcoOwnable} from "./EcoOwnable.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {StorageSlot} from "@openzeppelin/contracts/utils/StorageSlot.sol";
 
 interface ISlotOrder {
     function setSlot(bytes32 slot, bytes32 value) external;

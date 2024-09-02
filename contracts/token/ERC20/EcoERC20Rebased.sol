@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.0;
 
-import { ERC20RebasedUpgradeable } from "./ERC20RebasedUpgradeable.sol";
-import { IERC20, IERC20Metadata } from "./IERC20.sol";
+import {ERC20RebasedUpgradeable} from "./ERC20RebasedUpgradeable.sol";
+import {IERC20, IERC20Metadata} from "./IERC20.sol";
 
-import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract EcoERC20RebasedWithToken is ERC20RebasedUpgradeable {
     function _totalSupply() internal view virtual override returns (uint256) {

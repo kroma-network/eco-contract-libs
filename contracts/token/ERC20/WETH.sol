@@ -2,11 +2,12 @@
 
 pragma solidity ^0.8.0;
 
-import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import { ERC20BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
+import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import {ERC20BurnableUpgradeable} from
+    "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 
-import { IERC20, IWNative, IWETH } from "./IERC20.sol";
-import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import {IERC20, IWNative, IWETH} from "./IERC20.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 
 contract WrappingNativeCoin is IWNative, ERC20Upgradeable, ERC20BurnableUpgradeable {
     constructor(string memory name, string memory symbol) {

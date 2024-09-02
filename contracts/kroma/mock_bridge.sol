@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.20;
 
-import { ISelectorRoleControl, SelectorRoleControlUpgradeable } from "../access/SelectorRoleControlUpgradeable.sol";
+import {ISelectorRoleControl, SelectorRoleControlUpgradeable} from "../access/SelectorRoleControlUpgradeable.sol";
 
-import { IKromaBridge } from "./interfaces.sol";
-import { IEcoERC20 } from "../token/ERC20/IERC20.sol";
-import { IL2BridgeERC20 } from "../token/ERC20/ERC20L2BridgedUpgradeable.sol";
+import {IKromaBridge} from "./interfaces.sol";
+import {IEcoERC20} from "../token/ERC20/IERC20.sol";
+import {IL2BridgeERC20} from "../token/ERC20/ERC20L2BridgedUpgradeable.sol";
 
 interface IMockKromaBridge is IKromaBridge, ISelectorRoleControl {
     function remoteBridge() external view returns (IKromaBridge);
@@ -66,14 +66,10 @@ contract Mock_L1KromaBridge is MockKromaBridgeBase {
         remoteBridge.finalizeBridgeERC20(_localToken, _remoteToken, _from, _to, _amount, _extraData);
     }
 
-    function finalizeBridgeERC20(
-        address,
-        address _remoteToken,
-        address,
-        address _to,
-        uint256 _amount,
-        bytes calldata
-    ) public onlyAdmin {
+    function finalizeBridgeERC20(address, address _remoteToken, address, address _to, uint256 _amount, bytes calldata)
+        public
+        onlyAdmin
+    {
         // caller's remote == local
         IEcoERC20(_remoteToken).transfer(_to, _amount);
     }
@@ -104,14 +100,10 @@ contract Mock_L2KromaBridge is MockKromaBridgeBase {
         remoteBridge.finalizeBridgeERC20(_localToken, _remoteToken, _from, _to, _amount, _extraData);
     }
 
-    function finalizeBridgeERC20(
-        address,
-        address _remoteToken,
-        address,
-        address _to,
-        uint256 _amount,
-        bytes calldata
-    ) public onlyAdmin {
+    function finalizeBridgeERC20(address, address _remoteToken, address, address _to, uint256 _amount, bytes calldata)
+        public
+        onlyAdmin
+    {
         // caller's remote == local
         IEcoERC20(_remoteToken).mint(_to, _amount);
     }

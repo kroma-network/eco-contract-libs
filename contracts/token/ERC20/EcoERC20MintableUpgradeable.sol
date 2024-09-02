@@ -2,14 +2,20 @@
 
 pragma solidity ^0.8.0;
 
-import { ISelectorRoleControl, IPausable, IEcoOwnable, SelectorRoleControlUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
+import {
+    ISelectorRoleControl,
+    IPausable,
+    IEcoOwnable,
+    SelectorRoleControlUpgradeable
+} from "../../access/SelectorRoleControlUpgradeable.sol";
 
-import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import { ERC20BurnableUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
+import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import {ERC20BurnableUpgradeable} from
+    "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 
-import { IERC20Metadata, IERC20Burnable, IEcoERC20Mintable } from "./IERC20.sol";
+import {IERC20Metadata, IERC20Burnable, IEcoERC20Mintable} from "./IERC20.sol";
 
-import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
+import {ERC20MetadataUpgradeable} from "./ERC20MetadataUpgradeable.sol";
 
 abstract contract EcoERC20MintableUpgradeable is
     IEcoERC20Mintable,
@@ -18,12 +24,10 @@ abstract contract EcoERC20MintableUpgradeable is
     ERC20MetadataUpgradeable,
     ERC20BurnableUpgradeable
 {
-    function _initEcoERC20Mintable(
-        address initialOwner,
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals
-    ) internal onlyInitializing {
+    function _initEcoERC20Mintable(address initialOwner, string memory _name, string memory _symbol, uint8 _decimals)
+        internal
+        onlyInitializing
+    {
         _initEcoOwnable(initialOwner); // SelectorRoleControlUpgradeable
         _initEcoERC20Metadata(_name, _symbol, _decimals);
         __ERC20Burnable_init();
@@ -37,10 +41,11 @@ abstract contract EcoERC20MintableUpgradeable is
         return super.burn(amount);
     }
 
-    function burnFrom(
-        address account,
-        uint256 amount
-    ) public virtual override(IERC20Burnable, ERC20BurnableUpgradeable) {
+    function burnFrom(address account, uint256 amount)
+        public
+        virtual
+        override(IERC20Burnable, ERC20BurnableUpgradeable)
+    {
         return super.burnFrom(account, amount);
     }
 
@@ -76,12 +81,9 @@ abstract contract EcoERC20MintableUpgradeable is
 }
 
 contract TestEcoERC20MintableUpgradeable is EcoERC20MintableUpgradeable {
-    function testInitEcoERC20Mintable(
-        address initialOwner,
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals
-    ) public {
+    function testInitEcoERC20Mintable(address initialOwner, string memory _name, string memory _symbol, uint8 _decimals)
+        public
+    {
         _initEcoERC20Mintable(initialOwner, _name, _symbol, _decimals);
     }
 }

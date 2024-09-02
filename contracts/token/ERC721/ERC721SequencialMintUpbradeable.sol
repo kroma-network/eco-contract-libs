@@ -2,13 +2,16 @@
 
 pragma solidity ^0.8.0;
 
-import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
-import { SelectorRoleControlUpgradeable, AccessControlEnumerableUpgradeable } from "../../access/SelectorRoleControlUpgradeable.sol";
+import {
+    SelectorRoleControlUpgradeable,
+    AccessControlEnumerableUpgradeable
+} from "../../access/SelectorRoleControlUpgradeable.sol";
 
-import { IERC721Burnable, IERC721SequencialMintUpbradeable } from "./IERC721.sol";
+import {IERC721Burnable, IERC721SequencialMintUpbradeable} from "./IERC721.sol";
 
-import { EcoERC721Base } from "./EcoERC721Base.sol";
+import {EcoERC721Base} from "./EcoERC721Base.sol";
 
 abstract contract ERC721SequencialMintUpbradeable is
     SelectorRoleControlUpgradeable,
@@ -19,6 +22,7 @@ abstract contract ERC721SequencialMintUpbradeable is
         uint256 count;
     }
     // keccak256(abi.encode(uint256(keccak256("eco.storage.ERC721SequencialMintUpbradeable")) - 1)) & ~bytes32(uint256(0xff))
+
     bytes32 private constant ERC721SequencialMintStorageLocation =
         0x7330e025bdbd8ee021c7588e9b33f6f89de788eeb194164646ca75a5b7284100;
 
@@ -28,9 +32,13 @@ abstract contract ERC721SequencialMintUpbradeable is
         }
     }
 
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override(AccessControlEnumerableUpgradeable, EcoERC721Base, IERC165) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(AccessControlEnumerableUpgradeable, EcoERC721Base, IERC165)
+        returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
 
@@ -48,10 +56,13 @@ abstract contract ERC721SequencialMintUpbradeable is
         return _nextMint(to);
     }
 
-    function nextMintBatch(
-        address to,
-        uint256 amount
-    ) public virtual override onlyAdmin returns (uint256[] memory tokenIds) {
+    function nextMintBatch(address to, uint256 amount)
+        public
+        virtual
+        override
+        onlyAdmin
+        returns (uint256[] memory tokenIds)
+    {
         tokenIds = new uint256[](amount);
         for (uint256 i; i < amount; i++) {
             tokenIds[i] = _nextMint(to);

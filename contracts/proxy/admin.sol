@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.20;
 
-import { EcoOwnable } from "../access/EcoOwnable.sol";
-import { CallOrder } from "../access/CallOrder.sol";
-import { SlotOrder } from "../access/SlotOrder.sol";
-import { MulticallUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/MulticallUpgradeable.sol";
+import {EcoOwnable} from "../access/EcoOwnable.sol";
+import {CallOrder} from "../access/CallOrder.sol";
+import {SlotOrder} from "../access/SlotOrder.sol";
+import {MulticallUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/MulticallUpgradeable.sol";
 
-import { ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
-import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {ITransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 interface IEcoProxyAdmin {
     function initEcoProxyAdmin(address initialOwner) external;
@@ -50,18 +50,18 @@ contract EcoProxyAdmin is IEcoProxyAdmin, EcoOwnable, CallOrder, SlotOrder, Mult
      * - This contract must be the admin of `proxy`.
      * - If `data` is empty, `msg.value` must be zero.
      */
-    function upgradeAndCall(
-        ITransparentUpgradeableProxy proxy,
-        address implementation,
-        bytes memory data
-    ) public payable virtual onlyOwner {
-        proxy.upgradeToAndCall{ value: msg.value }(implementation, data);
+    function upgradeAndCall(ITransparentUpgradeableProxy proxy, address implementation, bytes memory data)
+        public
+        payable
+        virtual
+        onlyOwner
+    {
+        proxy.upgradeToAndCall{value: msg.value}(implementation, data);
     }
 }
 
 contract EcoProxyForProxyAdmin is ERC1967Proxy {
-    constructor(
-        address proxyAdminLogic,
-        address initialOwner
-    ) ERC1967Proxy(proxyAdminLogic, abi.encodeWithSelector(IEcoProxyAdmin.initEcoProxyAdmin.selector, initialOwner)) {}
+    constructor(address proxyAdminLogic, address initialOwner)
+        ERC1967Proxy(proxyAdminLogic, abi.encodeWithSelector(IEcoProxyAdmin.initEcoProxyAdmin.selector, initialOwner))
+    {}
 }

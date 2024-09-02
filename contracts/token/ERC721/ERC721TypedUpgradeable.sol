@@ -2,13 +2,13 @@
 
 pragma solidity ^0.8.0;
 
-import { IERC721Metadata, IERC721Burnable, IERC721Typed } from "./IERC721.sol";
+import {IERC721Metadata, IERC721Burnable, IERC721Typed} from "./IERC721.sol";
 
-import { ERC721Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import { EcoERC721Base } from "./EcoERC721Base.sol";
-import { ERC721SequencialMintUpbradeable } from "./ERC721SequencialMintUpbradeable.sol";
+import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import {EcoERC721Base} from "./EcoERC721Base.sol";
+import {ERC721SequencialMintUpbradeable} from "./ERC721SequencialMintUpbradeable.sol";
 
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUpbradeable {
     using Strings for uint256;
@@ -33,15 +33,18 @@ abstract contract ERC721TypedUpgradeable is IERC721Typed, ERC721SequencialMintUp
         return _getERC721TypedUpgradeable().baseURI;
     }
 
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual override(EcoERC721Base, IERC721Metadata) returns (string memory) {
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override(EcoERC721Base, IERC721Metadata)
+        returns (string memory)
+    {
         string memory baseURI = _baseURI();
 
-        return
-            bytes(baseURI).length > 0
-                ? string.concat(string.concat(baseURI, tokenType(tokenId).toString()), ".json")
-                : "";
+        return bytes(baseURI).length > 0
+            ? string.concat(string.concat(baseURI, tokenType(tokenId).toString()), ".json")
+            : "";
     }
 
     function tokenType(uint256 tokenId) public view override returns (uint256) {
