@@ -12,7 +12,7 @@ type EcoDeploymentDetail = {
 } & {
   waitForDeployment(): any;
   upgradeToAndCall(newImplementation: AddressLike, data: BytesLike): Promise<void>;
-  deploymentTransaction(): ContractTransactionResponse
+  deploymentTransaction(): ContractTransactionResponse;
 } & BaseContract;
 
 // IContractFactory 인터페이스 정의
@@ -24,7 +24,7 @@ export interface IContractFactory<CT> {
 
 // ContractFactoryType 및 ReturnCT 정의
 export type ContractFactoryType<CT> = IContractFactory<CT>;
-export type ReturnCT<CF extends IContractFactory<unknown>> = (CF extends IContractFactory<infer CT> ? CT : never);
+export type ReturnCT<CF extends IContractFactory<unknown>> = CF extends IContractFactory<infer CT> ? CT : never;
 
 // EcoCF와 CFConstructor 타입 정의
 export type EcoCF<CF extends IContractFactory<unknown>> = ContractFactoryType<ReturnCT<CF>>;
@@ -100,13 +100,13 @@ export class EcoProxyFactory extends AsyncConstructor {
     return EcoProxyFactory.instance;
   }
 
-  async _deployProxy<CF extends EcoCF<CF>>(logic:EcoCT<CF>, initData: BytesLike, deployer?:HardhatEthersSigner) {
+  async _deployProxy<CF extends EcoCF<CF>>(logic: EcoCT<CF>, initData: BytesLike, deployer?: HardhatEthersSigner) {
     const _deployer = deployer ?? this.deployer;
     const proxy = await this.factory.connect(_deployer).deploy(logic, initData);
     await proxy.waitForDeployment();
     const address = await proxy.getAddress();
     const inst = logic.attach(address) as unknown as EcoCT<CF>;
-    inst.address = address
+    inst.address = address;
     inst.deployedBlockNumber = proxy.deploymentTransaction()!.blockNumber!;
     return inst;
   }
@@ -118,7 +118,9 @@ export class EcoProxyFactory extends AsyncConstructor {
   ): Promise<EcoCT<CF>> {
     const _deployer = deployer ?? this.deployer;
     const _implFactory = implFactory.connect(_deployer);
-    const logic = (implConstructArgs ? await _implFactory.deploy(...implConstructArgs) : await _implFactory.deploy()) as EcoCT<CF>;
+    const logic = (
+      implConstructArgs ? await _implFactory.deploy(...implConstructArgs) : await _implFactory.deploy()
+    ) as EcoCT<CF>;
     await logic.waitForDeployment();
 
     logic.address = await logic.getAddress();
@@ -130,7 +132,7 @@ export class EcoProxyFactory extends AsyncConstructor {
     implFactory: CF,
     proxyInitData: BytesLike,
     implConstructArgs?: unknown[],
-    deployer?: HardhatEthersSigner
+    deployer?: HardhatEthersSigner,
   ): Promise<EcoCT<CF>> {
     const _deployer = deployer ?? this.deployer;
     const logic = await this._deployLogic(implFactory, implConstructArgs, _deployer);
@@ -143,7 +145,7 @@ export class EcoProxyFactory extends AsyncConstructor {
     return hre.ethers.getAddress("0x" + slotData.slice(-40));
   }
 
-  async findDeployedBlockNumber(contractAddress:string) {
+  async findDeployedBlockNumber(contractAddress: string) {
     const latestBlock = BigInt(await hre.ethers.provider.getBlockNumber());
     let low = 0n;
     let high = latestBlock;
@@ -196,11 +198,11 @@ export class EcoInstanceBase extends AsyncConstructor {
   }
   async _bindingDeployInfo(address: string, deployedBlockNumber?: number) {
     await this._bindingAddress(address);
-    this.deployedBlockNumber = deployedBlockNumber ?? await this.proxyFactory.findDeployedBlockNumber(address);
+    this.deployedBlockNumber = deployedBlockNumber ?? (await this.proxyFactory.findDeployedBlockNumber(address));
   }
 
   isBind() {
-    return !!this.address
+    return !!this.address;
   }
 
   checkUnbind() {
@@ -254,19 +256,23 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
     );
   }
 
-  async deployLogic(implArgs?:unknown[]) {
-    this.logic = await this.proxyFactory._deployLogic(this.factory, implArgs ?? await this.logicInput(), this.deployer);
+  async deployLogic(implArgs?: unknown[]) {
+    this.logic = await this.proxyFactory._deployLogic(
+      this.factory,
+      implArgs ?? (await this.logicInput()),
+      this.deployer,
+    );
   }
 
-  async useLogic(implArgs?:unknown[]) {
-    if(!this.logic) {
+  async useLogic(implArgs?: unknown[]) {
+    if (!this.logic) {
       await this.deployLogic(implArgs);
       return true;
     }
     return false;
   }
 
-  async deploy(inputBuilder?: () => Promise<string>, implArgs?:unknown[]) {
+  async deploy(inputBuilder?: () => Promise<string>, implArgs?: unknown[]) {
     this.checkUnbind();
     await this.useLogic(implArgs);
     const input = inputBuilder ? await inputBuilder() : "0x";
@@ -274,15 +280,15 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
     await this._bindingDeployInfo(this.inst.address, this.inst.deployedBlockNumber);
   }
 
-  async use(inputBuilder?: () => Promise<string>, implArgs?:unknown[]) {
-    if(!this.isBind()) {
+  async use(inputBuilder?: () => Promise<string>, implArgs?: unknown[]) {
+    if (!this.isBind()) {
       await this.deploy(inputBuilder, implArgs);
       return true;
     }
     return false;
   }
 
-  async upgrade(inputBuilder?: () => Promise<string>, implArgs?:unknown[]) {
+  async upgrade(inputBuilder?: () => Promise<string>, implArgs?: unknown[]) {
     this.checkBind();
 
     await this.deployLogic(implArgs);
@@ -291,25 +297,25 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
     await this.inst.upgradeToAndCall!(this.logic, input);
   }
 
-  async attach(address:AddressLike) {
-    this.checkUnbind()
-    this.inst = await this.factory.attach(address) as EcoCT<CF>;
-    this.logic = await this.factory.attach(this.proxyFactory.getLogicAddress(this.inst)) as EcoCT<CF>;
+  async attach(address: AddressLike) {
+    this.checkUnbind();
+    this.inst = (await this.factory.attach(address)) as EcoCT<CF>;
+    this.logic = (await this.factory.attach(this.proxyFactory.getLogicAddress(this.inst))) as EcoCT<CF>;
     this.logic.address = await this.logic.getAddress();
     await this._bindingAddress(this.inst.address);
   }
 
   async attachFromInfo(info: EcoContractInfo) {
-    this.checkUnbind()
+    this.checkUnbind();
     console.log("load", this.label, info.address);
-    this.inst = await this.factory.attach(info.address) as EcoCT<CF>;
+    this.inst = (await this.factory.attach(info.address)) as EcoCT<CF>;
     this.inst.address = info.address;
     this.inst.deployedBlockNumber = info.deployAt;
     await this._bindingDeployInfo(this.inst.address, info.deployAt);
   }
 
-  async load(address?:AddressLike) {
-    if(address) {
+  async load(address?: AddressLike) {
+    if (address) {
       this.attach(address);
     } else {
       await this.attachFromInfo(await this.importEcoContractInfo());
@@ -341,7 +347,7 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
     const instInfo: EcoContractInfo = {
       label: this.label,
       address: this.address,
-      deployAt: this.deployedBlockNumber ?? await this.proxyFactory.findDeployedBlockNumber(this.address),
+      deployAt: this.deployedBlockNumber ?? (await this.proxyFactory.findDeployedBlockNumber(this.address)),
       abi: "abi/" + this.label + ".json",
     };
 

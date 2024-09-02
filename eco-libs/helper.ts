@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
 
-
 const DefaultInfoDir = "eco-contract-info/";
 const DefaultAbiDir = DefaultInfoDir + "abi/";
 
@@ -23,7 +22,11 @@ export function getSelector(contractMethod: { fragment: { selector: string } }):
 
 async function writeAbiFromArtifact(serviceLabel: string, artifactPath: string, abiDirectory: string) {
   const hardhatArtifact = (await import(artifactPath)) as { abi: unknown[] };
-  fs.writeFileSync(path.join(abiDirectory, serviceLabel) + ".json", JSON.stringify(hardhatArtifact.abi, null, 2), "utf8");
+  fs.writeFileSync(
+    path.join(abiDirectory, serviceLabel) + ".json",
+    JSON.stringify(hardhatArtifact.abi, null, 2),
+    "utf8",
+  );
 }
 
 function filesInDirectory(startPath: string, filter = RegExp(/\.json$/)): string[] {
@@ -56,13 +59,13 @@ interface ContractInfo {
   abi: string;
 }
 
-export async function exportContractInfo(domain:string, label: string, inst: BaseContract) {
+export async function exportContractInfo(domain: string, label: string, inst: BaseContract) {
   await inst.waitForDeployment();
   const deployTxReceipt = await inst.deploymentTransaction()?.wait();
   const _chainId = (await hre.ethers.provider.getNetwork()).chainId;
   const chainId = _chainId.toString();
 
-  if(chain.isDevnet(_chainId)) return;
+  if (chain.isDevnet(_chainId)) return;
 
   const contractPaths = filesInDirectory(__dirname + "/../artifacts/contracts/");
   for (const contractPath of contractPaths) {
@@ -85,8 +88,8 @@ export async function exportContractInfo(domain:string, label: string, inst: Bas
   fs.writeFileSync(path.join(servicePath, label + ".json"), JSON.stringify(instInfo, null, 2), "utf8");
 }
 
-export async function importContractInfo(domain:string, label: string, chainId?:string): Promise<ContractInfo> {
-  if(!chainId) {
+export async function importContractInfo(domain: string, label: string, chainId?: string): Promise<ContractInfo> {
+  if (!chainId) {
     chainId = (await hre.ethers.provider.getNetwork()).chainId.toString();
   }
 
@@ -94,10 +97,10 @@ export async function importContractInfo(domain:string, label: string, chainId?:
     const instancePath = path.join(DefaultInfoDir, chainId, domain, label + ".json");
     const jsonString = fs.readFileSync(instancePath, "utf-8");
     return JSON.parse(jsonString) as ContractInfo;
-  } catch(error) {
+  } catch (error) {
     const err = error as FileError;
-    if(err.code === "ENOENT") {
-      return {address: hre.ethers.ZeroAddress} as ContractInfo;
+    if (err.code === "ENOENT") {
+      return { address: hre.ethers.ZeroAddress } as ContractInfo;
     } else {
       throw err;
     }
@@ -132,25 +135,27 @@ export class EcoServiceHelper extends AsyncConstructor {
 
 type Constructor<CF> = new (...args: any) => CF;
 
-export class ContractInstance<CF extends ContractFactoryTypeSupporter<CT>, CT extends BaseContract> extends EcoServiceHelper {
-  factory!:CF;
+export class ContractInstance<
+  CF extends ContractFactoryTypeSupporter<CT>,
+  CT extends BaseContract,
+> extends EcoServiceHelper {
+  factory!: CF;
   inst!: Awaited<ReturnType<CF["deploy"]>> | EcoProxiedInstanceWithFactory<CT>;
-  domain!:string;
+  domain!: string;
   label!: string;
 
-  constructor(domain:string, fatoryType: Constructor<CF>, deployer?: HardhatEthersSigner) {
+  constructor(domain: string, fatoryType: Constructor<CF>, deployer?: HardhatEthersSigner) {
     super(async () => {
       this.domain = domain;
       this.label = fatoryType.name.replace("__factory", "");
-      this.factory = await hre.ethers.getContractFactory(this.label) as unknown as CF;
+      this.factory = (await hre.ethers.getContractFactory(this.label)) as unknown as CF;
     }, deployer);
   }
 
-  async load(target?:string) {
+  async load(target?: string) {
     const info = await importContractInfo("erc20", this.label);
-    if(target)
-      this.inst = this.factory.attach(target) as Awaited<ReturnType<CF["deploy"]>>;
-    else if(info.address) {
+    if (target) this.inst = this.factory.attach(target) as Awaited<ReturnType<CF["deploy"]>>;
+    else if (info.address) {
       this.inst = this.factory.attach(info.address) as Awaited<ReturnType<CF["deploy"]>>;
     } else {
       throw "load: " + this.domain + "/" + this.label;
