@@ -2,14 +2,20 @@
 
 pragma solidity ^0.8.0;
 
-import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import { IEcoOwnable, EcoOwnable } from "./EcoOwnable.sol";
-import { AccessControlEnumerableUpgradeable, AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
-import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {IEcoOwnable, EcoOwnable} from "./EcoOwnable.sol";
+import {
+    AccessControlEnumerableUpgradeable,
+    AccessControlUpgradeable
+} from "@openzeppelin/contracts-upgradeable/access/extensions/AccessControlEnumerableUpgradeable.sol";
+import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
 
-import { UUPSUpgradeable } from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-import { IAccessControlEnumerable, IAccessControl } from "@openzeppelin/contracts/access/extensions/IAccessControlEnumerable.sol";
+import {
+    IAccessControlEnumerable,
+    IAccessControl
+} from "@openzeppelin/contracts/access/extensions/IAccessControlEnumerable.sol";
 
 interface IPausable {
     function pause() external;

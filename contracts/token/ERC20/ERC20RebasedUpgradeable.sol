@@ -2,11 +2,12 @@
 
 pragma solidity ^0.8.0;
 
-import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import { IERC20, IERC20Metadata, IERC20Rebased, IERC20Stake } from "./IERC20.sol";
+import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import {IERC20, IERC20Metadata, IERC20Rebased, IERC20Stake} from "./IERC20.sol";
 
-import { ERC20PermitUpgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
-import { ERC20MetadataUpgradeable } from "./ERC20MetadataUpgradeable.sol";
+import {ERC20PermitUpgradeable} from
+    "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PermitUpgradeable.sol";
+import {ERC20MetadataUpgradeable} from "./ERC20MetadataUpgradeable.sol";
 
 abstract contract ERC20RebasedUpgradeable is
     IERC20Rebased,
@@ -30,12 +31,10 @@ abstract contract ERC20RebasedUpgradeable is
         }
     }
 
-    function initEcoERC20Rebase(
-        address _underlying,
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals
-    ) public initializer {
+    function initEcoERC20Rebase(address _underlying, string memory _name, string memory _symbol, uint8 _decimals)
+        public
+        initializer
+    {
         _initEcoERC20Metadata(_name, _symbol, _decimals);
         _initERC20Rebased(_underlying);
         __ERC20Permit_init(name());

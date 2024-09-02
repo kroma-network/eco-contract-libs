@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.0;
 
-import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-import { IEcoERC20Metadata, IERC20Metadata } from "./IERC20.sol";
+import {IEcoERC20Metadata, IERC20Metadata} from "./IERC20.sol";
 
 abstract contract ERC20MetadataUpgradeable is IEcoERC20Metadata, ERC20Upgradeable {
     // keccak256(abi.encode(uint256(keccak256("eco.storage.ERC20MetadataUpgradeable")) - 1)) & ~bytes32(uint256(0xff))
@@ -23,11 +23,10 @@ abstract contract ERC20MetadataUpgradeable is IEcoERC20Metadata, ERC20Upgradeabl
         }
     }
 
-    function _initEcoERC20Metadata(
-        string memory _name,
-        string memory _symbol,
-        uint8 _decimals
-    ) internal onlyInitializing {
+    function _initEcoERC20Metadata(string memory _name, string memory _symbol, uint8 _decimals)
+        internal
+        onlyInitializing
+    {
         ERC20MetadataUpgradeableStorage storage $ = _getERC20MetadataUpgradeableStorage();
         $.name = _name;
         $.symbol = _symbol;

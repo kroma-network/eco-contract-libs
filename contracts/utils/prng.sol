@@ -33,6 +33,7 @@ function nomalize(uint256 value, uint256 nomalizeRange, uint256 valueRange) pure
 // Keccak256 Random Gnerator
 library Keccak256RG {
     uint128 constant keccak16Max = 2 ** 16;
+
     struct KeccakRGState {
         bytes32 seed;
         bytes32 weed;
