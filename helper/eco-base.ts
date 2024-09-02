@@ -125,7 +125,7 @@ export class EcoProxyFactory extends AsyncConstructor {
 
     logic.address = await logic.getAddress();
     logic.deployedBlockNumber = logic.deploymentTransaction()!.blockNumber!;
-    return logic as EcoCT<CF>;
+    return logic;
   }
 
   async deployWithImpl<CF extends EcoCF<CF>>(
@@ -137,7 +137,7 @@ export class EcoProxyFactory extends AsyncConstructor {
     const _deployer = deployer ?? this.deployer;
     const logic = await this._deployLogic(implFactory, implConstructArgs, _deployer);
     const inst = await this._deployProxy(logic, proxyInitData, _deployer);
-    return inst as EcoCT<CF>;
+    return inst;
   }
 
   async getLogicAddress(inst: AddressLike) {
@@ -294,7 +294,7 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
     await this.deployLogic(implArgs);
 
     const input = inputBuilder ? await inputBuilder() : "0x";
-    await this.inst.upgradeToAndCall!(this.logic, input);
+    await this.inst.upgradeToAndCall(this.logic, input);
   }
 
   async attach(address: AddressLike) {
@@ -316,7 +316,7 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
 
   async load(address?: AddressLike) {
     if (address) {
-      this.attach(address);
+      await this.attach(address);
     } else {
       await this.attachFromInfo(await this.importEcoContractInfo());
     }
@@ -336,7 +336,7 @@ export class EcoUUPS<CF extends EcoCF<CF>> extends EcoInstanceBase {
   async exportEcoContractInfo() {
     this.checkBind();
 
-    const contractPaths = filesInDirectory(__dirname + "/../artifacts/contracts/");
+    const contractPaths = filesInDirectory(process.cwd() + "/artifacts/contracts/");
     for (const contractPath of contractPaths) {
       const baseName = path.basename(contractPath, ".json");
       if (!baseName.startsWith("I") && baseName.endsWith(this.label)) {
