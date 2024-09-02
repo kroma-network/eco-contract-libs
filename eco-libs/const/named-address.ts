@@ -25,7 +25,7 @@ export const MainnetAuthorizedAddress: InterfaceAuthorizedAddress = {
   kgh_vault: "0xB83F38bF7aB3Df8121846a611F97775400212a09"
 };
 
-export const TestnetAuthorizedAddress: InterfaceAuthorizedAddress = {
+export const HHnetAuthorizedAddress: InterfaceAuthorizedAddress = {
   oracle_feeder: "0xfFf95F4bD1D4521927aFb8E6757E7E9bf6851045",
 
   galaxeQuest: "0x994AAf2Ab13270B66f4824283264b5Fd02ddaFe8",

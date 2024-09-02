@@ -43,8 +43,8 @@ compiler:
       enabled: true
       runs: 1000000
     remappings:
-      - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@5.0.1"
-      - "@openzeppelin/contracts-upgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@5.0.1/contracts"
+      - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@5.0.2"
+      - "@openzeppelin/contracts-upgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@5.0.2/contracts"
   vyper:
     version: null
 
@@ -74,7 +74,7 @@ hypothesis:
 
 autofetch_sources: false
 dependencies:
-  - OpenZeppelin/openzeppelin-contracts@5.0.1
-  - OpenZeppelin/openzeppelin-contracts-upgradeable@5.0.1
-  - OpenZeppelin/openzeppelin-contracts-upgradeable@5.0.1
+  - OpenZeppelin/openzeppelin-contracts@5.0.2
+  - OpenZeppelin/openzeppelin-contracts-upgradeable@5.0.2
+  - OpenZeppelin/openzeppelin-contracts-upgradeable@5.0.2
 dev_deployment_artifacts: false
