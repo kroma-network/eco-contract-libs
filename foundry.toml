@@ -3,7 +3,8 @@ src = "contracts"
 out = "artifacts"
 libs = ["node_modules", "lib"]
 remappings = [
-    "@openzeppelin/=node_modules/@openzeppelin/",
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+    "@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
     "hardhat/=node_modules/hardhat/",
     "solmate/=node_modules/solmate/",
 ]
