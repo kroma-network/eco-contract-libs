@@ -55,6 +55,7 @@ const layer2Values = Object.values(Layer2).map((value) => value);
 export function isLayer1(id: bigint): boolean {
   return layer1Values.includes(id);
 }
+
 export function isLayer2(id: bigint): boolean {
   return layer2Values.includes(id);
 }
@@ -64,6 +65,7 @@ export function onlyDevnet(id: bigint) {
     throw new Error("Only Test");
   }
 }
+
 export function onlyTestnet(id: bigint) {
   if (!isTestnet(id)) {
     throw new Error("Only Test");

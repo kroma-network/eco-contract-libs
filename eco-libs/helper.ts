@@ -16,11 +16,17 @@ interface FileError {
   message: string;
 }
 
-export function getSelector(contractMethod: { fragment: { selector: string } }): string {
+export function getSelector(contractMethod: {
+  fragment: { selector: string };
+}): string {
   return contractMethod.fragment.selector;
 }
 
-async function writeAbiFromArtifact(serviceLabel: string, artifactPath: string, abiDirectory: string) {
+async function writeAbiFromArtifact(
+  serviceLabel: string,
+  artifactPath: string,
+  abiDirectory: string,
+) {
   const hardhatArtifact = (await import(artifactPath)) as { abi: unknown[] };
   fs.writeFileSync(
     path.join(abiDirectory, serviceLabel) + ".json",
@@ -29,7 +35,10 @@ async function writeAbiFromArtifact(serviceLabel: string, artifactPath: string, 
   );
 }
 
-function filesInDirectory(startPath: string, filter = RegExp(/\.json$/)): string[] {
+function filesInDirectory(
+  startPath: string,
+  filter = RegExp(/\.json$/),
+): string[] {
   let results: string[] = [];
 
   if (!fs.existsSync(startPath)) {
@@ -59,7 +68,11 @@ interface ContractInfo {
   abi: string;
 }
 
-export async function exportContractInfo(domain: string, label: string, inst: BaseContract) {
+export async function exportContractInfo(
+  domain: string,
+  label: string,
+  inst: BaseContract,
+) {
   await inst.waitForDeployment();
   const deployTxReceipt = await inst.deploymentTransaction()?.wait();
   const _chainId = (await hre.ethers.provider.getNetwork()).chainId;
@@ -67,7 +80,9 @@ export async function exportContractInfo(domain: string, label: string, inst: Ba
 
   if (chain.isDevnet(_chainId)) return;
 
-  const contractPaths = filesInDirectory(__dirname + "/../artifacts/contracts/");
+  const contractPaths = filesInDirectory(
+    __dirname + "/../artifacts/contracts/",
+  );
   for (const contractPath of contractPaths) {
     const baseName = path.basename(contractPath, ".json");
     if (!baseName.startsWith("I") && baseName.endsWith(label)) {
@@ -85,16 +100,29 @@ export async function exportContractInfo(domain: string, label: string, inst: Ba
 
   const servicePath = path.join(DefaultInfoDir, chainId, domain);
   createDirectoryIfNotExists(servicePath);
-  fs.writeFileSync(path.join(servicePath, label + ".json"), JSON.stringify(instInfo, null, 2), "utf8");
+  fs.writeFileSync(
+    path.join(servicePath, label + ".json"),
+    JSON.stringify(instInfo, null, 2),
+    "utf8",
+  );
 }
 
-export async function importContractInfo(domain: string, label: string, chainId?: string): Promise<ContractInfo> {
+export async function importContractInfo(
+  domain: string,
+  label: string,
+  chainId?: string,
+): Promise<ContractInfo> {
   if (!chainId) {
     chainId = (await hre.ethers.provider.getNetwork()).chainId.toString();
   }
 
   try {
-    const instancePath = path.join(DefaultInfoDir, chainId, domain, label + ".json");
+    const instancePath = path.join(
+      DefaultInfoDir,
+      chainId,
+      domain,
+      label + ".json",
+    );
     const jsonString = fs.readFileSync(instancePath, "utf-8");
     return JSON.parse(jsonString) as ContractInfo;
   } catch (error) {
@@ -113,13 +141,20 @@ import { BaseContract, BytesLike } from "ethers";
 import hre from "hardhat";
 
 import * as chain from "./const/chain-list";
-import { ContractFactoryTypeSupporter, EcoProxiedInstanceWithFactory, ProxyInstanceFactory } from "./eco-proxy";
+import {
+  ContractFactoryTypeSupporter,
+  EcoProxiedInstanceWithFactory,
+  ProxyInstanceFactory,
+} from "./eco-proxy";
 
 export class EcoServiceHelper extends AsyncConstructor {
   deployer!: HardhatEthersSigner;
   proxyInstanceFactory!: ProxyInstanceFactory;
 
-  constructor(asyncContructor: () => Promise<void>, deployer?: HardhatEthersSigner) {
+  constructor(
+    asyncContructor: () => Promise<void>,
+    deployer?: HardhatEthersSigner,
+  ) {
     super(async () => {
       this.deployer = deployer ? deployer : (await hre.ethers.getSigners())[0];
       this.proxyInstanceFactory = await new ProxyInstanceFactory();
@@ -144,26 +179,41 @@ export class ContractInstance<
   domain!: string;
   label!: string;
 
-  constructor(domain: string, fatoryType: Constructor<CF>, deployer?: HardhatEthersSigner) {
+  constructor(
+    domain: string,
+    fatoryType: Constructor<CF>,
+    deployer?: HardhatEthersSigner,
+  ) {
     super(async () => {
       this.domain = domain;
       this.label = fatoryType.name.replace("__factory", "");
-      this.factory = (await hre.ethers.getContractFactory(this.label)) as unknown as CF;
+      this.factory = (await hre.ethers.getContractFactory(
+        this.label,
+      )) as unknown as CF;
     }, deployer);
   }
 
   async load(target?: string) {
     const info = await importContractInfo("erc20", this.label);
-    if (target) this.inst = this.factory.attach(target) as Awaited<ReturnType<CF["deploy"]>>;
+    if (target)
+      this.inst = this.factory.attach(target) as Awaited<
+        ReturnType<CF["deploy"]>
+      >;
     else if (info.address) {
-      this.inst = this.factory.attach(info.address) as Awaited<ReturnType<CF["deploy"]>>;
+      this.inst = this.factory.attach(info.address) as Awaited<
+        ReturnType<CF["deploy"]>
+      >;
     } else {
       throw "load: " + this.domain + "/" + this.label;
     }
   }
 
   async deploy(deployArgs: unknown[], input: BytesLike) {
-    this.inst = await this.proxyInstanceFactory.deployWithFactory(this.factory, deployArgs, input);
+    this.inst = await this.proxyInstanceFactory.deployWithFactory(
+      this.factory,
+      deployArgs,
+      input,
+    );
   }
 
   getSelector(contractMethod: { fragment: { selector: string } }): string {

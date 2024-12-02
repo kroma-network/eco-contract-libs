@@ -20,7 +20,10 @@ import { exportContractInfo, importContractInfo } from "./helper";
 export class BaseInstance extends AsyncConstructor {
   deployer!: HardhatEthersSigner;
 
-  constructor(asyncContructor: () => Promise<void>, deployer?: HardhatEthersSigner) {
+  constructor(
+    asyncContructor: () => Promise<void>,
+    deployer?: HardhatEthersSigner,
+  ) {
     super(async () => {
       this.deployer = deployer ? deployer : (await hre.ethers.getSigners())[0];
       await asyncContructor();
@@ -36,7 +39,10 @@ export class BaseInstance extends AsyncConstructor {
 // type CFConstructor<CF> = new (...args: any) => CF;
 type CFConstructor<CF extends TraitCF<any>> = new (...args: any) => CF;
 
-export class ContractInstance<CF extends TraitCF<CT>, CT extends BaseContract> extends BaseInstance {
+export class ContractInstance<
+  CF extends TraitCF<CT>,
+  CT extends BaseContract,
+> extends BaseInstance {
   deployer!: HardhatEthersSigner;
 
   domain!: string;
@@ -55,26 +61,36 @@ export class ContractInstance<CF extends TraitCF<CT>, CT extends BaseContract> e
       this.domain = domain;
       this.label = factoryType.name.replace("__factory", "");
 
-      this.factory = (await hre.ethers.getContractFactory(this.label)) as unknown as CF;
+      this.factory = (await hre.ethers.getContractFactory(
+        this.label,
+      )) as unknown as CF;
       await asyncContructor();
     }, deployer);
   }
 
   async deploy(...deployArgs: unknown[]) {
-    this.inst = (await this.factory.deploy(...deployArgs)) as Awaited<ReturnType<CF["deploy"]>>;
+    this.inst = (await this.factory.deploy(...deployArgs)) as Awaited<
+      ReturnType<CF["deploy"]>
+    >;
     await this.inst.waitForDeployment();
   }
 
   async attach(address: string) {
-    this.inst = (await this.factory.attach(address)) as Awaited<ReturnType<CF["deploy"]>>;
+    this.inst = (await this.factory.attach(address)) as Awaited<
+      ReturnType<CF["deploy"]>
+    >;
   }
 
   async load(address?: string) {
     const info = await importContractInfo(this.domain, this.label);
     if (address) {
-      this.inst = this.factory.attach(address) as Awaited<ReturnType<CF["deploy"]>>;
+      this.inst = this.factory.attach(address) as Awaited<
+        ReturnType<CF["deploy"]>
+      >;
     } else if (info.address && info.address != ZeroAddress) {
-      this.inst = this.factory.attach(info.address) as Awaited<ReturnType<CF["deploy"]>>;
+      this.inst = this.factory.attach(info.address) as Awaited<
+        ReturnType<CF["deploy"]>
+      >;
     } else {
       throw "load: " + this.domain + "/" + this.label;
     }
@@ -96,9 +112,14 @@ export class ContractInstance<CF extends TraitCF<CT>, CT extends BaseContract> e
 }
 
 // class ProxyFactory<CF extends TraitCF<CT> & typeof EcoProxyAdmin__factory, CT extends BaseContract> extends ContractInstance<CF, CT> {
-export class ProxyFactory extends ContractInstance<EcoProxyAdmin__factory, EcoProxyAdmin> {
-  readonly IMPLEMENTATION_SLOT = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
-  readonly ADMIN_SLOT = "0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103";
+export class ProxyFactory extends ContractInstance<
+  EcoProxyAdmin__factory,
+  EcoProxyAdmin
+> {
+  readonly IMPLEMENTATION_SLOT =
+    "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
+  readonly ADMIN_SLOT =
+    "0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103";
   private static instance: ProxyFactory;
 
   chainId!: bigint;
@@ -108,7 +129,9 @@ export class ProxyFactory extends ContractInstance<EcoProxyAdmin__factory, EcoPr
   private constructor() {
     super("admin", EcoProxyAdmin__factory, undefined, async () => {
       this.chainId = (await hre.ethers.provider.getNetwork()).chainId;
-      this.EcoTUPFactory = await hre.ethers.getContractFactory("EcoTUPWithAdminLogic");
+      this.EcoTUPFactory = await hre.ethers.getContractFactory(
+        "EcoTUPWithAdminLogic",
+      );
       try {
         await this.load();
       } catch (e) {
@@ -131,7 +154,10 @@ export class ProxyFactory extends ContractInstance<EcoProxyAdmin__factory, EcoPr
     return ProxyFactory.instance;
   }
 
-  async attachWithFactory<CF extends TraitCF<CT>, CT extends BaseContract>(factory: CF, address: string) {
+  async attachWithFactory<CF extends TraitCF<CT>, CT extends BaseContract>(
+    factory: CF,
+    address: string,
+  ) {
     const inst = (await factory.attach(address)) as CT;
     const proxy = await this.EcoTUPFactory.attach(address);
     const logic = await this.getImpl(inst);
@@ -139,14 +165,21 @@ export class ProxyFactory extends ContractInstance<EcoProxyAdmin__factory, EcoPr
     return { logic, proxy, admin, inst };
   }
 
-  async deployWithFactory<CF extends TraitCF<CT>, CT extends BaseContract>(factory: CF, input: string) {
+  async deployWithFactory<CF extends TraitCF<CT>, CT extends BaseContract>(
+    factory: CF,
+    input: string,
+  ) {
     const logic = await factory.deploy();
     await logic.waitForDeployment();
     return this.deployWithLogic(logic, input);
   }
 
   async deployWithLogic<CT extends BaseContract>(logic: CT, input: string) {
-    const proxy = await this.EcoTUPFactory.deploy(await this.inst.getAddress(), await logic.getAddress(), input);
+    const proxy = await this.EcoTUPFactory.deploy(
+      await this.inst.getAddress(),
+      await logic.getAddress(),
+      input,
+    );
     const inst = logic.attach(proxy);
     await inst.waitForDeployment();
     const admin = await this.getAdmin(inst);
@@ -154,13 +187,19 @@ export class ProxyFactory extends ContractInstance<EcoProxyAdmin__factory, EcoPr
   }
 
   async getImpl<CT extends BaseContract>(logic: CT) {
-    const slotData = await hre.ethers.provider.getStorage(logic, this.IMPLEMENTATION_SLOT);
+    const slotData = await hre.ethers.provider.getStorage(
+      logic,
+      this.IMPLEMENTATION_SLOT,
+    );
     const address = hre.ethers.getAddress("0x" + slotData.slice(-40));
     return logic.attach(address) as CT;
   }
 
   async getAdmin<CT extends BaseContract>(logic: CT) {
-    const slotData = await hre.ethers.provider.getStorage(logic, this.ADMIN_SLOT);
+    const slotData = await hre.ethers.provider.getStorage(
+      logic,
+      this.ADMIN_SLOT,
+    );
     const address = hre.ethers.getAddress("0x" + slotData.slice(-40));
     return this.factory.attach(address);
   }
@@ -176,7 +215,11 @@ export class ProxiedInstance<
   proxy!: EcoTUPWithAdminLogic;
   admin!: EcoProxyAdmin;
 
-  constructor(domain: string, factoryType: CFConstructor<CF>, deployer?: HardhatEthersSigner) {
+  constructor(
+    domain: string,
+    factoryType: CFConstructor<CF>,
+    deployer?: HardhatEthersSigner,
+  ) {
     super(domain, factoryType, deployer, async () => {
       this.proxyFactory = await ProxyFactory.getInstance();
     });
@@ -204,7 +247,10 @@ export class ProxiedInstance<
       await this.deployLogic();
     }
 
-    const info = await this.proxyFactory.deployWithLogic(this.logic, await inputBuilder());
+    const info = await this.proxyFactory.deployWithLogic(
+      this.logic,
+      await inputBuilder(),
+    );
     await this.assign(info);
   }
 
@@ -218,7 +264,9 @@ export class ProxiedInstance<
   }
 
   async attach(address: string) {
-    this.assign({ ...(await this.proxyFactory.attachWithFactory(this.factory, address)) });
+    this.assign({
+      ...(await this.proxyFactory.attachWithFactory(this.factory, address)),
+    });
   }
 
   async load(address?: string) {
@@ -246,7 +294,11 @@ export class ProxiedInstance<
       await this.deployLogic();
       address = await this.logic.getAddress();
     }
-    await this.admin.upgradeAndCall(await this.proxy.getAddress(), address, "0x");
+    await this.admin.upgradeAndCall(
+      await this.proxy.getAddress(),
+      address,
+      "0x",
+    );
     await this.attach(await this.inst.getAddress());
   }
 

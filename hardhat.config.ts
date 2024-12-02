@@ -10,7 +10,8 @@ import "hardhat-contract-sizer";
 import "./eco-tasks/namespace-slot";
 const { ALCHEMY_ETHEREUM_RPC, ALCHEMY_SEPOLIA_RPC } = process.env;
 
-const { TEST_PRIVATE, MAIN_PRIVATE, ETHERSCAN_API, KROMASCAN_API } = process.env;
+const { TEST_PRIVATE, MAIN_PRIVATE, ETHERSCAN_API, KROMASCAN_API } =
+  process.env;
 
 const MAINNET_ACCOUNTS = [MAIN_PRIVATE ? MAIN_PRIVATE : "a".repeat(64)];
 const TESTNET_ACCOUNTS = [TEST_PRIVATE ? TEST_PRIVATE : "a".repeat(64)];
