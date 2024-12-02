@@ -3,15 +3,15 @@ export const Mainnet = {
   Wemix: 1111n,
 
   Kroma: 255n,
+  Op: 10n,
 };
 
 export const Testnet = {
   Sepolia: 11155111n,
   testWemix: 1112n,
-  Easel: 7789n,
 
   sepoliaKroma: 2358n,
-  Sail: 7791n,
+  sepoliaOp: 11155420n,
 };
 
 export const Devnet = {
@@ -24,13 +24,13 @@ export const Layer1 = {
   Wemix: 1111n,
   Sepolia: 11155111n,
   testWemix: 1112n,
-  Easel: 7789n,
 };
 
 export const Layer2 = {
   Kroma: 255n,
+  Op: 10n,
   sepoliaKroma: 2358n,
-  Sail: 7791n,
+  sepoliaOp: 11155420n,
 };
 
 const mainnetValues = Object.values(Mainnet).map((value) => value);
@@ -57,6 +57,29 @@ export function isLayer1(id: bigint): boolean {
 }
 export function isLayer2(id: bigint): boolean {
   return layer2Values.includes(id);
+}
+
+export function onlyDevnet(id: bigint) {
+  if (!isDevnet(id)) {
+    throw new Error("Only Test");
+  }
+}
+export function onlyTestnet(id: bigint) {
+  if (!isTestnet(id)) {
+    throw new Error("Only Test");
+  }
+}
+
+export function onlyLayer1(id: bigint) {
+  if (!isLayer1(id)) {
+    throw new Error("Only Layer1");
+  }
+}
+
+export function onlyLayer2(id: bigint) {
+  if (!isLayer2(id)) {
+    throw new Error("Only Layer2");
+  }
 }
 
 export function bridgeAddresss(id: bigint) {
