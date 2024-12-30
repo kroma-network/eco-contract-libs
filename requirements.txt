@@ -1,4 +1,0 @@
-eth-brownie
-slither-analyzer
-scipy
-numpy
