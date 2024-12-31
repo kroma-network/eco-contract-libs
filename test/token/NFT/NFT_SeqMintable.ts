@@ -22,7 +22,8 @@ describe("NFT SeqMintable", function () {
     it("Basic Initialize", async function () {
       const { nft, owner } = await loadFixture(NFT_SeqMintable_Fixture);
 
-      await expect(nft.initNFT_SeqMintable(owner.address, name, symbol)).reverted;
+      await expect(nft.initNFT_SeqMintable(owner.address, name, symbol))
+        .reverted;
 
       expect(await nft.owner()).to.equal(owner.address);
 
@@ -49,7 +50,8 @@ describe("NFT SeqMintable", function () {
       await expect(nft.connect(user0).nextMint(user0)).reverted;
       await expect(nft.connect(admin).nextMint(user0)).reverted;
 
-      await expect(nft.grantSelectorRole(getSelector(nft.nextMint), admin)).not.reverted;
+      await expect(nft.grantSelectorRole(getSelector(nft.nextMint), admin)).not
+        .reverted;
       await expect(nft.connect(user0).nextMint(user0)).reverted;
 
       const tokenId = await nft.nextMintId();
@@ -57,7 +59,8 @@ describe("NFT SeqMintable", function () {
         .emit(nft, "Transfer")
         .withArgs(hre.ethers.ZeroAddress, user0, tokenId);
 
-      await expect(nft.revokeSelectorRole(getSelector(nft.nextMint), admin)).not.reverted;
+      await expect(nft.revokeSelectorRole(getSelector(nft.nextMint), admin)).not
+        .reverted;
       await expect(nft.connect(user0).nextMint(user0)).reverted;
       await expect(nft.connect(admin).nextMint(user0)).reverted;
     });
@@ -67,18 +70,26 @@ describe("NFT SeqMintable", function () {
 
       const batchAmount = 10;
 
-      await expect(nft.connect(user0).nextMintBatch(user0, batchAmount)).reverted;
-      await expect(nft.connect(admin).nextMintBatch(user0, batchAmount)).reverted;
+      await expect(nft.connect(user0).nextMintBatch(user0, batchAmount))
+        .reverted;
+      await expect(nft.connect(admin).nextMintBatch(user0, batchAmount))
+        .reverted;
 
-      await expect(nft.grantSelectorRole(getSelector(nft.nextMintBatch), admin)).not.reverted;
-      await expect(nft.connect(user0).nextMintBatch(user0, batchAmount)).reverted;
+      await expect(nft.grantSelectorRole(getSelector(nft.nextMintBatch), admin))
+        .not.reverted;
+      await expect(nft.connect(user0).nextMintBatch(user0, batchAmount))
+        .reverted;
 
       const startTokenId = await nft.nextMintId();
-      const tokenIds = Array.from({ length: batchAmount }, (_, i) => startTokenId + BigInt(i));
+      const tokenIds = Array.from(
+        { length: batchAmount },
+        (_, i) => startTokenId + BigInt(i),
+      );
 
       expect(await nft.totalSupply()).equal(0);
       expect(await nft.balanceOf(user0)).equal(0);
-      await expect(nft.connect(admin).nextMintBatch(user0, batchAmount)).not.reverted;
+      await expect(nft.connect(admin).nextMintBatch(user0, batchAmount)).not
+        .reverted;
       expect(await nft.totalSupply()).equal(BigInt(tokenIds.length));
       expect(await nft.balanceOf(user0)).equal(BigInt(tokenIds.length));
 
@@ -86,45 +97,98 @@ describe("NFT SeqMintable", function () {
         expect(await nft.tokenOfOwnerByIndex(user0, i)).equal(tokenIds[i]);
       }
 
-      await expect(nft.revokeSelectorRole(getSelector(nft.nextMintBatch), admin)).not.reverted;
-      await expect(nft.connect(user0).nextMintBatch(user0, batchAmount)).reverted;
-      await expect(nft.connect(admin).nextMintBatch(user0, batchAmount)).reverted;
+      await expect(
+        nft.revokeSelectorRole(getSelector(nft.nextMintBatch), admin),
+      ).not.reverted;
+      await expect(nft.connect(user0).nextMintBatch(user0, batchAmount))
+        .reverted;
+      await expect(nft.connect(admin).nextMintBatch(user0, batchAmount))
+        .reverted;
     });
 
     describe("Transfer", function () {
       it("transfer and approve test", async function () {
-        const { nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
+        const { nft, user0, user1 } = await loadFixture(
+          NFT_SeqMintable_Fixture,
+        );
         await expect(nft.nextMint(user0)).not.reverted;
 
-        await expect(nft.connect(user1).transferFrom(user0, user1, await nft.tokenOfOwnerByIndex(user0, 0))).reverted;
-        await expect(nft.connect(user0).transferFrom(user0, user1, await nft.tokenOfOwnerByIndex(user0, 0))).not
+        await expect(
+          nft
+            .connect(user1)
+            .transferFrom(
+              user0,
+              user1,
+              await nft.tokenOfOwnerByIndex(user0, 0),
+            ),
+        ).reverted;
+        await expect(
+          nft
+            .connect(user0)
+            .transferFrom(
+              user0,
+              user1,
+              await nft.tokenOfOwnerByIndex(user0, 0),
+            ),
+        ).not.reverted;
+        await expect(
+          nft
+            .connect(user0)
+            .transferFrom(
+              user1,
+              user0,
+              await nft.tokenOfOwnerByIndex(user1, 0),
+            ),
+        ).reverted;
+
+        await expect(
+          nft
+            .connect(user1)
+            .approve(user0, await nft.tokenOfOwnerByIndex(user1, 0)),
+        ).not.reverted;
+        await expect(
+          nft
+            .connect(user0)
+            .transferFrom(
+              user1,
+              user0,
+              await nft.tokenOfOwnerByIndex(user1, 0),
+            ),
+        ).not.reverted;
+
+        await expect(nft.nextMint(user0)).not.reverted;
+        await expect(nft.nextMint(user0)).not.reverted;
+        await expect(nft.nextMint(user0)).not.reverted;
+
+        await expect(
+          nft
+            .connect(user1)
+            .transferFrom(
+              user0,
+              user1,
+              await nft.tokenOfOwnerByIndex(user0, 0),
+            ),
+        ).reverted;
+
+        await expect(nft.connect(user0).setApprovalForAll(user1, true)).not
           .reverted;
-        await expect(nft.connect(user0).transferFrom(user1, user0, await nft.tokenOfOwnerByIndex(user1, 0))).reverted;
-
-        await expect(nft.connect(user1).approve(user0, await nft.tokenOfOwnerByIndex(user1, 0))).not.reverted;
-        await expect(nft.connect(user0).transferFrom(user1, user0, await nft.tokenOfOwnerByIndex(user1, 0))).not
-          .reverted;
-
-        await expect(nft.nextMint(user0)).not.reverted;
-        await expect(nft.nextMint(user0)).not.reverted;
-        await expect(nft.nextMint(user0)).not.reverted;
-
-        await expect(nft.connect(user1).transferFrom(user0, user1, await nft.tokenOfOwnerByIndex(user0, 0))).reverted;
-
-        await expect(nft.connect(user0).setApprovalForAll(user1, true)).not.reverted;
         for (let i = 1; i < (await nft.balanceOf(user0)); i++) {
-          await expect(nft.connect(user1).transferFrom(user0, user1, i)).not.reverted;
+          await expect(nft.connect(user1).transferFrom(user0, user1, i)).not
+            .reverted;
         }
       });
 
       it("transfer and approve test", async function () {
-        const { nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
+        const { nft, user0, user1 } = await loadFixture(
+          NFT_SeqMintable_Fixture,
+        );
 
         const tokenId = await nft.nextMintId();
         await expect(nft.nextMint(user0)).not.reverted;
         await expect(nft.pause()).not.reverted;
 
-        await expect(nft.connect(user0).transferFrom(user0, user1, tokenId)).reverted;
+        await expect(nft.connect(user0).transferFrom(user0, user1, tokenId))
+          .reverted;
       });
     });
   });

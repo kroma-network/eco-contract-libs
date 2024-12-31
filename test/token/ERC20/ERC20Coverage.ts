@@ -13,15 +13,21 @@ describe("ERC20 Coverage", function () {
 
   describe("EcoERC20MintableUpgradeable", function () {
     it("Eco ERC20 Mintable Coverage(revert)", async function () {
-      const factory = await ethers.getContractFactory("HHEcoERC20MintableUpgradeable");
+      const factory = await ethers.getContractFactory(
+        "HHEcoERC20MintableUpgradeable",
+      );
       const erc20 = await factory.deploy();
-      await expect(erc20.hhInitEcoERC20Mintable(ZeroAddress, name, symbol, decimals)).reverted;
+      await expect(
+        erc20.hhInitEcoERC20Mintable(ZeroAddress, name, symbol, decimals),
+      ).reverted;
     });
   });
 
   describe("ERC20MetadataUpgradeable", function () {
     it("ERC20 Metadata Coverage(revert)", async function () {
-      const factory = await ethers.getContractFactory("HHERC20MetadataUpgradeable");
+      const factory = await ethers.getContractFactory(
+        "HHERC20MetadataUpgradeable",
+      );
       const erc20 = await factory.deploy();
       await expect(erc20.initEcoERC20Metadata(name, symbol, decimals)).reverted;
     });
@@ -29,7 +35,9 @@ describe("ERC20 Coverage", function () {
 
   describe("EcoERC4626Upgradeable", function () {
     it("ERC4626 Coverage(revert)", async function () {
-      const factory = await ethers.getContractFactory("HHEcoERC4626Upgradeable");
+      const factory = await ethers.getContractFactory(
+        "HHEcoERC4626Upgradeable",
+      );
       const erc20 = await factory.deploy();
       await expect(erc20.hhInitEcoERC4626(ZeroAddress, name, symbol)).reverted;
     });
@@ -37,7 +45,9 @@ describe("ERC20 Coverage", function () {
 
   describe("ERC20RebasedUpgradeable", function () {
     it("ERC20 Rebased Coverage(revert and virtual)", async function () {
-      const factory = await ethers.getContractFactory("HHERC20RebasedUpgradeable");
+      const factory = await ethers.getContractFactory(
+        "HHERC20RebasedUpgradeable",
+      );
       const erc20 = await factory.deploy();
       await expect(erc20.hhVirtual()).not.reverted;
       await expect(erc20.hhInitERC20Rebased(ZeroAddress)).reverted;
@@ -46,14 +56,18 @@ describe("ERC20 Coverage", function () {
 
   describe("ERC20L2BridgedUpgradeable", function () {
     it("ERC20 L2 Bridged Coverage(view interface Id)", async function () {
-      const factory = await ethers.getContractFactory("ERC20L2BridgedUpgradeable");
+      const factory = await ethers.getContractFactory(
+        "ERC20L2BridgedUpgradeable",
+      );
       const erc20 = await factory.deploy();
       const IKromaBridge_interfaceId = "0x30a0c5a9";
       const IAccessControlEnumerable_interfaceId = "0x5a05180f";
 
       expect(await erc20.supportsInterface(zeroInterfaceId)).eq(false);
       expect(await erc20.supportsInterface(IKromaBridge_interfaceId)).eq(true);
-      expect(await erc20.supportsInterface(IAccessControlEnumerable_interfaceId)).eq(true);
+      expect(
+        await erc20.supportsInterface(IAccessControlEnumerable_interfaceId),
+      ).eq(true);
     });
   });
 });

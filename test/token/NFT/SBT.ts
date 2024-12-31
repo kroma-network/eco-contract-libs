@@ -34,7 +34,8 @@ describe("SBT", function () {
 
       await expect(sbt.nextMint(user0)).not.reverted;
 
-      await expect(sbt.connect(user0).transferFrom(user0, user1, tokenId)).reverted;
+      await expect(sbt.connect(user0).transferFrom(user0, user1, tokenId))
+        .reverted;
 
       await expect(sbt.connect(user0).burn(tokenId)).not.reverted;
     });

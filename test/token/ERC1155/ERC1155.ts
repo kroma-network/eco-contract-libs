@@ -19,7 +19,9 @@ describe("ERC1155 Mintable", function () {
 
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
-      const { erc1155, owner, users} = await loadFixture(ERC1155_Mintable_Fixture);
+      const { erc1155, owner, users } = await loadFixture(
+        ERC1155_Mintable_Fixture,
+      );
 
       expect(await erc1155.owner()).to.equal(owner.address);
       await expect(erc1155.initEcoERC1155(owner, erc1155URI)).reverted;
@@ -56,59 +58,156 @@ describe("ERC1155 Mintable", function () {
     describe("Mint", function () {
       it("Shouldn't fail mint with the right owner", async function () {
         const { erc1155, users } = await loadFixture(ERC1155_Mintable_Fixture);
-        await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex)).not.reverted;
-        await expect(erc1155.mintBatch(users[0], [...Array(3).keys()], Array(3).fill(amount), defaultHex)).not.reverted;
-        await expect(erc1155.connect(users[0]).mintBatch(users[0], [...Array(3).keys()], Array(3).fill(amount), defaultHex)).reverted;
+        await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex))
+          .not.reverted;
+        await expect(
+          erc1155.mintBatch(
+            users[0],
+            [...Array(3).keys()],
+            Array(3).fill(amount),
+            defaultHex,
+          ),
+        ).not.reverted;
+        await expect(
+          erc1155
+            .connect(users[0])
+            .mintBatch(
+              users[0],
+              [...Array(3).keys()],
+              Array(3).fill(amount),
+              defaultHex,
+            ),
+        ).reverted;
 
         await expect(erc1155.pause()).not.reverted;
-        await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex)).reverted;
+        await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex))
+          .reverted;
       });
 
       it("batchMint and batchBurn", async function () {
-        const { owner, erc1155, users } = await loadFixture(ERC1155_Mintable_Fixture);
+        const { owner, erc1155, users } = await loadFixture(
+          ERC1155_Mintable_Fixture,
+        );
 
-        await expect(erc1155.mintBatch(users[0], [...Array(3).keys()], Array(3).fill(amount), defaultHex)).not.reverted;
-        await expect(erc1155.connect(users[0]).setApprovalForAll(owner, true)).not.reverted;
-        await expect(erc1155.burnBatch(users[0], [...Array(3).keys()], Array(3).fill(amount))).not.reverted;
+        await expect(
+          erc1155.mintBatch(
+            users[0],
+            [...Array(3).keys()],
+            Array(3).fill(amount),
+            defaultHex,
+          ),
+        ).not.reverted;
+        await expect(erc1155.connect(users[0]).setApprovalForAll(owner, true))
+          .not.reverted;
+        await expect(
+          erc1155.burnBatch(
+            users[0],
+            [...Array(3).keys()],
+            Array(3).fill(amount),
+          ),
+        ).not.reverted;
       });
 
       it("Should revert with the right error if mint called from another account", async function () {
         const { erc1155, users } = await loadFixture(ERC1155_Mintable_Fixture);
         const user_connected_erc1155 = erc1155.connect(users[0]);
-        await expect(user_connected_erc1155.mint(users[0], default1155Id, amount, defaultHex)).reverted;
+        await expect(
+          user_connected_erc1155.mint(
+            users[0],
+            default1155Id,
+            amount,
+            defaultHex,
+          ),
+        ).reverted;
       });
 
       it("Shouldn't fail mint with the right role access account", async function () {
         const { erc1155, users } = await loadFixture(ERC1155_Mintable_Fixture);
 
-        await expect(erc1155.grantSelectorRole(getSelector(erc1155.mint), users[0])).not.reverted;
+        await expect(
+          erc1155.grantSelectorRole(getSelector(erc1155.mint), users[0]),
+        ).not.reverted;
 
         const user_connected_erc1155 = erc1155.connect(users[0]);
-        await expect(user_connected_erc1155.mint(users[0], default1155Id, amount, defaultHex)).not.reverted;
+        await expect(
+          user_connected_erc1155.mint(
+            users[0],
+            default1155Id,
+            amount,
+            defaultHex,
+          ),
+        ).not.reverted;
 
-        await expect(erc1155.revokeSelectorRole(getSelector(erc1155.mint), users[0])).not.reverted;
-        await expect(user_connected_erc1155.mint(users[0], default1155Id, amount, defaultHex)).reverted;
+        await expect(
+          erc1155.revokeSelectorRole(getSelector(erc1155.mint), users[0]),
+        ).not.reverted;
+        await expect(
+          user_connected_erc1155.mint(
+            users[0],
+            default1155Id,
+            amount,
+            defaultHex,
+          ),
+        ).reverted;
       });
     });
 
     describe("Transfer", function () {
       it("Should revert with the right error if mint called from another account", async function () {
-        const { owner, erc1155, users } = await loadFixture(ERC1155_Mintable_Fixture);
-        await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex)).not.reverted;
-        await expect(erc1155.connect(users[0]).burn(users[0], default1155Id, amount)).not.reverted;
+        const { owner, erc1155, users } = await loadFixture(
+          ERC1155_Mintable_Fixture,
+        );
+        await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex))
+          .not.reverted;
+        await expect(
+          erc1155.connect(users[0]).burn(users[0], default1155Id, amount),
+        ).not.reverted;
         expect(await erc1155.balanceOf(users[0], default1155Id)).equal(0);
 
-        await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex)).not.reverted;
-        await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex)).not.reverted;
+        await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex))
+          .not.reverted;
+        await expect(erc1155.mint(users[0], default1155Id, amount, defaultHex))
+          .not.reverted;
 
         await erc1155.connect(users[0]).setApprovalForAll(owner, true);
-        await expect(erc1155.safeTransferFrom(users[0], users[1], default1155Id, await erc1155.balanceOf(users[0], default1155Id), defaultHex)).not.reverted;
-        await expect(erc1155.safeTransferFrom(users[0], users[1], default1155Id, amount, defaultHex)).reverted;
+        await expect(
+          erc1155.safeTransferFrom(
+            users[0],
+            users[1],
+            default1155Id,
+            await erc1155.balanceOf(users[0], default1155Id),
+            defaultHex,
+          ),
+        ).not.reverted;
+        await expect(
+          erc1155.safeTransferFrom(
+            users[0],
+            users[1],
+            default1155Id,
+            amount,
+            defaultHex,
+          ),
+        ).reverted;
 
-        await expect(erc1155.connect(users[1]).safeTransferFrom(users[1], users[0], default1155Id, await erc1155.balanceOf(users[1], default1155Id)/2n, defaultHex))
-          .not.reverted; // this allowed, openzeppelin transfer imple differ from erc20
+        await expect(
+          erc1155
+            .connect(users[1])
+            .safeTransferFrom(
+              users[1],
+              users[0],
+              default1155Id,
+              (await erc1155.balanceOf(users[1], default1155Id)) / 2n,
+              defaultHex,
+            ),
+        ).not.reverted; // this allowed, openzeppelin transfer imple differ from erc20
         await erc1155.connect(users[1]).setApprovalForAll(owner, true);
-        await expect(erc1155.burn(users[1], default1155Id, await erc1155.balanceOf(users[1], default1155Id))).not.reverted;
+        await expect(
+          erc1155.burn(
+            users[1],
+            default1155Id,
+            await erc1155.balanceOf(users[1], default1155Id),
+          ),
+        ).not.reverted;
       });
     });
   });

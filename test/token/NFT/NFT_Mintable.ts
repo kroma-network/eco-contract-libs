@@ -22,7 +22,8 @@ describe("NFT Mintable", function () {
     it("Basic Initialize", async function () {
       const { nft, owner } = await loadFixture(NFT_SeqMintable_Fixture);
 
-      await expect(nft.initNFTMintableBase(owner.address, name, symbol)).reverted;
+      await expect(nft.initNFTMintableBase(owner.address, name, symbol))
+        .reverted;
 
       expect(await nft.owner()).to.equal(owner.address);
 
@@ -50,12 +51,16 @@ describe("NFT Mintable", function () {
       await expect(nft.connect(user0).mint(user0, 0)).reverted;
       await expect(nft.connect(admin).mint(user0, 0)).reverted;
 
-      await expect(nft.grantSelectorRole(getSelector(nft.mint), admin)).not.reverted;
+      await expect(nft.grantSelectorRole(getSelector(nft.mint), admin)).not
+        .reverted;
       await expect(nft.connect(user0).mint(user0, 0)).reverted;
 
-      await expect(nft.connect(admin).mint(user0, 0)).emit(nft, "Transfer").withArgs(hre.ethers.ZeroAddress, user0, 0);
+      await expect(nft.connect(admin).mint(user0, 0))
+        .emit(nft, "Transfer")
+        .withArgs(hre.ethers.ZeroAddress, user0, 0);
 
-      await expect(nft.revokeSelectorRole(getSelector(nft.mint), admin)).not.reverted;
+      await expect(nft.revokeSelectorRole(getSelector(nft.mint), admin)).not
+        .reverted;
       await expect(nft.connect(user0).mint(user0, 0)).reverted;
       await expect(nft.connect(admin).mint(user0, 0)).reverted;
     });
