@@ -20,7 +20,8 @@ describe("NFT Typed", function () {
     it("Basic Initialize", async function () {
       const { nft, owner } = await loadFixture(NFT_Typed_Fixture);
 
-      await expect(nft.initNFT_SeqMintable(owner.address, name, symbol)).reverted;
+      await expect(nft.initNFT_SeqMintable(owner.address, name, symbol))
+        .reverted;
 
       expect(await nft.owner()).to.equal(owner.address);
 
@@ -61,7 +62,9 @@ describe("NFT Typed", function () {
 
       for (let i = 0; i < baseURIForType.length; i++) {
         expect(await nft.tokenType(i + 1)).equal(i);
-        expect(await nft.tokenURI(i + 1)).equal(baseURIForType + i.toString() + ".json");
+        expect(await nft.tokenURI(i + 1)).equal(
+          baseURIForType + i.toString() + ".json",
+        );
         await expect(nft.connect(user0).setTokenType(i + 1, 0)).reverted;
         const typedSupply = await nft.typeSupply(i);
         expect(typedSupply).not.equal(BigInt(0));

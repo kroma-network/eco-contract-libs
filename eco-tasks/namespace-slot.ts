@@ -10,18 +10,21 @@ interface ERC7201NamespaceInfo {
   value: string;
 }
 
-task("namespace-slot", "check solidity files namespace slot value(ERC7201)").setAction(
-  async (taskArgs: TaskArguments, hre: HardhatRuntimeEnvironment) => {
-    const contractsDir = hre.config.paths.sources;
-    const ERC7201NamespaceInfo = findERC7201NamespaceInfo(contractsDir);
-    ERC7201NamespaceInfo.forEach((data) => {
-      const calcSlot = "0x" + namespaceSlot(data.namespace, hre);
-      if (calcSlot !== data.value) {
-        console.log(`File: ${data.file}\nNamespace: ${data.namespace}, Value: ${data.value}, Should: ${calcSlot}`);
-      }
-    });
-  },
-);
+task(
+  "namespace-slot",
+  "check solidity files namespace slot value(ERC7201)",
+).setAction(async (taskArgs: TaskArguments, hre: HardhatRuntimeEnvironment) => {
+  const contractsDir = hre.config.paths.sources;
+  const ERC7201NamespaceInfo = findERC7201NamespaceInfo(contractsDir);
+  ERC7201NamespaceInfo.forEach((data) => {
+    const calcSlot = "0x" + namespaceSlot(data.namespace, hre);
+    if (calcSlot !== data.value) {
+      console.log(
+        `File: ${data.file}\nNamespace: ${data.namespace}, Value: ${data.value}, Should: ${calcSlot}`,
+      );
+    }
+  });
+});
 
 function findERC7201NamespaceInfo(contractsDir: string) {
   const results: ERC7201NamespaceInfo[] = [];
@@ -50,7 +53,8 @@ function extractData(filePath: string): ERC7201NamespaceInfo | null {
 
   if (match) {
     // 네임스페이스 추출을 위한 정규 표현식 수정
-    const namespaceRegex = /keccak256\(abi\.encode\(uint256\(keccak256\("([^"]+)"\)\) - 1\)\)/;
+    const namespaceRegex =
+      /keccak256\(abi\.encode\(uint256\(keccak256\("([^"]+)"\)\) - 1\)\)/;
     const namespaceMatch = namespaceRegex.exec(content);
     return {
       file: filePath,
@@ -62,15 +66,23 @@ function extractData(filePath: string): ERC7201NamespaceInfo | null {
   }
 }
 
-export function namespaceSlot(namespace: string, hre: HardhatRuntimeEnvironment) {
+export function namespaceSlot(
+  namespace: string,
+  hre: HardhatRuntimeEnvironment,
+) {
   // keccak256(abi.encode(uint256(keccak256(namespace)) - 1)) & ~bytes32(uint256(0xff))
   const hashNamespace = hre.ethers.keccak256(hre.ethers.toUtf8Bytes(namespace));
 
   const number = hre.ethers.toBigInt(hashNamespace) - 1n;
 
-  const hash_second = hre.ethers.keccak256(hre.ethers.AbiCoder.defaultAbiCoder().encode(["uint256"], [number]));
+  const hash_second = hre.ethers.keccak256(
+    hre.ethers.AbiCoder.defaultAbiCoder().encode(["uint256"], [number]),
+  );
 
-  const finalMasked = (hre.ethers.toBigInt(hash_second) & (hre.ethers.MaxUint256 - 255n)).toString(16);
+  const finalMasked = (
+    hre.ethers.toBigInt(hash_second) &
+    (hre.ethers.MaxUint256 - 255n)
+  ).toString(16);
 
   const paddingSize = 64 - finalMasked.length;
   if (paddingSize > 0) {

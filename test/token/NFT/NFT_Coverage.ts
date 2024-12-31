@@ -46,19 +46,29 @@ describe("NFT Coverage", function () {
 
     const extraURIPath = "extra/path/";
     await expect(nft.setTokenURI(tokenId, extraURIPath + tokenId)).not.reverted;
-    await expect(nft.connect(user0).setTokenURI(tokenId, extraURIPath + tokenId)).reverted;
-    expect(await nft.tokenURI(tokenId)).eq(baseURI + extraURIPath + tokenId + ".json");
+    await expect(
+      nft.connect(user0).setTokenURI(tokenId, extraURIPath + tokenId),
+    ).reverted;
+    expect(await nft.tokenURI(tokenId)).eq(
+      baseURI + extraURIPath + tokenId + ".json",
+    );
   });
 
   it("NFT_SeqMintableIdenticalURI (view & set)", async function () {
-    const { owner, nft, user0, user1 } = await loadFixture(NFT_SeqMintable_Fixture);
+    const { owner, nft, user0, user1 } = await loadFixture(
+      NFT_SeqMintable_Fixture,
+    );
 
-    const seqIdentical = await (await ethers.getContractFactory("HH_NFT_SeqMintableIdenticalURI")).deploy();
-    await expect(seqIdentical.initNFT_SeqMintable(
-      owner,
-      "SeqMintableIdenticalURI",
-      "SMIURI"
-    )).not.reverted;
+    const seqIdentical = await (
+      await ethers.getContractFactory("HH_NFT_SeqMintableIdenticalURI")
+    ).deploy();
+    await expect(
+      seqIdentical.initNFT_SeqMintable(
+        owner,
+        "SeqMintableIdenticalURI",
+        "SMIURI",
+      ),
+    ).not.reverted;
 
     const tokenId = await seqIdentical.nextMintId();
     await expect(seqIdentical.nextMint(user0)).not.reverted;
@@ -92,8 +102,21 @@ describe("NFT Coverage", function () {
 
     // for coverage
     await expect(nft.nextMintBatch(user1, len)).not.reverted;
-    expect(await nft.tokensOfOwnerIn(user0, len - 5, len + 5)).deep.equal([10n, 9n, 8n, 7n, 5n, 6n]);
-    expect(await nft.tokensOfOwnerIn(user1, len - 5, len + 5)).deep.equal([11n, 12n, 13n, 14n, 15n]);
+    expect(await nft.tokensOfOwnerIn(user0, len - 5, len + 5)).deep.equal([
+      10n,
+      9n,
+      8n,
+      7n,
+      5n,
+      6n,
+    ]);
+    expect(await nft.tokensOfOwnerIn(user1, len - 5, len + 5)).deep.equal([
+      11n,
+      12n,
+      13n,
+      14n,
+      15n,
+    ]);
   });
 
   it("SBT (view)", async function () {
@@ -113,7 +136,14 @@ describe("NFT Coverage", function () {
     const factory = await ethers.getContractFactory("HHERC721Receiver");
     const receiver_contract = await factory.deploy();
 
-    expect(await receiver_contract.onERC721Received(ZeroAddress, ZeroAddress, 0, "0x")).eq("0x150b7a02");
+    expect(
+      await receiver_contract.onERC721Received(
+        ZeroAddress,
+        ZeroAddress,
+        0,
+        "0x",
+      ),
+    ).eq("0x150b7a02");
     await expect(nft.nextMint(receiver_contract)).not.reverted;
   });
 });
