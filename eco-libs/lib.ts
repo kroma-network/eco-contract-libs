@@ -16,6 +16,7 @@ export interface TraitCF<CT> {
 }
 
 import { exportContractInfo, importContractInfo } from "./helper";
+import { getChainId } from "../helper/chain";
 
 export class BaseInstance extends AsyncConstructor {
   deployer!: HardhatEthersSigner;
@@ -128,7 +129,7 @@ export class ProxyFactory extends ContractInstance<
 
   private constructor() {
     super("admin", EcoProxyAdmin__factory, undefined, async () => {
-      this.chainId = (await hre.ethers.provider.getNetwork()).chainId;
+      this.chainId = await getChainId();
       this.EcoTUPFactory = await hre.ethers.getContractFactory(
         "EcoTUPWithAdminLogic",
       );
