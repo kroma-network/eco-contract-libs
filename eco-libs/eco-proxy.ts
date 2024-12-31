@@ -19,6 +19,7 @@ import {
 
 import * as reuseAddress from "./const/reuse-logic-address";
 import { exportContractInfo, importContractInfo } from "./helper";
+import { getChainId } from "../helper/chain";
 
 export interface ContractFactoryTypeSupporter<CT extends BaseContract> {
   deploy(...deployArgs: unknown[]): Promise<CT>;
@@ -73,7 +74,7 @@ export class ProxyInstanceFactory extends AsyncConstructor {
   }
 
   async load(proxyAdminLogic?: EcoProxyAdmin) {
-    const chainId = (await hre.ethers.provider.getNetwork()).chainId;
+    const chainId = await getChainId();
     const reuseLogicAddress = reuseAddress.LogicAddress(chainId).proxyAdmin;
 
     if (proxyAdminLogic !== undefined) {

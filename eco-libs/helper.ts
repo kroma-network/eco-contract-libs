@@ -75,10 +75,9 @@ export async function exportContractInfo(
 ) {
   await inst.waitForDeployment();
   const deployTxReceipt = await inst.deploymentTransaction()?.wait();
-  const _chainId = (await hre.ethers.provider.getNetwork()).chainId;
-  const chainId = _chainId.toString();
+  const chainId = await getChainId();
 
-  if (chain.isDevnet(_chainId)) return;
+  if (chain.isDevnet(chainId)) return;
 
   const contractPaths = filesInDirectory(
     __dirname + "/../artifacts/contracts/",
@@ -98,7 +97,7 @@ export async function exportContractInfo(
     abi: "abi/" + label + ".json",
   };
 
-  const servicePath = path.join(DefaultInfoDir, chainId, domain);
+  const servicePath = path.join(DefaultInfoDir, chainId.toString(), domain);
   createDirectoryIfNotExists(servicePath);
   fs.writeFileSync(
     path.join(servicePath, label + ".json"),
@@ -112,9 +111,7 @@ export async function importContractInfo(
   label: string,
   chainId?: string,
 ): Promise<ContractInfo> {
-  if (!chainId) {
-    chainId = (await hre.ethers.provider.getNetwork()).chainId.toString();
-  }
+  chainId = chainId ?? (await getChainId()).toString();
 
   try {
     const instancePath = path.join(
@@ -146,6 +143,7 @@ import {
   EcoProxiedInstanceWithFactory,
   ProxyInstanceFactory,
 } from "./eco-proxy";
+import { getChainId } from "../helper/chain";
 
 export class EcoServiceHelper extends AsyncConstructor {
   deployer!: HardhatEthersSigner;
