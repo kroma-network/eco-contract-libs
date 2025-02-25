@@ -321,6 +321,7 @@ export class EcoUUPS<CF extends EcoCF<CF>>
       implArgs ?? (await this.logicInput()),
       this.deployer,
     );
+    return this.logic;
   }
 
   async useLogic(implArgs?: unknown[]) {
@@ -354,7 +355,7 @@ export class EcoUUPS<CF extends EcoCF<CF>>
   async upgrade(inputBuilder?: () => Promise<string>, implArgs?: unknown[]) {
     this.checkBind();
 
-    await this.deployLogic(implArgs);
+    console.log("logic deployed:", (await this.deployLogic(implArgs)).address);
 
     const input = inputBuilder ? await inputBuilder() : "0x";
     await this.inst.upgradeToAndCall(this.logic, input);
