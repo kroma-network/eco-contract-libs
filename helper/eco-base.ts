@@ -194,7 +194,7 @@ export class EcoProxyFactory extends AsyncConstructor {
       inst,
       this.IMPLEMENTATION_SLOT,
     );
-    return hre.ethers.getAddress("0x" + slotData.slice(40));
+    return hre.ethers.getAddress("0x" + slotData.slice(26));
   }
 
   async findDeployAt(contractAddress: string) {
@@ -256,9 +256,10 @@ export class EcoInstanceBase extends AsyncConstructor {
     this.checkUnbind();
     this.address = address;
   }
-  async _bindingDeployInfo(address: string, deployAt?: number) {
-    await this._bindingAddress(address);
-    this.deployAt = deployAt ?? (await this.proxyFactory.findDeployAt(address));
+  async _bindingDeployAt(deployAt?: number) {
+    this.checkBind();
+    this.deployAt =
+      deployAt ?? (await this.proxyFactory.findDeployAt(this.address));
   }
 
   isBind() {
@@ -340,7 +341,8 @@ export class EcoUUPS<CF extends EcoCF<CF>>
       input,
       this.deployer,
     );
-    await this._bindingDeployInfo(this.inst.address, this.inst.deployAt);
+    await this._bindingAddress(await this.inst.address);
+    await this._bindingDeployAt(this.inst.deployAt);
   }
 
   async use(inputBuilder?: () => Promise<string>, implArgs?: unknown[]) {
@@ -364,20 +366,21 @@ export class EcoUUPS<CF extends EcoCF<CF>>
     this.checkUnbind();
     this.inst = (await this.factory.attach(address)) as EcoCT<CF>;
     this.logic = (await this.factory.attach(
-      this.proxyFactory.getLogicAddress(this.inst),
+      await this.proxyFactory.getLogicAddress(this.inst),
     )) as EcoCT<CF>;
+
+    this.inst.address = await this.inst.getAddress();
     this.logic.address = await this.logic.getAddress();
+
     await this._bindingAddress(this.inst.address);
   }
 
   async attachFromInfo(info: EcoContractInfo) {
     this.checkUnbind();
-    console.log("load", this.label, info.address);
-    this.inst = (await this.factory.attach(info.address)) as EcoCT<CF>;
-    this.inst.address = info.address;
+    await this.attach(info.address);
     this.inst.deployAt = info.deployAt;
+    await this._bindingDeployAt(this.inst.deployAt);
     this.openfort = info.openfort;
-    await this._bindingDeployInfo(this.inst.address, info.deployAt);
   }
 
   async load(address?: AddressLike) {
@@ -385,6 +388,7 @@ export class EcoUUPS<CF extends EcoCF<CF>>
       await this.attach(address);
     } else {
       await this.attachFromInfo(await this.importEcoContractInfo());
+      console.log("load", this.label, this.address);
     }
   }
 
